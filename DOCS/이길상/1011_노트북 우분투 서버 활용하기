@@ -1,0 +1,38 @@
+# Laptop Ubuntu Server
+
+### a. iso 다운
+
+- [Ubuntu 20.04.4 LTS (Focal Fossa)](https://releases.ubuntu.com/20.04/)
+- 서버로만 사용하고 ssh cli만 사용할 경우 server 버전으로 설치해도 괜찮다.
+- 하지만, 노트북에 설치하기 때문에 wifi 세팅 등에 애로사항이 꽃피게 되므로 desktop 버전 사용
+
+### b. 부팅 디스크 설정
+
+- [https://rufus.ie/en/](https://rufus.ie/en/)
+- 4GB정도의 포맷된 USB 준비 후 부팅 USB 설정
+
+### c. 설치
+
+- Boot Manager 진입하여 연결된 USB로 부팅 설정(ASUS Zenbook 기준 Esc 키)
+
+### d. 인터넷 연결
+
+- desktop 버전의 경우 wifi 어댑터를 자동으로 인식하나…
+- Window10의 전원 옵션의 빠른 부팅 설정이 wifi 어댑터 설정을 가져가버리는 듯(UEFI의 FastBoot과 무관). wifi 설정이 보이지 않는다면 해당 설정을 꺼준 뒤 재부팅.
+
+### e. ssh접속설정
+
+- [[Ubuntu] SSH로 원격접속 하기 (velog.io)](https://velog.io/@717lumos/Ubuntu-SSH%EB%A1%9C-%EC%9B%90%EA%B2%A9%EC%A0%91%EC%86%8D-%ED%95%98%EA%B8%B0)
+- 방화벽 설정 건너뜀
+
+### f. 다른 기기에서 접속 확인
+
+- desktop에서 mobaXtetm 툴을 사용하여 로컬 접속.
+- 외부 네트워크에서의 접속은 공유기 설정이 필요해보인다.
+    - [[UBUNTU] 우분투 서버 SSH로 접속 세팅하기 - MemoLOG (ramel.be)](https://ca.ramel.be/74)
+
+### 기타 자료
+
+[[UBUNTU] 우분투 서버 WOL (Wake On Lan) 설정하기 - MemoLOG (ramel.be)](https://ca.ramel.be/117?category=935134)
+
+[asus 메인보드 wol 설정 [bios] (tistory.com)](https://intunknown.tistory.com/576)
