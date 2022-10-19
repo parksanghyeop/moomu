@@ -13,7 +13,7 @@ class Region(Base):
     users = relationship("User", back_populates="region")
     bus = relationship("Bus", back_populates="region")
     notices = relationship("Notice", back_populates="region")
-    faqs = relationship("Faq", back_populates="region")
+    faqs = relationship("FaQ", back_populates="region")
 
 
 class User(Base):
@@ -27,14 +27,13 @@ class User(Base):
 
     region_id = Column(Integer, ForeignKey("region.id"))
     start_statoin_id = Column(Integer, ForeignKey("station.id"))
-    end_station_id = Column(Integer, ForeignKey("station.id"))
 
-    region = relationship("Region", back_populates="user")
+    region = relationship("Region", back_populates="users")
     alarms = relationship("Alarm", back_populates="user")
     notices = relationship("Notice", back_populates="user")
-    faqs = relationship("Faq", back_populates="user")
-    start_station = relationship("Station", back_populates="start_user")
-    end_station = relationship("Station", back_populates="end_user")
+    faqs = relationship("FaQ", back_populates="faq_user")
+    faq_answers = relationship("FaQAnswer", back_populates="answer_user")
+    start_station = relationship("Station", back_populates="start_users")
 
 
 class Alarm(Base):
@@ -54,10 +53,9 @@ class Bus(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String(50), unique=True, index=True, nullable=False)
-    station_id = Column(Integer, ForeignKey("station.id"))
     region_id = Column(Integer, ForeignKey("region.id"))
 
-    stations = relationship("Station", back_populates="bus")
+    bus_stations = relationship("Station", back_populates="bus")
     region = relationship("Region", back_populates="bus")
 
 
@@ -67,10 +65,11 @@ class Station(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String(50), unique=True, index=True, nullable=False)
     bus_id = Column(Integer, ForeignKey("bus.id"))
+    lat = Column(String(50), nullable=False)
+    lng = Column(String(50), nullable=False)
 
-    bus = relationship("Bus", back_populates="stations")
+    bus = relationship("Bus", back_populates="bus_stations")
     start_users = relationship("User", back_populates="start_station", uselist=False)
-    end_users = relationship("User", back_populates="end_station", uselist=False)
 
 
 class Notice(Base):
@@ -99,7 +98,7 @@ class FaQ(Base):
     region_id = Column(Integer, ForeignKey("region.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
 
-    user = relationship("User", back_populates="faqs")
+    faq_user = relationship("User", back_populates="faqs")
     region = relationship("Region", back_populates="faqs")
     faq_answer = relationship("FaQAnswer", back_populates="faq", uselist=False)
 
@@ -114,5 +113,5 @@ class FaQAnswer(Base):
     faq_id = Column(Integer, ForeignKey("faq.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
 
-    user = relationship("User", back_populates="faq_answers")
-    faq = relationship("FaQ", back_populates="faq_answers")
+    answer_user = relationship("User", back_populates="faq_answers")
+    faq = relationship("FaQ", back_populates="faq_answer")
