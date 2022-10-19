@@ -1,12 +1,14 @@
 from locale import strcoll
 from pydantic import BaseModel
 
+
 class RegionBase(BaseModel):
     name: str
 
 
 class RegionCreate(RegionBase):
     pass
+
 
 class Region(RegionBase):
     id: int
@@ -21,8 +23,10 @@ class UserBase(BaseModel):
     grade: int
     region_id: int
 
+
 class UserCreate(UserBase):
     password: str
+
 
 class User(UserBase):
     id: int

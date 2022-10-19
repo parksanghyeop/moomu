@@ -7,7 +7,6 @@ from app.db.database import Base
 
 class Region(Base):
     __tablename__ = "region"
-
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), unique=True, index=True)
 
@@ -73,7 +72,7 @@ class Station(Base):
     start_users = relationship("User", back_populates="start_station", uselist=False)
     end_users = relationship("User", back_populates="end_station", uselist=False)
 
-    
+
 class Notice(Base):
     __tablename__ = "notice"
 

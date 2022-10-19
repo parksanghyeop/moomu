@@ -10,4 +10,3 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # 나중에 이 클래스에서 상속해서 각 데이터베이스 모델이나 ORM모델 생성
 Base = declarative_base()
-
