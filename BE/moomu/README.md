@@ -1,7 +1,7 @@
 # moomu
 
-This project was generated via [manage-fastapi](https://ycd.github.io/manage-fastapi/)! :tada:
+## 프로젝트 시작
 
-## License
-
-This project is licensed under the terms of the None license.
+1. moomu/ 위치에 .env파일을 작성한다.
+2. pip install -r requirements.txt
+3. moomu/ 에서 `uvicorn app.main:app --reload` 명령 실행
