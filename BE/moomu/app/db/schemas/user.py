@@ -1,12 +1,10 @@
 from pydantic import BaseModel
 
-from app.db.schemas.region import Region
-
 
 class UserBase(BaseModel):
     username: str
-    name: str
-    grade: int
+    nickname: str
+    class_group: int
     region_id: int
 
 
@@ -14,9 +12,12 @@ class UserCreate(UserBase):
     password: str
 
 
+class UserUpdate(UserBase):
+    pass
+
+
 class User(UserBase):
     id: int
-    regions: list[Region] = []
 
     class Config:
         orm_mode = True
