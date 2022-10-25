@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api import users
+from app.api import users, notices
 from app.db import database, models
 
 
@@ -24,8 +24,8 @@ models.Base.metadata.create_all(bind=database.engine)
 
 app = get_application()
 
-# 사용자 관련 API
 app.include_router(users.router)
+app.include_router(notices.router)
 
 
 # 루트 경로로 접속하면 Swagger 문서로 리다이렉트
