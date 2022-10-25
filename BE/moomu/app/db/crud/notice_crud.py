@@ -23,10 +23,11 @@ def create_notice(db: Session, notice: NoticeCreate):
     return db_notice
 
 
-def update_notice(db: Session, notice: NoticeUpdate):
-    db_notice = db.query(models.Notice).filter(models.Notice.id == notice.id).first()
+def notice_update(db: Session, notice_id: int, notice: NoticeUpdate):
+    db_notice = db.query(models.Notice).filter(models.Notice.id == notice_id).first()
     db_notice.title = notice.title
     db_notice.content = notice.content
+    db_notice.region_id = notice.region_id
     db.commit()
     db.refresh(db_notice)
     return db_notice

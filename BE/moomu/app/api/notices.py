@@ -64,7 +64,7 @@ def update_notice(notice_id: int, notice: NoticeUpdate, db: Session = Depends(ge
     validate_user(db, notice.user_id)
     validate_region(db, notice.region_id)
 
-    notice_crud.update_notice(db=db, notice=notice)
+    notice_crud.notice_update(db, notice_id, notice)
     return {"message": "공지사항이 수정되었습니다."}
 
 
