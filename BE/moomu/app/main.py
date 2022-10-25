@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api import users, shuttlebus
+from app.api import users, regions, notices, shuttlebus
 from app.db import database, models
 
 
@@ -24,10 +24,9 @@ models.Base.metadata.create_all(bind=database.engine)
 
 app = get_application()
 
-# 사용자 관련 API
 app.include_router(users.router)
-
-# 셔틀버스 관련 API
+app.include_router(regions.router)
+app.include_router(notices.router)
 app.include_router(shuttlebus.router)
 
 
