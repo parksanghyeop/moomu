@@ -9,6 +9,14 @@ class RegionCreate(RegionBase):
     pass
 
 
+class RegionUpdate(RegionBase):
+    id: int
+
+
+class RegionDelete(BaseModel):
+    id: int
+
+
 class Region(RegionBase):
     id: int
 
