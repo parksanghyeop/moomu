@@ -25,8 +25,8 @@ class User(Base):
     password = Column(String(50), nullable=False)
     class_group = Column(Integer, nullable=False, default=0)
     region_id = Column(Integer, ForeignKey("region.id"))
-    start_station_id = Column(Integer, ForeignKey("station.id"))
-    end_station_id = Column(Integer, ForeignKey("station.id"))
+    start_station_id = Column(Integer, ForeignKey("station.id", ondelete="SET NULL"))
+    end_station_id = Column(Integer, ForeignKey("station.id", ondelete="SET NULL"))
 
     region = relationship("Region", back_populates="users")
     alarms = relationship("Alarm", back_populates="user")
@@ -45,7 +45,7 @@ class Alarm(Base):
     content = Column(String(255), unique=True, index=True, nullable=False)
     read = Column(Boolean, default=False)
     created_date = Column(DateTime, default=datetime.now)
-    user_id = Column(Integer, ForeignKey("user.id"))
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
 
     user = relationship("User", back_populates="alarms")
 
@@ -66,7 +66,7 @@ class Station(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String(50), unique=True, index=True, nullable=False)
-    bus_id = Column(Integer, ForeignKey("bus.id"))
+    bus_id = Column(Integer, ForeignKey("bus.id", ondelete="CASCADE"))
     lat = Column(String(50), nullable=False)
     lng = Column(String(50), nullable=False)
     order = Column(Integer, nullable=False)
@@ -91,7 +91,7 @@ class Notice(Base):
     created_date = Column(DateTime, default=datetime.now)
     updated_date = Column(DateTime, default=datetime.now)
     region_id = Column(Integer, ForeignKey("region.id"))
-    user_id = Column(Integer, ForeignKey("user.id"))
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
 
     user = relationship("User", back_populates="notices")
     region = relationship("Region", back_populates="notices")
@@ -106,7 +106,7 @@ class FaQ(Base):
     created_date = Column(DateTime, default=datetime.now)
     updated_date = Column(DateTime, default=datetime.now)
     region_id = Column(Integer, ForeignKey("region.id"))
-    user_id = Column(Integer, ForeignKey("user.id"))
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
 
     faq_user = relationship("User", back_populates="faqs")
     region = relationship("Region", back_populates="faqs")
@@ -120,8 +120,8 @@ class FaQAnswer(Base):
     content = Column(Text, nullable=False)
     created_date = Column(DateTime, default=datetime.now)
     updated_date = Column(DateTime, default=datetime.now)
-    faq_id = Column(Integer, ForeignKey("faq.id"))
-    user_id = Column(Integer, ForeignKey("user.id"))
+    faq_id = Column(Integer, ForeignKey("faq.id", ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
 
     answer_user = relationship("User", back_populates="faq_answers")
     faq = relationship("FaQ", back_populates="faq_answer")
