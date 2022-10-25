@@ -1,9 +1,12 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 
 class NoticeBase(BaseModel):
     title: str
     content: str
+    region_id: int
+    user_id: int
 
 
 class NoticeCreate(NoticeBase):
@@ -11,17 +14,17 @@ class NoticeCreate(NoticeBase):
 
 
 class NoticeUpdate(NoticeBase):
-    pass
+    id: int
+
+
+class NoticeDelete(BaseModel):
+    id: int
 
 
 class Notice(NoticeBase):
     id: int
-    title: str
-    content: str
-    created_date: str
-    updated_date: str
-    region_id: int
-    user_id: int
+    created_date: datetime
+    updated_date: datetime
 
     class Config:
         orm_mode = True
