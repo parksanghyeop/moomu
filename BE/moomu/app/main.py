@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api import users, notices
+from app.api import users, regions, notices
 from app.db import database, models
 
 
@@ -25,6 +25,7 @@ models.Base.metadata.create_all(bind=database.engine)
 app = get_application()
 
 app.include_router(users.router)
+app.include_router(regions.router)
 app.include_router(notices.router)
 
 
