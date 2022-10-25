@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 class StationBase(BaseModel):
     bus_id: int
-    region_id: int
     name: str
     lat: str
     lng: str
