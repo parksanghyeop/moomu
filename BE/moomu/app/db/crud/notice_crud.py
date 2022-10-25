@@ -7,8 +7,8 @@ def get_notice(db: Session, notice_id: int):
     return db.query(models.Notice).filter(models.Notice.id == notice_id).first()
 
 
-def get_notices(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Notice).offset(skip).limit(limit).all()
+def get_notices(db: Session, page: int, limit: int):
+    return db.query(models.Notice).offset(page).limit(limit).all()
 
 
 def get_notices_by_region(db: Session, region_id: int):

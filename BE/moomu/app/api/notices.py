@@ -2,13 +2,14 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.db.crud import notice_crud, user_crud, region_crud
-from app.db.schemas import NoticeCreate, NoticeUpdate, Notice, NoticeDelete
+from app.db.crud import notice_crud, user_crud, region_crud, page_crud
+from app.db.schemas import NoticeCreate, NoticeUpdate, Notice, Page
+from app.db import models
 from app.dependencies import get_db
 
 router = APIRouter(
-    prefix="/notice",
-    tags=["notice"],
+    prefix="/notices",
+    tags=["notices"],
     responses={404: {"description": "Not found"}},
 )
 
@@ -25,10 +26,10 @@ def validate_region(db: Session, region_id: int):
         raise HTTPException(status_code=404, detail="지역을 찾을 수 없습니다.")
 
 
-@router.get("", response_model=list[Notice])
-def get_notices(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    notices = notice_crud.get_notices(db, skip=skip, limit=limit)
-    return notices
+@router.get("", response_model=Page)
+def get_notices(page: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+
+    return page_crud.page(db, models.Notice, page, limit)
 
 
 @router.get("/{notice_id}", response_model=Notice)
@@ -54,9 +55,9 @@ def create_notice(notice: NoticeCreate, db: Session = Depends(get_db)):
     return {"message": "공지사항이 등록되었습니다."}
 
 
-@router.put("/edit")
-def update_notice(notice: NoticeUpdate, db: Session = Depends(get_db)):
-    db_notice = notice_crud.get_notice(db, notice_id=notice.id)
+@router.put("/edit/{notice_id}")
+def update_notice(notice_id: int, notice: NoticeUpdate, db: Session = Depends(get_db)):
+    db_notice = notice_crud.get_notice(db, notice_id=notice_id)
     if db_notice is None:
         raise HTTPException(status_code=404, detail="공지사항을 찾을 수 없습니다.")
 
@@ -67,12 +68,11 @@ def update_notice(notice: NoticeUpdate, db: Session = Depends(get_db)):
     return {"message": "공지사항이 수정되었습니다."}
 
 
-@router.delete("/delete")
-def delete_notice(notice: NoticeDelete, db: Session = Depends(get_db)):
-    db_notice = notice_crud.get_notice(db, notice_id=notice.id)
+@router.delete("/delete/{notice_id}")
+def delete_notice(notice_id: int, db: Session = Depends(get_db)):
+    db_notice = notice_crud.get_notice(db, notice_id=notice_id)
     if db_notice is None:
         raise HTTPException(status_code=404, detail="공지사항을 찾을 수 없습니다.")
-    validate_user(db, notice.user_id)
-    db.delete(db_notice)
-    db.commit()
+
+    notice_crud.delete_notice(db=db, notice_id=notice_id)
     return {"message": "공지사항이 삭제되었습니다."}

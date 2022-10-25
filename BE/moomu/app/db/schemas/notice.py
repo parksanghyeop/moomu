@@ -14,11 +14,11 @@ class NoticeCreate(NoticeBase):
 
 
 class NoticeUpdate(NoticeBase):
-    id: int
+    pass
 
 
 class NoticeDelete(BaseModel):
-    id: int
+    pass
 
 
 class Notice(NoticeBase):
