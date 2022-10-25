@@ -44,7 +44,9 @@ def get_station(db: Session, station_id: int):
 
 
 def get_stations(db: Session, bus_id: int):
-    return db.query(Station).filter(Station.bus_id == bus_id).order_by(Station.order).all()
+    return (
+        db.query(Station).filter(Station.bus_id == bus_id).order_by(Station.order).all()
+    )
 
 
 def create_station(db: Session, station: StationBase):
@@ -58,3 +60,11 @@ def create_station(db: Session, station: StationBase):
 def delete_station(db: Session, bus_id: int):
     db.query(Station).filter(Station.bus_id == bus_id).delete()
     db.commit()
+
+
+def exist_bus(db: Session, bus: BusBase):
+    return (
+        db.query(Bus)
+        .filter(Bus.name == bus.name).filter(Bus.region_id == bus.region_id)
+        .first()
+    )
