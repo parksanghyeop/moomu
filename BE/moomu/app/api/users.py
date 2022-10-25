@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db.crud import user_crud
-from app.db.schemas import UserCreate, User
+from app.db.schemas import UserCreate, User, UserLogin
 from app.dependencies import get_db
+import bcrypt
 
 router = APIRouter(
     prefix="/users",
@@ -45,3 +46,19 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     db.delete(db_user)
     db.commit()
     return db_user
+
+
+@router.post("/login")
+def login_user(user: UserLogin, db: Session = Depends(get_db)):
+    db_user = user_crud.get_user_by_username(db, username=user.username)
+    if not db_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="존재하지 않는 사용자 입니다.",
+        )
+    if not bcrypt.checkpw(user.password.encode('utf-8'), db_user.password.encode('utf-8')):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="비밀번호가 일치하지 않습니다.",
+        )
+    return 200
