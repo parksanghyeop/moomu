@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.db import models
 from app.db.schemas import UserCreate
+import bcrypt
 
 
 def get_user(db: Session, user_id: int):
@@ -17,6 +18,9 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_user(db: Session, user: UserCreate):
+    # 비밀번호 암호화
+    hashed_pw = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt())
+    user.password = hashed_pw
     db_user = models.User(**user.dict())
     db.add(db_user)
     db.commit()
