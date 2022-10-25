@@ -5,6 +5,8 @@ from app.db.schemas import UserCreate, User, UserLogin
 from app.dependencies import get_db
 import bcrypt
 
+from app.service.jwt_service import generate_access_token
+
 router = APIRouter(
     prefix="/users",
     tags=["users"],
@@ -61,4 +63,5 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="비밀번호가 일치하지 않습니다.",
         )
-    return 200
+    # 토큰 발급
+    return generate_access_token(user.username)
