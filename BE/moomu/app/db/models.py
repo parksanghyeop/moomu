@@ -22,11 +22,12 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     username = Column(String(50), unique=True, index=True, nullable=False)
     nickname = Column(String(20), nullable=False)
-    password = Column(String(50), nullable=False)
+    password = Column(String(100), nullable=False)
     class_group = Column(Integer, nullable=False, default=0)
     region_id = Column(Integer, ForeignKey("region.id"))
     start_station_id = Column(Integer, ForeignKey("station.id", ondelete="SET NULL"))
     end_station_id = Column(Integer, ForeignKey("station.id", ondelete="SET NULL"))
+    fcm_token = Column(String(100), nullable=True)
 
     region = relationship("Region", back_populates="users")
     alarms = relationship("Alarm", back_populates="user")
