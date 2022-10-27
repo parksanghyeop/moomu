@@ -45,6 +45,12 @@ def update_bus(bus_id: int, name: str, db: Session = Depends(get_db)):
     return {"message": "버스 정보 수정에 성공했습니다."}
 
 
+@router.delete("/bus/delete/{bus_id}")
+def delete_bus(bus_id: int, db: Session = Depends(get_db)):
+    shuttlebus_crud.delete_bus(db, bus_id)
+    return {"message": "버스 정보 삭제에 성공했습니다."}
+
+
 @router.get("/station/{station_id}", response_model=Station)
 def get_station(station_id: int, db: Session = Depends(get_db)):
     db_station = shuttlebus_crud.get_station(db, station_id=station_id)

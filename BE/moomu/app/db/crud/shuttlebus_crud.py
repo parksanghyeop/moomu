@@ -29,8 +29,7 @@ def create_bus(db: Session, bus: BusBase):
 
 
 def delete_bus(db: Session, bus_id: int):
-    db_bus = get_bus(bus_id)
-    db.delete(db_bus)
+    db.query(Bus).filter(Bus.id == bus_id).delete()
     db.commit()
 
 
