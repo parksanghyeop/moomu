@@ -27,11 +27,8 @@ app = get_application()
 app.include_router(users.router)
 app.include_router(regions.router)
 app.include_router(notices.router)
-<<<<<<< BE/moomu/app/main.py
 app.include_router(shuttlebus.router)
-=======
 app.include_router(faqs.router)
->>>>>>> BE/moomu/app/main.py
 
 
 # 루트 경로로 접속하면 Swagger 문서로 리다이렉트
