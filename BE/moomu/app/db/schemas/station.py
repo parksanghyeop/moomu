@@ -1,15 +1,14 @@
-from datetime import datetime
+from datetime import time
 from pydantic import BaseModel
 
 
 class StationBase(BaseModel):
     bus_id: int
-    region_id: int
     name: str
     lat: str
     lng: str
     order: int
-    arrived_time: datetime
+    arrived_time: time
     commute_or_leave: bool
 
 
