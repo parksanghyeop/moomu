@@ -32,24 +32,26 @@ function LogiInPage() {
             className="btn btn-primary btn-xs sm:btn-sm md:btn-md lg:btn-lg logInBtn"
             onClick={() => {
               let body = {
+                body: [
+                  {
+                    username: ID,
+                    password: PW,
+                  },
+                ],
                 username: ID,
                 password: PW,
               };
               let url = "https://cors-anywhere.herokuapp.com/http://k7b202.p.ssafy.io:8000/users/login";
               // setID("");
               // setPW("");
-
+              // console.log(typeof body);
               const options = {
                 method: "POST",
-                body: JSON.stringify(body),
+                body: body,
                 url: url,
-                headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/x-www-form-urlencoded",
-                },
-                origin: "https://cors-anywhere.herokuapp.com/",
               };
-              axios(options).then((res) => {
+              console.log(options);
+              axios.post(url, body).then((res) => {
                 console.log(res);
                 goToMain();
               });
