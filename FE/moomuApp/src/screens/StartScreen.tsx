@@ -5,7 +5,7 @@ import {
     StyleSheet,
     Image,
 } from 'react-native';
-// import Footer from '../../components/footer';
+import Footer from '../components/footer';
 import Button1 from '../components/button1';
 import 'react-native-gesture-handler';
 import { StackScreenProps } from "@react-navigation/stack";
@@ -22,7 +22,7 @@ const StartScreen: React.FC<StartScreenProps> = (props) => {
       <Image style={styles.image} source={Logo}/>
       <Button1 text={'로그인'} onPress={() => {props.navigation.navigate('LoginSignUp')}} />
       <Button1 text={'회원 등록'} />
-      {/* <Footer /> */}
+      <Footer />
     </View>
   );
 };
