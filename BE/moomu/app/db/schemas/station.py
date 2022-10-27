@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import time
 from pydantic import BaseModel
 
 
@@ -8,7 +8,7 @@ class StationBase(BaseModel):
     lat: str
     lng: str
     order: int
-    arrived_time: datetime
+    arrived_time: time
     commute_or_leave: bool
 
 

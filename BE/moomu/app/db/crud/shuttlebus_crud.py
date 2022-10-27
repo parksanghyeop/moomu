@@ -34,8 +34,8 @@ def delete_bus(db: Session, bus_id: int):
     db.commit()
 
 
-def update_bus(db: Session, bus_id: int, bus: BusBase):
-    db.query(Bus).filter(Bus.id == bus_id).update(**bus.dict())
+def update_bus(db: Session, bus_id: int, name: str):
+    db.query(Bus).filter(Bus.id == bus_id).update({"name": name})
     db.commit()
 
 
@@ -53,8 +53,6 @@ def create_station(db: Session, station: StationBase):
     db_station = Station(**station.dict())
     db.add(db_station)
     db.commit()
-    db.refresh(db_station)
-    return db_station
 
 
 def delete_station(db: Session, bus_id: int):
@@ -65,6 +63,7 @@ def delete_station(db: Session, bus_id: int):
 def exist_bus(db: Session, bus: BusBase):
     return (
         db.query(Bus)
-        .filter(Bus.name == bus.name).filter(Bus.region_id == bus.region_id)
+        .filter(Bus.name == bus.name)
+        .filter(Bus.region_id == bus.region_id)
         .first()
     )

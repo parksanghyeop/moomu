@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Text
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Text, TIME
 from sqlalchemy.orm import relationship
 
 from app.db.database import Base
@@ -70,7 +70,7 @@ class Station(Base):
     lat = Column(String(50), nullable=False)
     lng = Column(String(50), nullable=False)
     order = Column(Integer, nullable=False)
-    arrived_time = Column(DateTime, nullable=False)
+    arrived_time = Column(TIME, nullable=False)
     commute_or_leave = Column(Boolean, nullable=False)
 
     bus = relationship("Bus", back_populates="bus_stations")

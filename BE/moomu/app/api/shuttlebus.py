@@ -29,6 +29,22 @@ def get_bus(bus_id: int, db: Session = Depends(get_db)):
     return db_bus
 
 
+@router.post("/bus/register")
+def create_bus(bus: BusBase, db: Session = Depends(get_db)):
+    if shuttlebus_crud.exist_bus(db, bus) is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="이미 등록된 버스 이름입니다."
+        )
+    shuttlebus_crud.create_bus(db, bus)
+    return {"message": "버스 등록에 성공했습니다."}
+
+
+@router.put("/bus/edit/{bus_id}")
+def update_bus(bus_id: int, name: str, db: Session = Depends(get_db)):
+    shuttlebus_crud.update_bus(db, bus_id, name)
+    return {"message": "버스 정보 수정에 성공했습니다."}
+
+
 @router.get("/station/{station_id}", response_model=Station)
 def get_station(station_id: int, db: Session = Depends(get_db)):
     db_station = shuttlebus_crud.get_station(db, station_id=station_id)
@@ -39,11 +55,8 @@ def get_station(station_id: int, db: Session = Depends(get_db)):
     return db_station
 
 
-@router.post("/bus/register")
-def create_bus(bus: BusBase, db: Session = Depends(get_db)):
-    if shuttlebus_crud.exist_bus(db, bus) is not None:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="이미 등록된 버스 이름입니다."
-        )
-    shuttlebus_crud.create_bus(db, bus)
-    return {"message": "버스 등록에 성공했습니다."}
+@router.post("/station/register")
+def create_station(station_list: list[Station], db: Session = Depends(get_db)):
+    for i in station_list:
+        shuttlebus_crud.create_station(db, i)
+    return {"message": "정류장 등록에 성공했습니다."}
