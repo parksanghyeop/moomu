@@ -47,6 +47,8 @@ class Alarm(Base):
     read = Column(Boolean, default=False)
     created_date = Column(DateTime, default=datetime.now)
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
+    alarm_type = Column(Integer, nullable=False)
+    target_id = Column(Integer, nullable=False)
 
     user = relationship("User", back_populates="alarms")
 
