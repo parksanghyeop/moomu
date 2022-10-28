@@ -10,8 +10,7 @@ import Button1 from '../components/button1';
 import 'react-native-gesture-handler';
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList} from "../types/StackNavigation";
-
-let Logo = require('../../../assets/images/Logo.png');
+import {Logo} from '../components/logo';
 
 type StartScreenProps = StackScreenProps<RootStackParamList, "Start">;
 
@@ -19,9 +18,9 @@ const StartScreen: React.FC<StartScreenProps> = (props) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>소중한, 당신의 시간을 위해</Text>          
-      <Image style={styles.image} source={Logo}/>
-      <Button1 text={'로그인'} onPress={() => {props.navigation.navigate('LoginSignUp')}} />
-      <Button1 text={'회원 등록'} />
+      <Logo />
+      <Button1 text={'로그인'} onPress={() => {props.navigation.navigate('LoginSignUp', {id: 1})}} />
+      <Button1 text={'회원 등록'} onPress={() => {props.navigation.navigate('LoginSignUp', {id: 2})}} />
       <Footer />
     </View>
   );
