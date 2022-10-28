@@ -23,7 +23,7 @@ const MainScreen: React.FC<MainScreenProps> = (props)  => {
               <Text style={styles.text1}>최근노선</Text> 
               <Button2 text={'노선조회'} onPress={() =>  {props.navigation.navigate('BusSearch')}} />
               <Button2 text={'공지사항'} onPress={() => {props.navigation.navigate('Information')}}/>
-              <Button2 text={'F&Q'} onPress={() => {props.navigation.navigate('FAQ')}}/>
+              <Button2 text={'FAQ'} onPress={() => {props.navigation.navigate('FAQ')}}/>
               <Footer />
           </View>
         )
