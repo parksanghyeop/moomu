@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.db.crud import user_crud
 from app.db.schemas import UserCreate, User, UserLogin
 from app.dependencies import get_db
 import bcrypt
 
-from app.service.jwt_service import decode_token, generate_access_token
+from app.service.jwt_service import generate_access_token, validate_token
 
 router = APIRouter(
     prefix="/users",
@@ -15,12 +15,9 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
-
 
 @router.get("", response_model=list[User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
-    payload = decode_token(token, db)
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), payload: dict = Depends(validate_token)):
     users = user_crud.get_users(db, skip=skip, limit=limit)
     return users
 

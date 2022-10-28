@@ -1,17 +1,21 @@
 from datetime import datetime, timedelta
 from jose import jwt, JWTError, ExpiredSignatureError
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
 
 from app.core.config import settings
 from app.db.models import User
 from app.db.crud import user_crud
 
 from sqlalchemy.orm import Session
+from app.dependencies import get_db
+from fastapi.security import OAuth2PasswordBearer
 
 ACCESS_EXPIRES = timedelta(minutes=60)
 REFRESH_EXPIRES = timedelta(days=14)
 
 ALGORITHM = "HS256"
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
 
 
 def generate_access_token(user: User):
@@ -20,6 +24,11 @@ def generate_access_token(user: User):
     encode_jwt = jwt.encode(to_encode, settings.ACCESS_KEY, algorithm=ALGORITHM)
 
     return {"access_token": encode_jwt, "token_type": "bearer"}
+
+
+def validate_token(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    payload = decode_token(token, db)
+    return payload
 
 
 def decode_token(token: str, db: Session):
