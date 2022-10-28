@@ -5,44 +5,34 @@ import {
     StyleSheet,
     Image,
 } from 'react-native';
-//import Footer from '../components/footer';
+import Footer from '../components/footer';
 import Button2 from '../components/button2';
+import { StackScreenProps } from "@react-navigation/stack";
+import { RootStackParamList} from "../types/StackNavigation";
 
 let Logo = require('../../assets/Logo.png');
 
-interface IProps {
-  // navigation: any,
-}
+type MainScreenProps = StackScreenProps<RootStackParamList, "Main">; 
 
-interface IState {
-    text: string
-}
-
-export default class MainScreen extends Component<IProps, IState>{
-    constructor(props: IProps){
-        super(props);
-        this.state = {
-            text: "100"
-        }
-    }
-
-    render(){
+const MainScreen: React.FC<MainScreenProps> = (props)  => {
         return (
           <View style={styles.container}>
               <Image style={styles.image} source={Logo}/>
-              <Button2 text={'노선조회'} onPress={() => {console.log('pressed')}}></Button2>
-              <Button2 text={'공지사항'}></Button2>
-              <Button2 text={'F&Q'}></Button2>
-              {/* <Footer /> */}
+              <Text style={styles.text1}>김싸피</Text> 
+              <Text style={styles.text1}>소속</Text> 
+              <Text style={styles.text1}>최근노선</Text> 
+              <Button2 text={'노선조회'} onPress={() =>  {props.navigation.navigate('BusSearch')}} />
+              <Button2 text={'공지사항'} onPress={() => {props.navigation.navigate('Information')}}/>
+              <Button2 text={'F&Q'} onPress={() => {props.navigation.navigate('FAQ')}}/>
+              <Footer />
           </View>
         )
     }
-}
 
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff',
+      backgroundColor:'#fff',
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -55,12 +45,27 @@ const styles = StyleSheet.create({
       fontFamily: 'Pretendard Variable',
       fontStyle: 'normal',
       fontWeight: '100',
-      fontSize: 12,
+      fontSize: 18,
       lineHeight: 21,
       textAlign: 'center',
 
       /* BLUE 500 */
       color: '#3182CE',
+    },
+    text1: {
+      position: 'absolute',
+      width: 220,
+      height: 21,
+      top: 109,
+
+      fontFamily: 'Pretendard Variable',
+      fontStyle: 'normal',
+      fontWeight: '100',
+      fontSize: 18,
+      lineHeight: 21,
+      textAlign: 'center',
+
+      color: '#000000',
     },
     image: {
       width: 160,
@@ -68,3 +73,5 @@ const styles = StyleSheet.create({
       resizeMode: 'contain',
     }
   });
+
+  export default MainScreen;

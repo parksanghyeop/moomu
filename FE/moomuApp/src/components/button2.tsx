@@ -13,7 +13,7 @@ const Button2 = ({
   onPress = () => null,
   disabled = false,
 }: Props) => {
-  
+
   return (
     <LinearGradient
     colors={['#3182CE','#4BC9FF']}
