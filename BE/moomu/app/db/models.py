@@ -1,5 +1,14 @@
 from datetime import datetime
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Text, TIME
+from sqlalchemy import (
+    Boolean,
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    DateTime,
+    Text,
+    TIME,
+)
 from sqlalchemy.orm import relationship
 
 from app.db.database import Base
@@ -28,6 +37,7 @@ class User(Base):
     start_station_id = Column(Integer, ForeignKey("station.id", ondelete="SET NULL"))
     end_station_id = Column(Integer, ForeignKey("station.id", ondelete="SET NULL"))
     fcm_token = Column(String(100), nullable=True)
+    user_role = Column(Integer, nullable=False, default=0)
 
     region = relationship("Region", back_populates="users")
     alarms = relationship("Alarm", back_populates="user")
