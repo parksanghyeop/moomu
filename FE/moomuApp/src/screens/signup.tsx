@@ -7,9 +7,9 @@ import {
     Switch,
     Alert,
 } from 'react-native';
-import Button1 from '../../components/button1';
-import axios from "../../api/axios";
-import requests from "../../api/requests";
+import Button1 from '../components/button1';
+import axios from "../api/axios";
+import requests from "../api/requests";
 import SelectDropdown from 'react-native-select-dropdown';
 
 const SignUp = (navigation : any, route : any) => {

@@ -6,10 +6,10 @@ import {
     StyleSheet,
     Switch,
 } from 'react-native';
-import Button1 from '../../components/button1';
-import axios from "../../api/axios";
-import requests from "../../api/requests";
-import * as AsyncStorage from "../../utiles/AsyncService"; // 로컬 저장을 위한 AsyncStorage 사용 함수
+import Button1 from '../components/button1';
+import axios from "../api/axios";
+import requests from "../api/requests";
+import * as AsyncStorage from "../utiles/AsyncService"; // 로컬 저장을 위한 AsyncStorage 사용 함수
 
 const Login = ( navigation : any, route : any) => {
 
@@ -27,7 +27,7 @@ const Login = ( navigation : any, route : any) => {
     })
     .then((response) => {
       const token = response.data.result;
-      AsyncStorage.storeData("jwt",token);
+      AsyncStorage.storeData("token",token);
       navigation.navigate('main');
     })
     .catch((error) => {
