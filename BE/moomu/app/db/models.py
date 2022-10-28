@@ -43,11 +43,11 @@ class Alarm(Base):
     __tablename__ = "alarm"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    content = Column(String(255), unique=True, index=True, nullable=False)
+    content = Column(String(255), nullable=False)
     read = Column(Boolean, default=False)
     created_date = Column(DateTime, default=datetime.now)
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
-    alarm_type = Column(Integer, nullable=False)
+    alarm_type = Column(String(30), nullable=False)
     target_id = Column(Integer, nullable=False)
 
     user = relationship("User", back_populates="alarms")
