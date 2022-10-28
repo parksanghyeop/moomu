@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.db import models
 from app.db.schemas import FaQCreate, FaQUpdate
+from app.db.crud import alarm_crud
 
 
 def get_faq(db: Session, faq_id: int):
@@ -16,6 +17,18 @@ def create_faq(db: Session, faq: FaQCreate):
     db.add(db_faq)
     db.commit()
     db.refresh(db_faq)
+
+    # 관리자 계정에게 알림 전송
+    db_users = db.query(models.User).filter(models.User.user_role == 1).all()
+
+    alarm_crud.create_alarm_from_event(
+        db=db,
+        model=models.FaQ,
+        target_id=db_faq.id,
+        content=db_faq.title,
+        db_users=db_users,
+    )
+
     return db_faq
 
 
