@@ -16,6 +16,11 @@ class StationCreate(StationBase):
     pass
 
 
+class StationPos(BaseModel):
+    lat: str
+    lng: str
+
+
 class Station(StationBase):
     id: int
 
