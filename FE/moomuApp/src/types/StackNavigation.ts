@@ -1,6 +1,8 @@
 export type RootStackParamList = {
   Start: undefined;
-  LoginSignUp: undefined;
+  LoginSignUp: {
+    id: number,
+  };
   Main: undefined;
   BusSearch: undefined;
   Information: undefined;
