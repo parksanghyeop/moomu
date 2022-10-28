@@ -6,7 +6,7 @@ from app.db.schemas import UserCreate, User, UserLogin
 from app.dependencies import get_db
 import bcrypt
 
-from app.service.jwt_service import generate_access_token
+from app.service.jwt_service import decode_token, generate_access_token
 
 router = APIRouter(
     prefix="/users",
@@ -20,7 +20,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
 
 @router.get("", response_model=list[User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
-    print(token)
+    payload = decode_token(token, db)
     users = user_crud.get_users(db, skip=skip, limit=limit)
     return users
 
@@ -68,7 +68,7 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
             detail="비밀번호가 일치하지 않습니다.",
         )
     # 토큰 발급
-    return generate_access_token(user.username)
+    return generate_access_token(db_user)
 
 
 @router.post("/token")
@@ -85,4 +85,4 @@ def auth_token(user: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
             detail="비밀번호가 일치하지 않습니다.",
         )
     # 토큰 발급
-    return generate_access_token(user.username)
+    return generate_access_token(db_user)
