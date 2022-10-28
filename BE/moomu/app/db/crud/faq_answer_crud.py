@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.db import models
 from app.db.schemas import FaQAnswerCreate, FaQAnswerUpdate
+from app.db.crud import alarm_crud
 
 
 def get_faq_answer(db: Session, faq_answer_id: int):
@@ -22,6 +23,22 @@ def create_faq_answer(db: Session, faq_answer: FaQAnswerCreate):
     db.add(db_faq_answer)
     db.commit()
     db.refresh(db_faq_answer)
+
+    # 건의사항 작성자에게 알림 전송
+    db_user = (
+        db.query(models.User)
+        .filter(models.User.id == db_faq_answer.faq.user_id)
+        .first()
+    )
+
+    alarm_crud.create_alarm_from_event(
+        db=db,
+        model=models.FaQAnswer,
+        target_id=db_faq_answer.faq_id,
+        content=db_faq_answer.content,
+        db_users=db_user,
+    )
+
     return db_faq_answer
 
 
