@@ -1,13 +1,3 @@
-.bodyFrame {
-  width: 65vw;
-  height: 100vh;
-  color: black;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
 .bodyTitle {
   color: #61dafb;
   font-size: calc(10px + 8vmin);
@@ -20,6 +10,7 @@
 }
 .input-group {
   margin-bottom: 1rem;
+  /* width: 40vw; */
 }
 .logInBtn {
   margin-bottom: 1rem;
@@ -30,4 +21,7 @@
   margin-bottom: 1rem;
   width: 30vw;
   justify-self: centered;
+}
+.pwShow {
+  background-color: white;
 }
