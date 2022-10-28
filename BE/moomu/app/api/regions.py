@@ -7,6 +7,8 @@ from app.db.crud import region_crud
 from app.db.schemas import RegionCreate, Region, RegionUpdate, RegionDelete
 from app.dependencies import get_db
 
+from app.api.users import oauth2_scheme
+
 router = APIRouter(
     prefix="/regions",
     tags=["regions"],
@@ -16,7 +18,7 @@ router = APIRouter(
 
 
 @router.get("", response_model=list[Region])
-def read_regions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_regions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     regions = region_crud.get_regions(db, skip=skip, limit=limit)
     return regions
 

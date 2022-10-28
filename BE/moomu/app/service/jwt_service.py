@@ -14,7 +14,7 @@ def generate_access_token(id: str):
     to_encode = {"exp": expire, "id": id}
     encode_jwt = jwt.encode(to_encode, settings.ACCESS_KEY, algorithm=ALGORITHM)
 
-    return encode_jwt
+    return {"access_token": encode_jwt, "token_type": "bearer"}
 
 # def decode_token(token: str):
 #       try:
