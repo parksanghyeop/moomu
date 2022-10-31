@@ -1,10 +1,8 @@
 import React, {useState,useEffect, useRef}from 'react';
 import {
     View,
-    Text,
     TextInput,
     StyleSheet,
-    Switch,
     Alert,
 } from 'react-native';
 import Button1 from '../components/button1';
@@ -45,7 +43,7 @@ const SignUp = (navigation : any, route : any) => {
       region_id : region,
       class_group : group,
     }, {
-      headers : {"Content-type": `application/json`}
+      headers : {"Content-Type": `application/json`}
     })
     .then((response) => {
       console.log('회원가입성공');

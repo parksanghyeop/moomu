@@ -35,6 +35,5 @@
     "@types/react-native": "~0.69.1",
     "typescript": "~4.3.5"
   },
-  "private": true,
-  "proxy": "http://k7b202.p.ssafy.io:8080"
+  "private": true
 }
