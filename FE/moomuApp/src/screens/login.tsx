@@ -1,10 +1,8 @@
 import React, {useState}from 'react';
 import {
     View,
-    Text,
     TextInput,
     StyleSheet,
-    Switch,
 } from 'react-native';
 import Button1 from '../components/button1';
 import axios from "../api/axios";
@@ -23,7 +21,7 @@ const Login = ( navigation : any, route : any) => {
       username : username,
       password : password,
     }, {
-      headers : {"Content-type": `application/json`}
+      headers : {"Content-Type": `application/json`}
     })
     .then((response) => {
       const token = response.data.result;
