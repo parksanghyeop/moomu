@@ -1,13 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
+import jwt from "jwt-decode";
+var isEmpty = function (val) {
+  if (val === "" || val === undefined || val === null || (val !== null && typeof val === "object" && !Object.keys(val).length)) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export const tokenSlice = createSlice({
   name: "tokenSlice",
-  initialState: { token: "" },
+  initialState: { rawToken: "", isToken: false, decoded: {} },
   reducers: {
     logout: (state) => {
-      state.token = "";
+      state.rawToken = "";
+      state.decoded = "";
+      state.isToken = false;
     },
     login: (state, action) => {
-      state.token = action.payload;
+      // let jwt = require("jsonwebtoken");
+      state.rawToken = action.payload;
+      state.isToken = !isEmpty(state.rawToken);
+      console.log(state.token);
+      state.decoded = jwt(state.rawToken.access_token);
+      console.log(state.decoded);
     },
   },
 });

@@ -64,7 +64,8 @@ function LogiInPage() {
                 username: ID,
                 password: PW,
               };
-              let url = "https://cors-anywhere.herokuapp.com/http://k7b202.p.ssafy.io:8000/users/login";
+              // let url = "https://cors-anywhere.herokuapp.com/http://k7b202.p.ssafy.io:8000/users/login";
+              let url = "api/users/login";
 
               // const options = {
               //   method: "POST",
