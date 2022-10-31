@@ -24,7 +24,8 @@ const Login = ( navigation : any, route : any) => {
       headers : {"Content-Type": `application/json`}
     })
     .then((response) => {
-      const token = response.data.result;
+      //console.log(response);
+      const token = response.data.access_token;
       AsyncStorage.storeData("token",token);
       navigation.navigate('main');
     })
