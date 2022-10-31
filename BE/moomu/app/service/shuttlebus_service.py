@@ -11,8 +11,10 @@ r = redis.Redis(host="k7b202.p.ssafy.io", port=6379, db=0)
 def bus_near_station(bus_name: str, station_list: list[Station]):
     s = r.pubsub()
     s.subscribe(bus_name)
-    res = s.get_message(timeout=1)
-    res = s.get_message(timeout=1)
+    while True:
+        res = s.get_message(timeout=1)
+        if res["data"] == 1:
+            break
     if res is None:
         return ()
     dict = json.loads(str(res["data"], "utf-8"))
