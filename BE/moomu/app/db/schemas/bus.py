@@ -1,11 +1,13 @@
 from pydantic import BaseModel
 
 from app.db.schemas.station import Station
+from app.db.schemas.commute_or_leave import CommuteOrLeave
 
 
 class BusBase(BaseModel):
     region_id: int
     name: str
+    commute_or_leave: CommuteOrLeave
 
 
 class BusCreate(BusBase):
@@ -15,6 +17,7 @@ class BusCreate(BusBase):
 class Bus(BusBase):
     id: int
     stations: list[Station] = []
+    cur: tuple = ()
 
     class Config:
         orm_mode = True

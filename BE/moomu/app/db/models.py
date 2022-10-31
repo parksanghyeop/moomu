@@ -8,10 +8,11 @@ from sqlalchemy import (
     DateTime,
     Text,
     TIME,
+    Enum,
 )
 from sqlalchemy.orm import relationship
-
 from app.db.database import Base
+from app.db.schemas.commute_or_leave import CommuteOrLeave
 
 
 class Region(Base):
@@ -69,6 +70,7 @@ class Bus(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String(50), unique=True, index=True, nullable=False)
     region_id = Column(Integer, ForeignKey("region.id"))
+    commute_or_leave = Column(Enum(CommuteOrLeave))
 
     bus_stations = relationship("Station", back_populates="bus")
     region = relationship("Region", back_populates="bus")
@@ -84,7 +86,6 @@ class Station(Base):
     lng = Column(String(50), nullable=False)
     order = Column(Integer, nullable=False)
     arrived_time = Column(TIME, nullable=False)
-    commute_or_leave = Column(Boolean, nullable=False)
 
     bus = relationship("Bus", back_populates="bus_stations")
     start_users = relationship(
