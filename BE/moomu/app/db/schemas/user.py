@@ -2,13 +2,13 @@ from pydantic import BaseModel
 
 
 class UserBase(BaseModel):
-    username: str
     nickname: str
     class_group: int
     region_id: int
 
 
 class UserCreate(UserBase):
+    username: str
     password: str
 
 

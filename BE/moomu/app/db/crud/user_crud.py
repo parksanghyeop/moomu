@@ -4,6 +4,8 @@ from app.db import models
 from app.db.schemas import UserCreate
 import bcrypt
 
+from app.db.schemas.user import UserUpdate
+
 
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
@@ -35,9 +37,8 @@ def delete_user(db: Session, user_id: int):
     return db_user
 
 
-def update_user(db: Session, user_id: int, user: UserCreate):
+def update_user(db: Session, user_id: int, user: UserUpdate):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    db_user.username = user.username
     db_user.nickname = user.nickname
     db_user.class_group = user.class_group
     db_user.region_id = user.region_id
