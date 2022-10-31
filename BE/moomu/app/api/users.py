@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.db.crud import user_crud
 from app.db.schemas import UserCreate, User, UserLogin
+from app.db.schemas.user import UserUpdate
 from app.dependencies import get_db
 import bcrypt
 
@@ -16,15 +17,28 @@ router = APIRouter(
 )
 
 
-@router.get("", response_model=list[User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), payload: dict = Depends(validate_token)):
-    users = user_crud.get_users(db, skip=skip, limit=limit)
-    return users
-
-
-@router.get("/{user_id}", response_model=User)
-def read_user(user_id: int, db: Session = Depends(get_db)):
+@router.get("/profile", response_model=User)
+def read_user(db: Session = Depends(get_db), payload: dict = Depends(validate_token)):
+    user_id = payload.get("id")
     db_user = user_crud.get_user(db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+
+@router.put("/profile/edit", response_model=User)
+def edit_user(user: UserUpdate, db: Session = Depends(get_db), payload: dict = Depends(validate_token)):
+    user_id = payload.get("id")
+    db_user = user_crud.update_user(db, user_id, user)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+
+@router.delete("/profile/delete", response_model=User)
+def delete_user(db: Session = Depends(get_db), payload: dict = Depends(validate_token)):
+    user_id = payload.get("id")
+    db_user = user_crud.delete_user(db, user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
@@ -39,16 +53,6 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
             detail="이미 가입된 사용자 입니다.",
         )
     return user_crud.create_user(db=db, user=user)
-
-
-@router.delete("/{user_id}", response_model=User)
-def delete_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = user_crud.get_user(db, user_id=user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    db.delete(db_user)
-    db.commit()
-    return db_user
 
 
 @router.post("/login")
