@@ -9,7 +9,6 @@ class StationBase(BaseModel):
     lng: str
     order: int
     arrived_time: time
-    commute_or_leave: bool
 
 
 class StationCreate(StationBase):
