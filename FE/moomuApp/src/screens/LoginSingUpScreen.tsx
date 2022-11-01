@@ -27,9 +27,9 @@ const LoginSignUpScreen: React.FC<LoginSignUpScreenProps> = (props) => {
   const toggle = () => setCondition(!condition);
 
   const renderConditionInput = condition ? 
-    <Login/>
+    <Login navigation={props.navigation}/>
     : 
-    <SignUp />
+    <SignUp condition={setCondition}/>
 
   return (
     <View style={styles.container}>

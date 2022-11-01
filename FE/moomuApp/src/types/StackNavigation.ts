@@ -3,6 +3,11 @@ export type RootStackParamList = {
   LoginSignUp: {
     id: number,
   };
+  Bus: undefined;
+  BusMap: undefined;
+  Station: {
+    bus_id: number,
+  }
   Main: undefined;
   BusSearch: undefined;
   Information: undefined;
