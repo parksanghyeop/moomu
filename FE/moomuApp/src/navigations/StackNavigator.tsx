@@ -7,7 +7,8 @@ import BusMapScreen from "../screens/BusMapScreen";
 import StationScreen from "../screens/StationScreen";
 import MainScreen from "../screens/MainScreen";
 import { RootStackParamList} from "../types/StackNavigation";
-
+import FaqScreen from "../screens/FaqScreen";
+import InformationScreen from "../screens/InformationScreen";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -17,6 +18,8 @@ const StackNavigator = () => {
       <Stack.Screen name='Start' component={StartScreen} options={{ headerShown: false }}/>
       <Stack.Screen name='LoginSignUp' component={LoginSingUpScreen} options={{ headerShown: false }}/>
       <Stack.Screen name='Bus' component={BusScreen}/>
+      <Stack.Screen name='FAQ' component={FaqScreen}/>
+      <Stack.Screen name='Information' component={InformationScreen}/>
       <Stack.Screen name='Main' component={MainScreen}/>
       <Stack.Screen name='BusMap' component={BusMapScreen}/>
       <Stack.Screen name='Station' component={StationScreen}/>
