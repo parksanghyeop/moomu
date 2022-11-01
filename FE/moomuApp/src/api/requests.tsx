@@ -7,7 +7,8 @@ const requests = {
   register: "users/register",
   // 셔틀버스
   shuttlebus: "shuttlebus/bus",
-  shuttlebus_notion: "shuttlebus/bus/"
+  shuttlebus_notion: "shuttlebus/bus/",
+  
 }
 
 export default requests;
