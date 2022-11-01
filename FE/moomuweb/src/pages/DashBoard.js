@@ -11,7 +11,8 @@ function DashBoard() {
   const [isLoading, setLoading] = useState(true);
   const [routes, setRoutes] = useState({});
   const region_id = useSelector((state) => state.token.decoded.region);
-  let url = `http://k7b202.p.ssafy.io:8000/shuttlebus/bus?region_id=${region_id}`;
+  // let url = `http://k7b202.p.ssafy.io:8000/shuttlebus/bus?region_id=${region_id}`;
+  let url = "http://k7b202.p.ssafy.io:8000/shuttlebus/bus?region_id=200&commute_or_leave=COMMUTE";
   // let url = `shuttlebus/bus?region_id=${region_id}`;
 
   useEffect(() => {

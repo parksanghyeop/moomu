@@ -21,4 +21,5 @@
 .routeContainer {
   overflow-y: scroll;
   height: 70vh;
+  min-width: 15vw;
 }

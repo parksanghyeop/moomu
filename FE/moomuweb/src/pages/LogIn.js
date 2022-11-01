@@ -72,8 +72,18 @@ function LogiInPage() {
               //   body: body,
               //   url: url,
               // };
-
-              axios.post(url, body).then((res) => {
+              let config = {
+                headers: {
+                  "Content-Type": "application/json",
+                  "Access-Controle-Allow-Origin": "*",
+                  "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
+                  "Access-Control-Allow-Headers": "Content-Type, Authorization, Content-Length, x-Requested-With",
+                  "Access-Control-Allow-Origin": "http://localhost:3000",
+                  "Access-Control-Allow-Credentials": "true",
+                  "X-Requested-With": "XMLHttpRequest",
+                },
+              };
+              axios.post(url, body, config).then((res) => {
                 dispatch(login(res.data));
                 console.log(token);
                 goToMain();
