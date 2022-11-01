@@ -10,14 +10,14 @@ import axios from "../api/axios";
 import requests from "../api/requests";
 import SelectDropdown from 'react-native-select-dropdown';
 
-const SignUp = (navigation : any, route : any) => {
+const SignUp = ( props : any) => {
   // 회원가입 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
   const [nickname, setNickname] = useState('');
-  const [region, setRegion] = useState('');
-  const [group, setGroup] = useState('');
+  const [region, setRegion] = useState<number>();
+  const [group, setGroup] = useState<number>();
 
   // 유효성검사
   const [isId, setIsId] = useState<boolean>(false);
@@ -30,7 +30,7 @@ const SignUp = (navigation : any, route : any) => {
     { label: '서울', value: 100 },
         { label: '대전', value: 200 },
         { label: '구미', value: 300 },
-        { label: '부산', value: 400 },
+        { label: '부울경', value: 400 },
         { label: '광주', value: 500 },
   ];
 
@@ -46,7 +46,7 @@ const SignUp = (navigation : any, route : any) => {
       headers : {"Content-Type": `application/json`}
     })
     .then((response) => {
-      console.log('회원가입성공');
+      // console.log('회원가입성공');
       Alert.alert(                    // 말그대로 Alert를 띄운다
       "회원 등록 완료",                    // 첫번째 text: 타이틀 제목
       nickname+"님 감사합니다.",                         // 두번째 text: 그 밑에 작은 제목
@@ -57,12 +57,14 @@ const SignUp = (navigation : any, route : any) => {
         }
       ],
       { cancelable: false })
-      route.params.condition = true;
+      props.condition(true);
     })
     .catch((error) => {
       console.log(error);
     });
   };
+
+  // disabled={!(isId && isPassword && isPasswordCeck)}
 
   return (
     <View style={styles.container3}>
@@ -76,7 +78,7 @@ const SignUp = (navigation : any, route : any) => {
       <SelectDropdown
               data={data}
               onSelect={(selectedItem, index) => {
-                console.log(selectedItem, index);
+                // console.log(selectedItem, index);
                 setRegion(selectedItem.value);
               }}
               defaultButtonText={'지역선택'}
@@ -94,9 +96,9 @@ const SignUp = (navigation : any, route : any) => {
               rowTextStyle={styles.dropdown1RowTxtStyle}
       />
       <View style={styles.divider} />
-      <TextInput style={[styles.input, {width:100}]} placeholder='반' onChangeText={(text) => setGroup(text)} onSubmitEditing={signUpbutton}></TextInput>
+      <TextInput style={[styles.input, {width:100}]} placeholder='반' onChangeText={(text) => setGroup(+text)} onSubmitEditing={signUpbutton}></TextInput>
       </View>
-      <Button1 text={'회원 등록'} onPress={signUpbutton} disabled={!(isId && isPassword && isPasswordCeck)}></Button1>
+      <Button1 text={'회원 등록'} onPress={signUpbutton}></Button1>
     </View>
   )
 };
