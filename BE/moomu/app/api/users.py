@@ -87,3 +87,27 @@ def auth_token(user: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         )
     # 토큰 발급
     return generate_access_token(db_user)
+
+
+@router.post("/expo_token")
+def expo_token(
+    expo_token: str,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(validate_token),
+):
+    user_id = payload.get("id")
+    db_user = user_crud.update_expo_token(db, user_id, expo_token)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+    return {"message": "토큰이 등록되었습니다."}
+
+
+@router.delete("/expo_token")
+def delete_expo_token(
+    db: Session = Depends(get_db), payload: dict = Depends(validate_token)
+):
+    user_id = payload.get("id")
+    db_user = user_crud.delete_expo_token(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+    return {"message": "토큰이 삭제되었습니다."}

@@ -74,6 +74,6 @@ def read_alarm(db: Session, alarm_id: int):
 def get_token_list(user_list):
     token_list = []
     for user in user_list:
-        token_list.append(f"ExponentPushToken[{user.fcm_token}]")
+        token_list.append(f"ExponentPushToken[{user.expo_token}]")
 
     return token_list
