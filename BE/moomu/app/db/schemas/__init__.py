@@ -8,5 +8,6 @@ from app.db.schemas.faq_answer import (
     FaQAnswerCreate,
     FaQAnswerUpdate,
     FaQAnswerDelete,
+    FaQAnswerBase
 )
 from app.db.schemas.alarm import Alarm, AlarmCreate, AlarmUpdate, AlarmDelete

@@ -8,8 +8,8 @@ from app.dependencies import get_db
 from app.service.jwt_service import validate_token
 
 router = APIRouter(
-    prefix="/faqs",
-    tags=["faqs"],
+    prefix="/faq",
+    tags=["faq"],
     responses={404: {"description": "Not found"}},
 )
 
@@ -74,10 +74,15 @@ def update_faq(faq_id: int, faq: FaQUpdate, db: Session = Depends(get_db), paylo
 
 
 @router.delete("/delete/{faq_id}")
-def delete_faq(faq_id: int, db: Session = Depends(get_db)):
+def delete_faq(faq_id: int, db: Session = Depends(get_db), payload: dict = Depends(validate_token)):
     db_faq = faq_crud.get_faq(db, faq_id=faq_id)
     if db_faq is None:
         raise HTTPException(status_code=404, detail="FAQ를 찾을 수 없습니다.")
-
+    user_role = payload.get("role")
+    if user_role < 5 and payload.get("id") != db_faq.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
+            detail="권한이 없습니다."
+        )
     faq_crud.delete_faq(db=db, faq_id=faq_id)
     return {"message": "FAQ가 삭제되었습니다."}

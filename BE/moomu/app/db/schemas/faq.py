@@ -27,7 +27,7 @@ class FaQList(FaQBase):
 
 class FaQ(BaseModel):
     faq: object
-    answer: object
+    answer: list[object]
 
     class Config:
         orm_mode = True

@@ -38,8 +38,8 @@ def create_faq(db: Session, faq: FaQCreate):
 
 def update_faq(db: Session, faq_id: int, faq: FaQUpdate):
     db_faq = db.query(models.FaQ).filter(models.FaQ.id == faq_id).first()
-    db_faq.question = faq.question
-    db_faq.answer = faq.answer
+    db_faq.title = faq.title
+    db_faq.content = faq.content
     db.commit()
     db.refresh(db_faq)
     return db_faq
