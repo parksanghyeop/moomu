@@ -5,6 +5,8 @@ from app.db.schemas import Page, FaQ, FaQCreate, FaQUpdate
 from app.db import models
 from app.dependencies import get_db
 
+from app.service.jwt_service import validate_token
+
 router = APIRouter(
     prefix="/faqs",
     tags=["faqs"],
@@ -13,7 +15,13 @@ router = APIRouter(
 
 
 @router.get("", response_model=Page)
-def get_faqs(page: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+def get_faqs(page: int = 0, limit: int = 10, db: Session = Depends(get_db), payload: dict = Depends(validate_token)):
+    user_role = payload.get("role")
+    if user_role < 5:
+        raise HTTPException(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED, 
+            detail="권한이 없습니다."
+        )
     return page_crud.page(db, models.FaQ, page, limit)
 
 
