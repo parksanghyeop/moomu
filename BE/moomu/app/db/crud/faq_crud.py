@@ -12,6 +12,10 @@ def get_faqs(db: Session, page: int, limit: int):
     return db.query(models.FaQ).offset(page).limit(limit).all()
 
 
+def get_faqs_by_userid(db: Session, user_id: int):
+    return db.query(models.FaQ).filter(models.FaQ.user_id == user_id).all()
+
+
 def create_faq(db: Session, faq: FaQCreate):
     db_faq = models.FaQ(**faq.dict())
     db.add(db_faq)
