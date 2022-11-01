@@ -2,40 +2,35 @@
 import React from "react";
 import axios from "axios";
 import "./RouteMap.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function RouteMap() {
+  const [routeStations, setRouteStaions] = useState([]);
+  const [routesDriving, setRoutesDriving] = useState({});
+  let theRoutes = [];
+  const dataId = useState(0);
   const mapElement = useRef(null);
+  const dataFetchedRef = useRef(false);
+
+  var isEmpty = function (val) {
+    if (val === "" || val === undefined || val === null || (val !== null && typeof val === "object" && !Object.keys(val).length)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   useEffect(() => {
+    if (dataFetchedRef.current) return;
+    dataFetchedRef.current = true;
     const { naver } = window;
     if (!mapElement.current || !naver) return;
-
-    // 지도에 표시할 위치의 위도와 경도 좌표를 파라미터로 넣어줍니다.
     const location = new naver.maps.LatLng(36.354683, 127.298177);
-    const uonyeck = new naver.maps.LatLng(36.3537, 127.3415);
-    const dajeonStation = new naver.maps.LatLng(36.3334, 127.436);
-    const govBuilding = new naver.maps.LatLng(36.3494, 127.3848);
-    const station01 = new naver.maps.LatLng(36.3484, 127.2982);
-    const station02 = new naver.maps.LatLng(36.3457, 127.3017);
-    const station03 = new naver.maps.LatLng(36.3417, 127.3055);
-    const station04 = new naver.maps.LatLng(36.3538, 127.3416);
-    const station05 = new naver.maps.LatLng(36.3741, 127.318);
-    const station06 = new naver.maps.LatLng(36.3796, 127.318);
-    const station07 = new naver.maps.LatLng(36.3841, 127.3203);
-    const station08 = new naver.maps.LatLng(36.3917, 127.3151);
-    const points = [
-      [127.298177, 36.354683],
-      [127.2982, 36.3485],
-      [127.3017, 36.3457],
-      [127.3055, 36.3417],
-      [127.3416, 36.3538],
-      [127.318, 36.3741],
-      [127.318, 36.3796],
-      [127.3203, 36.3841],
-      [127.3151, 36.3917],
-    ];
-    let stations = [location, station01, station02, station03, station04, station05, station06, station07, station08];
+    let points = [];
+    // setRouteStaions([location]);
+    console.log(routeStations);
+
+    initStations(naver);
     const mapOptions = {
       center: location,
       zoom: 17,
@@ -45,24 +40,26 @@ function RouteMap() {
       },
     };
     const map = new naver.maps.Map(mapElement.current, mapOptions);
-    console.log(location);
-    console.log(stations);
-    for (var loc in stations) {
-      console.log(stations[loc]);
+    console.log(routeStations, theRoutes);
+    for (var loc in theRoutes) {
+      console.log(theRoutes[loc].x, theRoutes[loc].y);
       new naver.maps.Marker({
-        position: stations[loc],
+        position: theRoutes[loc],
         map,
       });
+      points.push(convetLatLngCorr(theRoutes[loc]));
     }
-    console.log(points[0].toString());
-    const start = points[0].toString();
-    const goal = points.slice(-1).toString();
+    console.log("////////////////////////////////");
+    console.log(points);
+    // console.log(points[0].toString());
+    const start = points[0];
+    const goal = points.slice(-1);
     var temp = [];
-    for (var i = 0; i < points.length; i++) {
-      temp.push(points[i].toString());
+    for (var i = 1; i < points.length - 1; i++) {
+      temp.push(points[i]);
     }
     const waypoints = temp.join("|");
-    const direction15Url = `https://cors-anywhere.herokuapp.com/https://naveropenapi.apigw.ntruss.com/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
+    const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
     console.log(direction15Url);
     naver.maps.Service.geocode(
       {
@@ -79,6 +76,8 @@ function RouteMap() {
         // do Something
       }
     );
+    let tmpURL = "navermap" + direction15Url;
+    console.log(tmpURL);
     axios
       .get(direction15Url, {
         headers: {
@@ -90,8 +89,9 @@ function RouteMap() {
       .then((response) => {
         console.log(response.data);
         let paths = response.data.route.trafast[0].path;
+        setRoutesDriving(response.data.route.trafast[0].path);
         let polylinePath = [];
-        console.log(paths);
+        console.log(paths, routesDriving);
         paths.map((path) => {
           polylinePath.push(new naver.maps.LatLng(path[1], path[0]));
         });
@@ -103,11 +103,47 @@ function RouteMap() {
           map: map, //만들어 놓은 지도
         });
       });
-    // new naver.maps.Marker({
-    //   position: uonyeck,
-    //   map,
-    // });
   }, []);
+  const initStations = function (naver) {
+    if (isEmpty(routeStations)) {
+      // 지도에 표시할 위치의 위도와 경도 좌표를 파라미터로 넣어줍니다.
+      const location = new naver.maps.LatLng(36.354683, 127.298177);
+      const station01 = new naver.maps.LatLng(36.3484, 127.2982);
+      const station02 = new naver.maps.LatLng(36.3457, 127.3017);
+      const station03 = new naver.maps.LatLng(36.3417, 127.3055);
+      const station04 = new naver.maps.LatLng(36.3538, 127.3416);
+      const station05 = new naver.maps.LatLng(36.3741, 127.318);
+      const station06 = new naver.maps.LatLng(36.3796, 127.318);
+      const station07 = new naver.maps.LatLng(36.3841, 127.3203);
+      const station08 = new naver.maps.LatLng(36.3917, 127.3151);
+      const points = [
+        [127.298177, 36.354683],
+        [127.2982, 36.3485],
+        [127.3017, 36.3457],
+        [127.3055, 36.3417],
+        [127.3416, 36.3538],
+        [127.318, 36.3741],
+        [127.318, 36.3796],
+        [127.3203, 36.3841],
+        [127.3151, 36.3917],
+      ];
+      let tmpStations = [location, station01, station02, station03, station04, station05, station06, station07, station08];
+      for (var loc in tmpStations) {
+        console.log(tmpStations[loc].x, tmpStations[loc].y);
+        dataId.current += 1;
+        const newItem = { stationLatLng: tmpStations[loc], staionName: "test", id: routeStations.length };
+        setRouteStaions((routeStations) => [...routeStations, newItem]);
+        console.log(routeStations, newItem);
+      }
+      theRoutes.push(...tmpStations);
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      console.log(theRoutes);
+      // await setRouteStaions(tmpStations);
+    }
+  };
+  const convetLatLngCorr = function (LatLng) {
+    return LatLng.x.toString() + "," + LatLng.y.toString();
+  };
 
   return (
     <div className="mapPage">
