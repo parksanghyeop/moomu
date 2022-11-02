@@ -11,6 +11,7 @@ from sqlalchemy import (
     Enum,
 )
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from app.db.database import Base
 from app.db.schemas.commute_or_leave import CommuteOrLeave
 
@@ -56,7 +57,7 @@ class Alarm(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     content = Column(String(255), nullable=False)
     read = Column(Boolean, default=False)
-    created_date = Column(DateTime, default=datetime.now)
+    created_date = Column(DateTime, server_default=func.now())
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
     alarm_type = Column(String(30), nullable=False)
     target_id = Column(Integer, nullable=False)
@@ -102,8 +103,8 @@ class Notice(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     title = Column(String(50), nullable=False)
     content = Column(Text, nullable=False)
-    created_date = Column(DateTime, default=datetime.now)
-    updated_date = Column(DateTime, default=datetime.now)
+    created_date = Column(DateTime, server_default=func.now())
+    updated_date = Column(DateTime, server_default=func.now(), onupdate=func.now())
     region_id = Column(Integer, ForeignKey("region.id"))
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
 
@@ -117,8 +118,8 @@ class FaQ(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     title = Column(String(50), nullable=False)
     content = Column(Text, nullable=False)
-    created_date = Column(DateTime, default=datetime.now)
-    updated_date = Column(DateTime, default=datetime.now)
+    created_date = Column(DateTime, server_default=func.now())
+    updated_date = Column(DateTime, server_default=func.now(), onupdate=func.now())
     region_id = Column(Integer, ForeignKey("region.id"))
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
 
@@ -129,11 +130,10 @@ class FaQ(Base):
 
 class FaQAnswer(Base):
     __tablename__ = "faq_answer"
-
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     content = Column(Text, nullable=False)
-    created_date = Column(DateTime, default=datetime.now)
-    updated_date = Column(DateTime, default=datetime.now)
+    created_date = Column(DateTime, server_default=func.now())
+    updated_date = Column(DateTime, server_default=func.now(), onupdate=func.now())
     faq_id = Column(Integer, ForeignKey("faq.id", ondelete="CASCADE"))
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
 
