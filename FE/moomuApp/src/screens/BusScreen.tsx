@@ -13,6 +13,7 @@ import axios from '../api/axios';
 import requests from '../api/requests';
 import Footer from '../components/footer';
 import * as AsyncStorage from "../utiles/AsyncService";
+import jwtDecode from 'jwt-decode';
 
 type BusScreenProps = StackScreenProps<RootStackParamList,"Bus"> 
 
@@ -31,15 +32,23 @@ interface Bus {
   name : string,
   commute_or_leave : string,
   id : number,
-  stations : [station],
-  cur : []
+  stations : station[],
+  cur : any[]
+}
+
+interface jwt {
+  exp : number,
+  id : number,
+  nickname : string,
+  region : number,
+  role : number
 }
 
 const data = [{
   region_id : 200,
   name : "1호차",
   commute_or_leave : "COMMUTE",
-  id : 1,
+  id : 2,
   stations : [{
     bus_id : 1,
     name : "한남오거리",
@@ -60,7 +69,7 @@ const data = [{
     region_id : 200,
     name : "2호차",
     commute_or_leave : "COMMUTE",
-    id : 2,
+    id : 3,
     stations : [{
       bus_id : 2,
       name : "한남오거리",
@@ -81,41 +90,55 @@ const data = [{
 
 const BusScreen: React.FC<BusScreenProps> = (props) => {
 
-  const [busList,setBusList] = useState<[Bus]>();
+  const [busList,setBusList] = useState<Bus[]>([] as Bus[]);
+  const [current,setCurrent] = useState('');
+  const [region_id,setRegion_id] = useState<number>();
+  let decoded : jwt;
 
   useEffect(() => {
     (async () => {
         // 토큰 해석
-        
-        // JWT
+        let token : string;
+        let isDecoded = false;
+        await AsyncStorage.getData("token").then((response) => {
+          token = response;
+          decoded = jwtDecode(response);
+          isDecoded = true;
+        });
 
-        axios.get(requests.shuttlebus, {
-          params: {
-            region_id : 100,
-            commute_or_leave : 'COMMUTE'
-          }
-        })
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        })
+        if(isDecoded){
+          axios.get(requests.shuttlebus, {
+            params: {
+              region_id : decoded.region,
+              commute_or_leave : 'COMMUTE',
+            }
+          })
+          .then((response) => {
+            // console.log(response.data);
+            setBusList(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        }
+
     })();
   }, []);  
 
   const ButtonList = () => {
     const result = [];
-    for(let i = 0; i < data.length; i++){
-      result.push(<Button1 text={data[i].name} onPress={() => props.navigation.navigate('Station',{bus_id:data[i].id})}></Button1>)
+    for(let i = 0; i < busList.length; i++){
+      result.push(<Button1 key={busList[i].id} text={busList[i].name} onPress={() => props.navigation.navigate('Station',{bus_id:busList[i].id, name:busList[i].name})}></Button1>)
     }
     return result;
   }
 
   return (
     <View style={styles.container}> 
-      <Text>출근 노선</Text>
-      <Text>퇴근 노선</Text>
+      <View style={styles.container2}>
+        <Text>출근 노선</Text>
+        <Text>퇴근 노선</Text>
+      </View>
       <View>
       {ButtonList()}
       </View>
@@ -131,6 +154,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  container2: {
+    flexDirection: 'row'
+  }
 });
 
 export default BusScreen;
