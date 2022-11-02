@@ -4,12 +4,14 @@ import {
   Text,
   StyleSheet,
   FlatList,
+  SafeAreaView,
 } from 'react-native';
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList} from "../types/StackNavigation"; 
 import Footer from '../components/footer';
 import axios from '../api/axios';
 import requests from '../api/requests';
+import Mapsvg from '../../assets/icons/map.svg';
 
 type StationScreenProps = StackScreenProps<RootStackParamList,"Station"> 
 
@@ -61,7 +63,7 @@ const Item = ( {name} : {name:string}) => (
 
 const StationScreen: React.FC<StationScreenProps> = (props) => {
 
-  const [stationList,setStationList] = useState<[station]>();
+  const [stationList,setStationList] = useState<station[]>();
 
   useEffect(() => {
     (async () => {
@@ -69,13 +71,11 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
         
         // JWT
 
-        axios.get(requests.shuttlebus, {
-          params: {
-            region_id : 100,
-            commute_or_leave : 'COMMUTE'
-          }
+        axios.get(requests.shuttlebus_notion+props.route.params.bus_id, {
         })
         .then((response) => {
+          setStationList(response.data.stations);
+          // console.log(stationList);
           
         })
         .catch((error) => {
@@ -90,11 +90,12 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
 
   return (
     <View style={styles.container}> 
-      <View style={styles.container2}>
-        <Text>{props.route.params.bus_id}호차</Text>
-      </View>
+      <SafeAreaView style={styles.container2}>
+        <Text>{props.route.params.name}</Text>
+        <Mapsvg style={[{width:27, height:24}]} onPress={() => {props.navigation.navigate('BusMap')}} />
+      </SafeAreaView>
       <View>
-        <FlatList data={DATA} renderItem={renderItem} keyExtractor={item => item.id.toString()} />
+        <FlatList data={stationList} renderItem={renderItem} keyExtractor={item => item.id.toString()} />
       </View>
       <Footer/>
     </View>
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
   },
   container2: {
     justifyContent: 'center',
-    flexDirection: 'column',
+    flexDirection: 'row',
   },
   item: {
     backgroundColor: '#fff',

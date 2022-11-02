@@ -7,6 +7,7 @@ export type RootStackParamList = {
   BusMap: undefined;
   Station: {
     bus_id: number,
+    name: string,
   }
   Main: undefined;
   BusSearch: undefined;
