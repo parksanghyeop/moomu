@@ -22,17 +22,50 @@ const SignUp = ( props : any) => {
   // 유효성검사
   const [isId, setIsId] = useState<boolean>(false);
   const [isPassword, setIsPassword] = useState<boolean>(false);
-  const [isPasswordCeck, setIsPasswordCeck] = useState<boolean>(false);
+  const [isPasswordCheck, setIsPasswordCheck] = useState<boolean>(false);
 
   // 지역
   const [selected, setSelected] = useState(undefined);
-  const data = [
+  const regions = [
     { label: '서울', value: 100 },
         { label: '대전', value: 200 },
         { label: '구미', value: 300 },
         { label: '부울경', value: 400 },
         { label: '광주', value: 500 },
   ];
+
+  //오류메시지 상태저장
+  const [passwordMessage, setPasswordMessage] = useState<string>('')
+  const [passwordCheckMessage, setPasswordCheckMessage] = useState<string>('')
+
+  // 비밀번호
+  // const onChangePassword = () => {
+  //   const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/
+  //   const passwordCurrent = e.target.value
+  //   setPassword(passwordCurrent)
+
+  //   if (!passwordRegex.test(passwordCurrent)) {
+  //     setPasswordMessage('숫자+영문자+특수문자 조합으로 8자리 이상 입력해주세요!')
+  //     setIsPassword(false)
+  //   } else {
+  //     setPasswordMessage('안전한 비밀번호에요 : )')
+  //     setIsPassword(true)
+  //   }
+  // }
+
+  // 비밀번호 확인
+  // const onChangePasswordConfirm = () => {
+  //     const passwordConfirmCurrent = e.target.value
+  //     setPasswordCheck(passwordConfirmCurrent)
+
+  //     if (password === passwordConfirmCurrent) {
+  //       setPasswordCheckMessage('비밀번호를 똑같이 입력했어요 : )')
+  //       setIsPasswordCheck(true)
+  //     } else {
+  //       setPasswordCheckMessage('비밀번호가 틀려요. 다시 확인해주세요 ㅜ ㅜ')
+  //       setIsPasswordCheck(false)
+  //     }
+  //   }
 
   // 회원 등록 버튼 onPress
   const signUpbutton = () => {
@@ -76,7 +109,7 @@ const SignUp = ( props : any) => {
       {/* <TextInput style={styles.input} placeholder='지역'></TextInput> */}
       <View style={[{flexDirection:'row'}]}>
       <SelectDropdown
-              data={data}
+              data={regions}
               onSelect={(selectedItem, index) => {
                 // console.log(selectedItem, index);
                 setRegion(selectedItem.value);
@@ -96,7 +129,7 @@ const SignUp = ( props : any) => {
               rowTextStyle={styles.dropdown1RowTxtStyle}
       />
       <View style={styles.divider} />
-      <TextInput style={[styles.input, {width:100}]} placeholder='반' onChangeText={(text) => setGroup(+text)} onSubmitEditing={signUpbutton}></TextInput>
+      <TextInput style={[styles.input, {width:100}]} keyboardType="number-pad" placeholder='반' onChangeText={(text) => setGroup(+text)} onSubmitEditing={signUpbutton}></TextInput>
       </View>
       <Button1 text={'회원 등록'} onPress={signUpbutton}></Button1>
     </View>
