@@ -1,3 +1,4 @@
+from app.db.schemas.commute_or_leave import CommuteOrLeave
 from sqlalchemy.orm import Session, Load
 from sqlalchemy import select
 from app.db.models import Bus, Station
@@ -12,11 +13,12 @@ def get_bus(db: Session, bus_id: int):
     )
 
 
-def get_buses(db: Session, region_id: int):
+def get_buses(db: Session, region_id: int, commute_or_leave: CommuteOrLeave):
     return (
         db.query(Bus)
         .options(Load(Bus).lazyload("*"))
         .filter(Bus.region_id == region_id)
+        .filter(Bus.commute_or_leave == commute_or_leave)
         .all()
     )
 

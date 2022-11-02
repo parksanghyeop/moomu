@@ -1,17 +1,17 @@
 import React, {useState}from 'react';
 import {
     View,
-    Text,
     TextInput,
     StyleSheet,
-    Switch,
 } from 'react-native';
 import Button1 from '../components/button1';
 import axios from "../api/axios";
 import requests from "../api/requests";
+import jwtDecode from 'jwt-decode';
 import * as AsyncStorage from "../utiles/AsyncService"; // 로컬 저장을 위한 AsyncStorage 사용 함수
+import { useNavigation } from '@react-navigation/native';
 
-const Login = ( navigation : any, route : any) => {
+const Login = (props:any) => {
 
   // 아이디 
   const [username, setUsername] = useState('');
@@ -23,12 +23,16 @@ const Login = ( navigation : any, route : any) => {
       username : username,
       password : password,
     }, {
-      headers : {"Content-type": `application/json`}
+      headers : {"Content-Type": `application/json`}
     })
     .then((response) => {
-      const token = response.data.result;
+      //console.log(response);
+      const token = response.data.access_token;
       AsyncStorage.storeData("token",token);
-      navigation.navigate('main');
+      const decoded = jwtDecode(token);
+      // console.log(decoded);
+      
+      props.navigation.navigate('Main');
     })
     .catch((error) => {
       console.log(error);

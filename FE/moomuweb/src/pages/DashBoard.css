@@ -1,0 +1,33 @@
+.table-title {
+  font-size: calc(10px + 2vmin);
+}
+.custom-table {
+  @apply table;
+  display: table;
+  position: relative;
+  text-align: center;
+  text-indent: 0;
+  border-color: inherit;
+  border-collapse: collapse;
+  border-spacing: 2px;
+}
+.custom-table :where(thead, tfoot) :where(th, td) {
+  font-size: calc(10px + 1.5vmin) !important;
+}
+.routeTitle {
+  font-size: calc(10px + 2vmin);
+  text-align: center;
+}
+
+.tablePage {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  width: 65vw;
+}
+.changeIcon {
+  font-size: calc(10px + 2vmin) !important;
+}
+.deleteIcon {
+  font-size: calc(10px + 2vmin) !important;
+}

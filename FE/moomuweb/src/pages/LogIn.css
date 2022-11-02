@@ -1,0 +1,27 @@
+.bodyTitle {
+  color: #61dafb;
+  font-size: calc(10px + 8vmin);
+  margin-bottom: 3vmin;
+}
+.bodyLabel {
+  font-size: calc(10px + 1vmin);
+  min-width: 16vmin;
+  text-align: center;
+}
+.input-group {
+  margin-bottom: 1rem;
+  /* width: 40vw; */
+}
+.logInBtn {
+  margin-bottom: 1rem;
+  width: 30vw;
+  /* background-color: #63b3ed; */
+}
+.logInCtrl {
+  margin-bottom: 1rem;
+  width: 30vw;
+  justify-self: centered;
+}
+.pwShow {
+  background-color: white;
+}

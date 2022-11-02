@@ -1,28 +1,34 @@
-import * as Font from 'expo-font'; // 폰트
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {useEffect, useCallback} from 'react';
+import { View, StyleSheet } from 'react-native';
+import * as Font from 'expo-font';
+import { NavigationContainer,useNavigationContainerRef } from '@react-navigation/native';
+import StackNavigator from './src/navigations/StackNavigator';
+import useCachedResources from './src/utiles/useCachedResources';
 
-export default function App() {
-  // 폰트 적용
-  const getFonts = async () => {
-    await Font.loadAsync({
-      Pretendard : require('./assets/fonts/PretendardVariable.ttf')
-    })
+// Pretendard : require('./assets/fonts/PretendardVariable.ttf')
+
+const App = () => {
+
+  const navigationRef = useNavigationContainerRef();
+
+  const isLoaded = useCachedResources();
+
+  if (isLoaded) {
+    return (
+      <NavigationContainer ref={navigationRef}>
+        <StackNavigator/>
+      </NavigationContainer>
+    );
+  } else {
+    return null;
   }
-
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+  
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
+
+export default App;

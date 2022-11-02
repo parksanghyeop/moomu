@@ -4,6 +4,8 @@ from app.db.crud import shuttlebus_crud
 from app.db.schemas.bus import Bus, BusBase
 from app.db.schemas.station import Station, StationBase
 from app.dependencies import get_db
+from app.service.shuttlebus_service import bus_near_station
+from app.db.schemas.commute_or_leave import CommuteOrLeave
 
 router = APIRouter(
     prefix="/shuttlebus",
@@ -13,8 +15,10 @@ router = APIRouter(
 
 
 @router.get("/bus", response_model=list[Bus])
-def get_buses(region_id: int, db: Session = Depends(get_db)):
-    db_buses = shuttlebus_crud.get_buses(db, region_id)
+def get_buses(
+    region_id: int, commute_or_leave: CommuteOrLeave, db: Session = Depends(get_db)
+):
+    db_buses = shuttlebus_crud.get_buses(db, region_id, commute_or_leave)
     return db_buses
 
 
@@ -26,6 +30,7 @@ def get_bus(bus_id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND, detail="해당 버스 정보를 찾을 수 없습니다."
         )
     db_bus.stations = shuttlebus_crud.get_stations(db, bus_id=bus_id)
+    db_bus.cur = bus_near_station(db_bus.name, db_bus.stations)
     return db_bus
 
 
