@@ -21,4 +21,17 @@
 .routeContainer {
   overflow-y: scroll;
   height: 70vh;
+  min-width: 15vw;
+}
+
+.btn-up {
+  @apply btn-primary;
+  grid-column-start: 2;
+}
+.updownBtnFrame {
+  display: flex;
+  grid-column-start: 2;
+}
+.steps-vertical .step:before {
+  height: 170%;
 }
