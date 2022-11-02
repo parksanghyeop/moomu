@@ -15,12 +15,13 @@ def bus_near_station(bus_name: str, station_list: list[Station]):
     s.subscribe(bus_name)
     while True:
         res = s.get_message(timeout=1)
-        if res["data"] != 1:
+        if res is None:
+            return ()
+        elif res["data"] != 1:
             break
-    if res is None or res["data"] is None:
+    if res["data"] is None:
         return ()
     dict = json.loads(str(res["data"], "utf-8"))
-    # dict = {"lat": "36.357155", "lng": "127.403758"}
     bus_pos = (float(dict["lat"]), float(dict["lng"]))
     min = sys.maxsize
     num = 0
