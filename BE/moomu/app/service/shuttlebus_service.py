@@ -1,8 +1,10 @@
 from haversine import haversine
 from app.db.schemas.station import Station
+from app.core.config import settings
 import redis
 import sys
 import json
+import requests
 
 
 r = redis.Redis(host="k7b202.p.ssafy.io", port=6379, db=0)
@@ -13,9 +15,11 @@ def bus_near_station(bus_name: str, station_list: list[Station]):
     s.subscribe(bus_name)
     while True:
         res = s.get_message(timeout=1)
-        if res["data"] == 1:
+        if res is None:
+            return ()
+        elif res["data"] != 1:
             break
-    if res is None:
+    if res["data"] is None:
         return ()
     dict = json.loads(str(res["data"], "utf-8"))
     bus_pos = (float(dict["lat"]), float(dict["lng"]))
@@ -44,9 +48,23 @@ def bus_near_station(bus_name: str, station_list: list[Station]):
     elif post is None:
         return (pre.id, cur.id)
     else:
-        pre_pos = (float(pre.lat), float(pre.lng))
-        post_pos = (float(post.lat), float(post.lng))
-        if haversine(bus_pos, pre_pos) < haversine(bus_pos, post_pos):
+        post_bus = real_distance(dict["lat"], dict["lng"], post.lat, post.lng)
+        post_cur = real_distance(cur.lat, cur.lng, post.lat, post.lng)
+        if post_bus > post_cur:
             return (pre.id, cur.id)
         else:
             return (cur.id, post.id)
+
+
+def real_distance(lat_s: str, lng_s: str, lat_e: str, lng_e: str):
+    headers = {
+        "X-NCP-APIGW-API-KEY-ID": settings.CLINET_ID,
+        "X-NCP-APIGW-API-KEY": settings.CLIENT_SECRET,
+    }
+    params = {
+        "start": lng_s + "," + lat_s,
+        "goal": lng_e + "," + lat_e,
+    }
+    response = requests.get(settings.URL, headers=headers, params=params)
+    json_obj = response.json()
+    return int(json_obj["route"]["traoptimal"][0]["summary"]["distance"])
