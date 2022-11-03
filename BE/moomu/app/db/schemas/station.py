@@ -15,12 +15,20 @@ class StationCreate(StationBase):
     pass
 
 
-class StationPos(BaseModel):
+class StationPosBase(BaseModel):
+    name: str
     lat: str
     lng: str
 
 
 class Station(StationBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class StationPos(StationPosBase):
     id: int
 
     class Config:

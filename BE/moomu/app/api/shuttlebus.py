@@ -2,10 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db.crud import shuttlebus_crud
 from app.db.schemas.bus import Bus, BusBase
-from app.db.schemas.station import Station, StationBase
+from app.db.schemas.station import Station, StationBase, StationPos
 from app.dependencies import get_db
 from app.service.shuttlebus_service import bus_near_station
 from app.db.schemas.commute_or_leave import CommuteOrLeave
+from app.service.jwt_service import validate_token
 
 router = APIRouter(
     prefix="/shuttlebus",
@@ -34,9 +35,22 @@ def get_bus(bus_id: int, db: Session = Depends(get_db)):
     return db_bus
 
 
+@router.get("/bus/name/{bus_name}", response_model=list[StationPos])
+def get_stations_by_bus_name(
+    bus_name: str, commute_or_leave: CommuteOrLeave, db: Session = Depends(get_db)
+):
+    return shuttlebus_crud.get_stations_by_bus_name(db, bus_name, commute_or_leave)
+
+
 @router.post("/bus/register")
-def create_bus(bus: BusBase, db: Session = Depends(get_db)):
-    # 권한추가예정
+def create_bus(
+    bus: BusBase, db: Session = Depends(get_db), payload: dict = Depends(validate_token)
+):
+    user_role = payload.get("role")
+    if user_role < 5:
+        raise HTTPException(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
+        )
     if shuttlebus_crud.exist_bus(db, bus) is not None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="이미 등록된 버스 이름입니다."
@@ -46,15 +60,30 @@ def create_bus(bus: BusBase, db: Session = Depends(get_db)):
 
 
 @router.put("/bus/edit/{bus_id}")
-def update_bus(bus_id: int, name: str, db: Session = Depends(get_db)):
-    # 권한추가예정
+def update_bus(
+    bus_id: int,
+    name: str,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(validate_token),
+):
+    user_role = payload.get("role")
+    if user_role < 5:
+        raise HTTPException(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
+        )
     shuttlebus_crud.update_bus(db, bus_id, name)
     return {"message": "버스 정보 수정에 성공했습니다."}
 
 
 @router.delete("/bus/delete/{bus_id}")
-def delete_bus(bus_id: int, db: Session = Depends(get_db)):
-    # 권한추가예정
+def delete_bus(
+    bus_id: int, db: Session = Depends(get_db), payload: dict = Depends(validate_token)
+):
+    user_role = payload.get("role")
+    if user_role < 5:
+        raise HTTPException(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
+        )
     shuttlebus_crud.delete_bus(db, bus_id)
     return {"message": "버스 정보 삭제에 성공했습니다."}
 
@@ -70,17 +99,32 @@ def get_station(station_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/station/register")
-def create_station(station_list: list[StationBase], db: Session = Depends(get_db)):
-    # 권한추가예정
+def create_station(
+    station_list: list[StationBase],
+    db: Session = Depends(get_db),
+    payload: dict = Depends(validate_token),
+):
+    user_role = payload.get("role")
+    if user_role < 5:
+        raise HTTPException(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
+        )
     shuttlebus_crud.create_station(db, station_list)
     return {"message": "정류장 등록에 성공했습니다."}
 
 
 @router.put("/station/edit/{bus_id}")
 def update_station(
-    bus_id: int, station_list: list[StationBase], db: Session = Depends(get_db)
+    bus_id: int,
+    station_list: list[StationBase],
+    db: Session = Depends(get_db),
+    payload: dict = Depends(validate_token),
 ):
-    # 권한추가예정
+    user_role = payload.get("role")
+    if user_role < 5:
+        raise HTTPException(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
+        )
     shuttlebus_crud.delete_station(db, bus_id)
     shuttlebus_crud.create_station(db, station_list)
     return {"message": "정류장 정보 수정/삭제에 성공했습니다."}
