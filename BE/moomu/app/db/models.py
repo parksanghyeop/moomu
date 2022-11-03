@@ -38,7 +38,7 @@ class User(Base):
     region_id = Column(Integer, ForeignKey("region.id"))
     start_station_id = Column(Integer, ForeignKey("station.id", ondelete="SET NULL"))
     end_station_id = Column(Integer, ForeignKey("station.id", ondelete="SET NULL"))
-    fcm_token = Column(String(100), nullable=True)
+    expo_token = Column(String(255), nullable=True)
     user_role = Column(Integer, nullable=False, default=0)
 
     region = relationship("Region", back_populates="users")
