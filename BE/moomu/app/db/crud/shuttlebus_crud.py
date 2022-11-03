@@ -61,6 +61,19 @@ def get_stations(db: Session, bus_id: int):
     )
 
 
+def get_stations_by_bus_name(
+    db: Session, bus_name: str, commute_or_leave: CommuteOrLeave
+):
+    return (
+        db.query(Station)
+        .join(Bus, Bus.id == Station.bus_id)
+        .filter(Bus.commute_or_leave == commute_or_leave)
+        .filter(Bus.name.like(f"{bus_name}%"))
+        .order_by(Station.order)
+        .all()
+    )
+
+
 def create_station(db: Session, station_list: list[StationBase]):
     for i in station_list:
         db.add(Station(**i.dict()))

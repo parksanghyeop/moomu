@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db.crud import shuttlebus_crud
 from app.db.schemas.bus import Bus, BusBase
-from app.db.schemas.station import Station, StationBase
+from app.db.schemas.station import Station, StationBase, StationPos
 from app.dependencies import get_db
 from app.service.shuttlebus_service import bus_near_station
 from app.db.schemas.commute_or_leave import CommuteOrLeave
@@ -33,6 +33,13 @@ def get_bus(bus_id: int, db: Session = Depends(get_db)):
     db_bus.stations = shuttlebus_crud.get_stations(db, bus_id=bus_id)
     db_bus.cur = bus_near_station(db_bus.name, db_bus.stations)
     return db_bus
+
+
+@router.get("/bus/name/{bus_name}", response_model=list[StationPos])
+def get_stations_by_bus_name(
+    bus_name: str, commute_or_leave: CommuteOrLeave, db: Session = Depends(get_db)
+):
+    return shuttlebus_crud.get_stations_by_bus_name(db, bus_name, commute_or_leave)
 
 
 @router.post("/bus/register")
