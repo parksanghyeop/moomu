@@ -5,18 +5,16 @@ import {
     TextInput,
     StyleSheet,
     Switch,
+    TouchableOpacity,
+    GestureResponderEvent,
 } from 'react-native';
 import Footer from '../components/footer';
-import Button1 from '../components/button1';
 import 'react-native-gesture-handler';
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList} from "../types/StackNavigation";
 import {Logo2} from "../components/logo";
-import axios from "../api/axios";
-import requests from "../api/requests";
 import Login from './login';
 import SignUp from './signup';
-import * as AsyncStorage from "../utiles/AsyncService"; // 로컬 저장을 위한 AsyncStorage 사용 함수
 
 type LoginSignUpScreenProps = StackScreenProps<RootStackParamList, "LoginSignUp">;
 
@@ -33,18 +31,18 @@ const LoginSignUpScreen: React.FC<LoginSignUpScreenProps> = (props) => {
 
   return (
     <View style={styles.container}>
-        <View style={[{flex:1,alignItems:'center', marginTop:100}]}>
+        <View style={[{alignItems:'center', marginTop:100}]}>
           <Logo2 />
         </View>
       <View style={styles.container2}>
         <Text style={[styles.text, {width:53,height:19}]}>LOGIN</Text>
-        <Switch style={styles.toggle} onValueChange={toggle} value={condition}></Switch>
+        <View style={{width:41, height: 3, backgroundColor: '#63B3ED',marginTop:5,marginLeft:5}} />
+        <TouchableOpacity style={styles.circleLogin} onPress={toggle}/>
+        {/* <Switch style={styles.toggle} onValueChange={toggle} value={condition}></Switch> */}
         <Text style={[styles.text, {width:72,height:15}]}>SIGN UP</Text>
       </View>
-      {renderConditionInput}
-      <View style={[{flex:0.5, alignItems: 'center'}]}>
+        {renderConditionInput}
         <Footer/>
-      </View>
     </View>
   );
 };
@@ -58,7 +56,7 @@ const styles = StyleSheet.create({
     },
     container2: {
       flexDirection: 'row',
-      height: 40,
+      paddingTop: 57,
     },
     text: {
       fontFamily: 'Pretendard Variable',
@@ -73,6 +71,16 @@ const styles = StyleSheet.create({
     },
     toggle:{
       
+    },
+    circleLogin: {
+      right: 45,
+      width: 16,
+      height: 16,
+      borderRadius: 100 / 2,
+      backgroundColor: "#63B3ED",
+    },
+    circleSignup: {
+
     },
   });
 

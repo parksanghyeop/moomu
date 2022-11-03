@@ -10,6 +10,11 @@ import axios from "../api/axios";
 import requests from "../api/requests";
 import SelectDropdown from 'react-native-select-dropdown';
 
+type regions = {
+  name : string,
+  id : number
+}
+
 const SignUp = ( props : any) => {
   // 회원가입 
   const [username, setUsername] = useState('');
@@ -22,17 +27,55 @@ const SignUp = ( props : any) => {
   // 유효성검사
   const [isId, setIsId] = useState<boolean>(false);
   const [isPassword, setIsPassword] = useState<boolean>(false);
-  const [isPasswordCeck, setIsPasswordCeck] = useState<boolean>(false);
+  const [isPasswordCheck, setIsPasswordCheck] = useState<boolean>(false);
 
   // 지역
   const [selected, setSelected] = useState(undefined);
-  const data = [
-    { label: '서울', value: 100 },
-        { label: '대전', value: 200 },
-        { label: '구미', value: 300 },
-        { label: '부울경', value: 400 },
-        { label: '광주', value: 500 },
-  ];
+  const [regions,setRegions] = useState<regions[]>([] as regions[]);
+
+  //오류메시지 상태저장
+  const [passwordMessage, setPasswordMessage] = useState<string>('')
+  const [passwordCheckMessage, setPasswordCheckMessage] = useState<string>('')
+
+  // 비밀번호
+  // const onChangePassword = () => {
+  //   const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/
+  //   const passwordCurrent = e.target.value
+  //   setPassword(passwordCurrent)
+
+  //   if (!passwordRegex.test(passwordCurrent)) {
+  //     setPasswordMessage('숫자+영문자+특수문자 조합으로 8자리 이상 입력해주세요!')
+  //     setIsPassword(false)
+  //   } else {
+  //     setPasswordMessage('안전한 비밀번호에요 : )')
+  //     setIsPassword(true)
+  //   }
+  // }
+
+  // 비밀번호 확인
+  // const onChangePasswordConfirm = () => {
+  //     const passwordConfirmCurrent = e.target.value
+  //     setPasswordCheck(passwordConfirmCurrent)
+
+  //     if (password === passwordConfirmCurrent) {
+  //       setPasswordCheckMessage('비밀번호를 똑같이 입력했어요 : )')
+  //       setIsPasswordCheck(true)
+  //     } else {
+  //       setPasswordCheckMessage('비밀번호가 틀려요. 다시 확인해주세요 ㅜ ㅜ')
+  //       setIsPasswordCheck(false)
+  //     }
+  //   }
+
+  // 지역 받아오기
+  useEffect( () => {
+    axios.get(requests.regions)
+    .then((response) => {
+      setRegions(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  },[]);
 
   // 회원 등록 버튼 onPress
   const signUpbutton = () => {
@@ -68,25 +111,25 @@ const SignUp = ( props : any) => {
 
   return (
     <View style={styles.container3}>
-      <TextInput style={styles.input} placeholder='아이디' onChangeText={(text) => setUsername(text)} returnKeyType="next" ></TextInput>
-      <TextInput style={styles.input} placeholder='비밀번호' onChangeText={(text) => setPassword(text)} returnKeyType="next" ></TextInput>
-      <TextInput style={styles.input} placeholder='비밀번호 확인' onChangeText={(text) => setPasswordCheck(text)} returnKeyType="next"></TextInput>
-      <TextInput style={styles.input} placeholder='이름' onChangeText={(text) => setNickname(text)} returnKeyType="next" ></TextInput>
+      <TextInput style={styles.input} placeholder='   아이디' onChangeText={(text) => setUsername(text)} returnKeyType="next" ></TextInput>
+      <TextInput style={styles.input} placeholder='   비밀번호' onChangeText={(text) => setPassword(text)} returnKeyType="next" ></TextInput>
+      <TextInput style={styles.input} placeholder='   비밀번호 확인' onChangeText={(text) => setPasswordCheck(text)} returnKeyType="next"></TextInput>
+      <TextInput style={styles.input} placeholder='   이름' onChangeText={(text) => setNickname(text)} returnKeyType="next" ></TextInput>
 
       {/* <TextInput style={styles.input} placeholder='지역'></TextInput> */}
       <View style={[{flexDirection:'row'}]}>
       <SelectDropdown
-              data={data}
+              data={regions}
               onSelect={(selectedItem, index) => {
                 // console.log(selectedItem, index);
-                setRegion(selectedItem.value);
+                setRegion(selectedItem.id);
               }}
               defaultButtonText={'지역선택'}
               buttonTextAfterSelection={(selectedItem, index) => {
-                return selectedItem.label;
+                return selectedItem.name;
               }}
               rowTextForSelection={(item, index) => {
-                return item.label;
+                return item.name;
               }}
               buttonStyle={styles.dropdown1BtnStyle}
               buttonTextStyle={styles.dropdown1BtnTxtStyle}
@@ -96,7 +139,7 @@ const SignUp = ( props : any) => {
               rowTextStyle={styles.dropdown1RowTxtStyle}
       />
       <View style={styles.divider} />
-      <TextInput style={[styles.input, {width:100}]} placeholder='반' onChangeText={(text) => setGroup(+text)} onSubmitEditing={signUpbutton}></TextInput>
+      <TextInput style={[styles.input, {width:80}]} keyboardType="number-pad" placeholder='   반' onChangeText={(text) => setGroup(+text)} onSubmitEditing={signUpbutton}></TextInput>
       </View>
       <Button1 text={'회원 등록'} onPress={signUpbutton}></Button1>
     </View>
@@ -118,7 +161,7 @@ const styles = StyleSheet.create({
   dropdownsRow: {flexDirection: 'row', width: '20%', paddingHorizontal: '5%'},
 
   dropdown1BtnStyle: {
-    flex: 1,
+    width: 150,
     height: 30,
     backgroundColor: '#FFF',
     borderRadius: 8,

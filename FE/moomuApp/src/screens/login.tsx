@@ -1,6 +1,12 @@
-import React, { useState } from "react";
-import { View, TextInput, StyleSheet, Platform } from "react-native";
-import Button1 from "../components/button1";
+import React, {useState}from 'react';
+import {
+    View,
+    TextInput,
+    StyleSheet,
+    NativeSyntheticEvent,
+    TextInputChangeEventData,
+} from 'react-native';
+import Button1 from '../components/button1';
 import axios from "../api/axios";
 import requests from "../api/requests";
 import jwtDecode from "jwt-decode";
@@ -14,59 +20,63 @@ const Login = (props: any) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const [isusername,setIsusername] = useState<boolean>(false);
+  const [ispassword,setIspassword] = useState<boolean>(false);
+
+  // 아이디 확인
+  const onChangeUsername = ( usernameCurrent : string) => {
+    setPassword(usernameCurrent);
+    setIsusername(true);
+    if(usernameCurrent.length > 0){
+      setIsusername(true);
+    }else {
+      setIsusername(false);
+    }
+    // if (!passwordRegex.test(passwordCurrent)) {
+    //   setIspassword(false)
+    // } else {
+    //   setIspassword(true)
+    // }
+  }
+
+  // 비밀번호 확인
+  const onChangePassword = ( passwordCurrent : string) => {
+    //const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/
+    setPassword(passwordCurrent);
+    if(passwordCurrent.length > 0){
+      setIspassword(true);
+    }else {
+      setIspassword(false);
+    }
+    
+    // if (!passwordRegex.test(passwordCurrent)) {
+    //   setIspassword(false)
+    // } else {
+    //   setIspassword(true)
+    // }
+  }
+
   // 로그인 버튼 onPress
   const loginbutton = () => {
-    axios
-      .post(
-        requests.login,
-        {
-          username: username,
-          password: password,
-        },
-        {
-          headers: { "Content-Type": `application/json` },
-        }
-      )
-      .then((response) => {
-        //console.log(response);
-        const token = response.data.access_token;
-        AsyncStorage.storeData("token", token);
-        const decoded = jwtDecode(token);
-        // console.log(decoded);
+    axios.post(requests.login,{
+      username : username,
+      password : password,
+    }, {
+      headers : {"Content-Type": `application/json`}
+    })
+    .then((response) => {
+      //console.log(response);
+      const token = response.data.access_token;
+      AsyncStorage.storeData("token",token);
+      const decoded = jwtDecode(token);
+      // console.log(decoded);
+      props.navigation.reset({routes: [{name: 'Main'}]});
 
-        // 푸시알림 토큰 세팅
-        registerForPushNotificationsAsync().then((token) => {
-          AsyncStorage.storeData("expoToken", token);
-          set_expoToken(token);
-        });
-        props.navigation.navigate("Main");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const set_expoToken = async (expo_token: any) => {
-    const token = await AsyncStorage.getData("token");
-    axios
-      .post(
-        requests.expo_token,
-        {
-          expo_token: expo_token,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-        }
-      )
-      .then((response) => {
-        // console.log("토큰 세팅 리스폰스", response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      // props.navigation.navigate('Main');
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   };
 
   async function registerForPushNotificationsAsync() {
@@ -103,17 +113,9 @@ const Login = (props: any) => {
 
   return (
     <View style={styles.container3}>
-      <TextInput
-        style={styles.input}
-        placeholder="아이디"
-        onChangeText={(text) => setUsername(text)}
-      ></TextInput>
-      <TextInput
-        style={styles.input}
-        placeholder="비밀번호"
-        onChangeText={(text) => setPassword(text)}
-      ></TextInput>
-      <Button1 text={"로그인"} onPress={loginbutton}></Button1>
+      <TextInput style={styles.input} placeholder='   아이디' onChangeText={(text) => onChangePassword(text)}></TextInput>
+      <TextInput style={styles.input} placeholder='   비밀번호' onChangeText={(text) => onChangeUsername(text)}></TextInput>
+      <Button1 text={'로그인'} onPress={loginbutton} disabled={!(isusername && ispassword)} ></Button1>
     </View>
   );
 };
@@ -122,6 +124,7 @@ const styles = StyleSheet.create({
   container3: {
     flex: 1,
     margin: 10,
+    alignItems:'center',
   },
   input: {
     width: 219,
