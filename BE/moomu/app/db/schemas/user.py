@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, typing
 
 
 class UserBase(BaseModel):
@@ -26,3 +26,15 @@ class User(UserBase):
 class UserLogin(BaseModel):
     username: str
     password: str
+
+
+class StationBase(BaseModel):
+    start_station_id: typing.Any
+    end_station_id: typing.Any
+
+
+class UserStation(StationBase):
+    id: int
+
+    class Config:
+        orm_mode = True
