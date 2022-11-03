@@ -128,3 +128,13 @@ def update_station(
     shuttlebus_crud.delete_station(db, bus_id)
     shuttlebus_crud.create_station(db, station_list)
     return {"message": "정류장 정보 수정/삭제에 성공했습니다."}
+
+
+@router.post("/station/alarm")
+def create_station_alarm(
+    station_id: int,
+    station_name: str,
+    commute_or_leave: CommuteOrLeave,
+    db: Session = Depends(get_db),
+):
+    shuttlebus_crud.create_station_alarm(db, commute_or_leave, station_id, station_name)

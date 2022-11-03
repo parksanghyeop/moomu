@@ -1,9 +1,10 @@
 from app.db.schemas.commute_or_leave import CommuteOrLeave
 from sqlalchemy.orm import Session, Load
 from sqlalchemy import select
-from app.db.models import Bus, Station
+from app.db.models import Bus, Station, User
 from app.db.schemas.bus import BusBase
 from app.db.schemas.station import StationBase
+from app.db.crud import alarm_crud
 
 
 # 버스
@@ -89,3 +90,22 @@ def get_station_pos(db: Session, station_id: int):
     return db.execute(
         select(Station.lat, Station.lng).where(Station.id == station_id)
     ).first()
+
+
+def create_station_alarm(
+    db: Session, commute_or_leave: CommuteOrLeave, station_id: int, station_name: str
+):
+    if commute_or_leave == CommuteOrLeave.COMMUTE:
+        coltype = "[승차]"
+        db_users = db.query(User).filter(User.start_station_id == station_id).all()
+    else:
+        coltype = "[하차]"
+        db_users = db.query(User).filter(User.end_station_id == station_id).all()
+
+    alarm_crud.create_alarm_from_event(
+        db=db,
+        model=Station,
+        target_id=station_id,
+        content=coltype + "버스가 잠시 후 " + station_name + "에 도착합니다. 준비해주세요.",
+        db_users=db_users,
+    )
