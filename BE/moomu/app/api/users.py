@@ -8,6 +8,7 @@ from app.dependencies import get_db
 import bcrypt
 
 from app.service.jwt_service import generate_access_token, validate_token
+from app.db.schemas.commute_or_leave import CommuteOrLeave
 
 router = APIRouter(
     prefix="/users",
@@ -27,7 +28,11 @@ def read_user(db: Session = Depends(get_db), payload: dict = Depends(validate_to
 
 
 @router.put("/profile/edit", response_model=User)
-def edit_user(user: UserUpdate, db: Session = Depends(get_db), payload: dict = Depends(validate_token)):
+def edit_user(
+    user: UserUpdate,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(validate_token),
+):
     user_id = payload.get("id")
     db_user = user_crud.update_user(db, user_id, user)
     if db_user is None:
@@ -63,7 +68,9 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="존재하지 않는 사용자 입니다.",
         )
-    if not bcrypt.checkpw(user.password.encode('utf-8'), db_user.password.encode('utf-8')):
+    if not bcrypt.checkpw(
+        user.password.encode("utf-8"), db_user.password.encode("utf-8")
+    ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="비밀번호가 일치하지 않습니다.",
@@ -73,14 +80,18 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
 
 
 @router.post("/token")
-def auth_token(user: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def auth_token(
+    user: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
+):
     db_user = user_crud.get_user_by_username(db, username=user.username)
     if not db_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="존재하지 않는 사용자 입니다.",
         )
-    if not bcrypt.checkpw(user.password.encode('utf-8'), db_user.password.encode('utf-8')):
+    if not bcrypt.checkpw(
+        user.password.encode("utf-8"), db_user.password.encode("utf-8")
+    ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="비밀번호가 일치하지 않습니다.",
@@ -111,3 +122,10 @@ def delete_expo_token(
     if db_user is None:
         raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
     return {"message": "토큰이 삭제되었습니다."}
+
+
+@router.get("/user/exists")
+def get_exists_user(
+    station_id: int, commute_or_leave: CommuteOrLeave, db: Session = Depends(get_db)
+):
+    return user_crud.get_exists_user_at_station(db, station_id, commute_or_leave)
