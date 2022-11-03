@@ -5,7 +5,6 @@ import axios from "../api/axios";
 import requests from "../api/requests";
 import jwtDecode from "jwt-decode";
 import * as AsyncStorage from "../utiles/AsyncService"; // 로컬 저장을 위한 AsyncStorage 사용 함수
-import { useNavigation } from "@react-navigation/native";
 
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
@@ -63,7 +62,7 @@ const Login = (props: any) => {
         }
       )
       .then((response) => {
-        console.log("토큰 세팅 리스폰스", response);
+        // console.log("토큰 세팅 리스폰스", response);
       })
       .catch((error) => {
         console.log(error);
