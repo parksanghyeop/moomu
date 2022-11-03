@@ -6,6 +6,7 @@ import store from "./store/store.js";
 import LogiInPage from "./pages/LogIn";
 import DashBoard from "./pages/DashBoard";
 import RouteMap from "./pages/RouteMap";
+import RouteMapChange from "./pages/RouteMapChange";
 import MenuSidebar from "./componentes/menuSidebar";
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/" element={<LogiInPage />} />
             <Route path="/main" element={<DashBoard />} />
             <Route path="/map" element={<RouteMap />} />
+            <Route path="/map/:id" element={<RouteMapChange />}></Route>
           </Routes>
         </BrowserRouter>
       </div>

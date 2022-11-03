@@ -29,6 +29,9 @@ function DashBoard() {
   let addRoute = function () {
     navigate("/map");
   };
+  const changeRoute = function (routeId) {
+    navigate(`/map/${routeId}`);
+  };
 
   // const options = {
   //   method: "POST",
@@ -59,7 +62,7 @@ function DashBoard() {
                   <td className="font-bold routeTitle">{route.name}</td>
                   <td>
                     <button className="btn btn-ghost btn-lg changeIcon">
-                      <FontAwesomeIcon icon={faRoute} />
+                      <FontAwesomeIcon icon={faRoute} onClick={() => changeRoute(route.id)} />
                     </button>
                   </td>
                   <td>
