@@ -107,7 +107,7 @@ def update_expo_token(
     payload: dict = Depends(validate_token),
 ):
     print(expo_token.expo_token)
-    user_id = 2
+    user_id = payload.get("id")
     db_user = user_crud.update_expo_token(db, user_id, expo_token.expo_token)
     if db_user is None:
         raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
