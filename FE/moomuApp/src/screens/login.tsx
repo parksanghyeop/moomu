@@ -3,6 +3,7 @@ import {
     View,
     TextInput,
     StyleSheet,
+    Platform,
     NativeSyntheticEvent,
     TextInputChangeEventData,
 } from 'react-native';
@@ -16,9 +17,10 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 
 const Login = (props: any) => {
-  // 아이디
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+
+  // 아이디 
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const [isusername,setIsusername] = useState<boolean>(false);
   const [ispassword,setIspassword] = useState<boolean>(false);
@@ -70,9 +72,8 @@ const Login = (props: any) => {
       AsyncStorage.storeData("token",token);
       const decoded = jwtDecode(token);
       // console.log(decoded);
-      props.navigation.reset({routes: [{name: 'Main'}]});
-
-      // props.navigation.navigate('Main');
+      
+      props.navigation.navigate('Main');
     })
     .catch((error) => {
       console.log(error);
