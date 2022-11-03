@@ -26,3 +26,7 @@ class User(UserBase):
 class UserLogin(BaseModel):
     username: str
     password: str
+
+
+class ExpoToken(BaseModel):
+    expo_token: str
