@@ -1,10 +1,12 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import literal
 
 from app.db import models
 from app.db.schemas import UserCreate
 import bcrypt
 
 from app.db.schemas.user import UserUpdate
+from app.db.schemas.commute_or_leave import CommuteOrLeave
 
 
 def get_user(db: Session, user_id: int):
@@ -58,6 +60,40 @@ def update_expo_token(db: Session, user_id: int, expo_token: str):
 def delete_expo_token(db: Session, user_id: int):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     db_user.expo_token = None
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+def get_exists_user_at_station(
+    db: Session, station_id: int, commute_or_leave: CommuteOrLeave
+):
+    if commute_or_leave == CommuteOrLeave.COMMUTE:
+        q = db.query(models.User).filter(models.User.start_station_id == station_id)
+    else:
+        q = db.query(models.User).filter(models.User.end_station_id == station_id)
+    return db.query(literal(True)).filter(q.exists()).scalar()
+
+
+def update_user_station(
+    db: Session, user_id: int, station_id: int, commute_or_leave: CommuteOrLeave
+):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if commute_or_leave == CommuteOrLeave.COMMUTE:
+        db_user.start_station_id = station_id
+    else:
+        db_user.end_station_id = station_id
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+def delete_user_station(db: Session, user_id: int, commute_or_leave: CommuteOrLeave):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if commute_or_leave == CommuteOrLeave.COMMUTE:
+        db_user.start_station_id = None
+    else:
+        db_user.end_station_id = None
     db.commit()
     db.refresh(db_user)
     return db_user
