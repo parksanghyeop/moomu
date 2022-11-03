@@ -1,0 +1,25 @@
+.naverMap {
+  min-width: 49vw;
+  height: 60vh;
+  align-self: center;
+}
+.mapPage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.mapContainer {
+  display: flex;
+}
+.menu {
+  width: 20vw;
+}
+.custom-steps {
+  @apply steps;
+  /* overflow-: scroll; */
+}
+.routeContainer {
+  overflow-y: scroll;
+  height: 70vh;
+  min-width: 15vw;
+}

@@ -8,7 +8,7 @@ class FaQAnswerBase(BaseModel):
 
 
 class FaQAnswerCreate(FaQAnswerBase):
-    pass
+    user_id: int
 
 
 class FaQAnswerUpdate(FaQAnswerBase):

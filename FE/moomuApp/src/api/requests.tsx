@@ -8,6 +8,7 @@ const requests = {
   // 셔틀버스
   shuttlebus: "shuttlebus/bus",
   shuttlebus_notion: "shuttlebus/bus/",
+  ,
 
   // 푸시알림 토큰
   expo_token: "users/expo_token",
