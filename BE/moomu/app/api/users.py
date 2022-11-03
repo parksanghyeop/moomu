@@ -143,3 +143,16 @@ def edit_user_station(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
+
+
+@router.delete("/station/delete", response_model=User)
+def delete_user_station(
+    commute_or_leave: CommuteOrLeave,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(validate_token),
+):
+    user_id = payload.get("id")
+    db_user = user_crud.delete_user_station(db, user_id, commute_or_leave)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user

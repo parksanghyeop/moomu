@@ -86,3 +86,14 @@ def update_user_station(
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def delete_user_station(db: Session, user_id: int, commute_or_leave: CommuteOrLeave):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if commute_or_leave == CommuteOrLeave.COMMUTE:
+        db_user.start_station_id = None
+    else:
+        db_user.end_station_id = None
+    db.commit()
+    db.refresh(db_user)
+    return db_user
