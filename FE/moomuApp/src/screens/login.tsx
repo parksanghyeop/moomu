@@ -53,7 +53,7 @@ const Login = (props: any) => {
       .post(
         requests.expo_token,
         {
-          expo_token: "3920eioejrt",
+          expo_token: expo_token,
         },
         {
           headers: {
