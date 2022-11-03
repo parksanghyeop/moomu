@@ -124,8 +124,22 @@ def delete_expo_token(
     return {"message": "토큰이 삭제되었습니다."}
 
 
-@router.get("/user/exists")
+@router.get("/exists")
 def get_exists_user(
     station_id: int, commute_or_leave: CommuteOrLeave, db: Session = Depends(get_db)
 ):
     return user_crud.get_exists_user_at_station(db, station_id, commute_or_leave)
+
+
+@router.put("/station/edit", response_model=User)
+def edit_user_station(
+    station_id: int,
+    commute_or_leave: CommuteOrLeave,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(validate_token),
+):
+    user_id = payload.get("id")
+    db_user = user_crud.update_user_station(db, user_id, station_id, commute_or_leave)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user

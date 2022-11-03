@@ -73,3 +73,16 @@ def get_exists_user_at_station(
     else:
         q = db.query(models.User).filter(models.User.end_station_id == station_id)
     return db.query(literal(True)).filter(q.exists()).scalar()
+
+
+def update_user_station(
+    db: Session, user_id: int, station_id: int, commute_or_leave: CommuteOrLeave
+):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if commute_or_leave == CommuteOrLeave.COMMUTE:
+        db_user.start_station_id = station_id
+    else:
+        db_user.end_station_id = station_id
+    db.commit()
+    db.refresh(db_user)
+    return db_user
