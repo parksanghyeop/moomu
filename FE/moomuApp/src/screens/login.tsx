@@ -3,19 +3,56 @@ import {
     View,
     TextInput,
     StyleSheet,
+    NativeSyntheticEvent,
+    TextInputChangeEventData,
 } from 'react-native';
 import Button1 from '../components/button1';
 import axios from "../api/axios";
 import requests from "../api/requests";
 import jwtDecode from 'jwt-decode';
 import * as AsyncStorage from "../utiles/AsyncService"; // 로컬 저장을 위한 AsyncStorage 사용 함수
-import { useNavigation } from '@react-navigation/native';
 
 const Login = (props:any) => {
 
   // 아이디 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const [isusername,setIsusername] = useState<boolean>(false);
+  const [ispassword,setIspassword] = useState<boolean>(false);
+
+  // 아이디 확인
+  const onChangeUsername = ( usernameCurrent : string) => {
+    setPassword(usernameCurrent);
+    setIsusername(true);
+    if(usernameCurrent.length > 0){
+      setIsusername(true);
+    }else {
+      setIsusername(false);
+    }
+    // if (!passwordRegex.test(passwordCurrent)) {
+    //   setIspassword(false)
+    // } else {
+    //   setIspassword(true)
+    // }
+  }
+
+  // 비밀번호 확인
+  const onChangePassword = ( passwordCurrent : string) => {
+    //const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/
+    setPassword(passwordCurrent);
+    if(passwordCurrent.length > 0){
+      setIspassword(true);
+    }else {
+      setIspassword(false);
+    }
+    
+    // if (!passwordRegex.test(passwordCurrent)) {
+    //   setIspassword(false)
+    // } else {
+    //   setIspassword(true)
+    // }
+  }
 
   // 로그인 버튼 onPress
   const loginbutton = () => {
@@ -31,8 +68,9 @@ const Login = (props:any) => {
       AsyncStorage.storeData("token",token);
       const decoded = jwtDecode(token);
       // console.log(decoded);
-      
-      props.navigation.navigate('Main');
+      props.navigation.reset({routes: [{name: 'Main'}]});
+
+      // props.navigation.navigate('Main');
     })
     .catch((error) => {
       console.log(error);
@@ -41,9 +79,9 @@ const Login = (props:any) => {
 
   return (
     <View style={styles.container3}>
-      <TextInput style={styles.input} placeholder='아이디' onChangeText={(text) => setUsername(text)}></TextInput>
-      <TextInput style={styles.input} placeholder='비밀번호' onChangeText={(text) => setPassword(text)}></TextInput>
-      <Button1 text={'로그인'} onPress={loginbutton} ></Button1>
+      <TextInput style={styles.input} placeholder='   아이디' onChangeText={(text) => onChangePassword(text)}></TextInput>
+      <TextInput style={styles.input} placeholder='   비밀번호' onChangeText={(text) => onChangeUsername(text)}></TextInput>
+      <Button1 text={'로그인'} onPress={loginbutton} disabled={!(isusername && ispassword)} ></Button1>
     </View>
   );
 };
@@ -52,6 +90,7 @@ const styles = StyleSheet.create({
   container3: {
     flex:1,
     margin: 10,
+    alignItems:'center',
   },
   input: {
     width: 219,

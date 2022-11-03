@@ -5,6 +5,8 @@ const requests = {
 
   // 회원가입
   register: "users/register",
+  // 지역조회
+  regions: "regions",
   // 셔틀버스
   shuttlebus: "shuttlebus/bus",
   shuttlebus_notion: "shuttlebus/bus/",
