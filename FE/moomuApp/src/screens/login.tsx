@@ -36,10 +36,10 @@ const Login = (props: any) => {
         // console.log(decoded);
 
         // 푸시알림 토큰 세팅
-        registerForPushNotificationsAsync().then((token) =>
-          AsyncStorage.storeData("expoToken", token)
-        );
-        set_expoToken();
+        registerForPushNotificationsAsync().then((token) => {
+          AsyncStorage.storeData("expoToken", token);
+          set_expoToken(token);
+        });
         props.navigation.navigate("Main");
       })
       .catch((error) => {
@@ -47,25 +47,27 @@ const Login = (props: any) => {
       });
   };
 
-  const set_expoToken = () => {
-    AsyncStorage.getData("expoToken").then((value) => {
-      axios
-        .post(
-          requests.set_expoToken,
-          {
-            expoToken: value,
+  const set_expoToken = async (expo_token: any) => {
+    const token = await AsyncStorage.getData("token");
+    axios
+      .post(
+        requests.expo_token,
+        {
+          expo_token: "3920eioejrt",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
           },
-          {
-            headers: { "Content-Type": `application/json` },
-          }
-        )
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    });
+        }
+      )
+      .then((response) => {
+        console.log("토큰 세팅 리스폰스", response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   async function registerForPushNotificationsAsync() {

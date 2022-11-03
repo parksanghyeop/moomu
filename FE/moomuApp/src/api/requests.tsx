@@ -10,7 +10,7 @@ const requests = {
   shuttlebus_notion: "shuttlebus/bus/",
 
   // 푸시알림 토큰
-  set_expoToken: "users/set_expoToken",
+  expo_token: "users/expo_token",
 };
 
 export default requests;
