@@ -137,4 +137,4 @@ def create_station_alarm(
     commute_or_leave: CommuteOrLeave,
     db: Session = Depends(get_db),
 ):
-    shuttlebus_crud.create_station_alarm(db, commute_or_leave, station_id, station_name)
+    return shuttlebus_crud.create_station_alarm(db, commute_or_leave, station_id, station_name)

@@ -102,7 +102,7 @@ def create_station_alarm(
         coltype = "[하차]"
         db_users = db.query(User).filter(User.end_station_id == station_id).all()
 
-    alarm_crud.create_alarm_from_event(
+    return alarm_crud.create_alarm_from_event(
         db=db,
         model=Station,
         target_id=station_id,
