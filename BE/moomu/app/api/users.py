@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.db.crud import user_crud
-from app.db.schemas import UserCreate, User, UserLogin
 from app.db.schemas.user import UserUpdate, UserStation
+from app.db.schemas import UserCreate, User, UserLogin, ExpoToken
 from app.dependencies import get_db
 import bcrypt
 
@@ -101,13 +101,14 @@ def auth_token(
 
 
 @router.post("/expo_token")
-def expo_token(
-    expo_token: str,
+def update_expo_token(
+    expo_token: ExpoToken,
     db: Session = Depends(get_db),
     payload: dict = Depends(validate_token),
 ):
-    user_id = payload.get("id")
-    db_user = user_crud.update_expo_token(db, user_id, expo_token)
+    print(expo_token.expo_token)
+    user_id = 2
+    db_user = user_crud.update_expo_token(db, user_id, expo_token.expo_token)
     if db_user is None:
         raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
     return {"message": "토큰이 등록되었습니다."}
@@ -132,7 +133,9 @@ def get_exists_user(
 
 
 @router.get("/station", response_model=UserStation)
-def get_user_station(db: Session = Depends(get_db), payload: dict = Depends(validate_token)):
+def get_user_station(
+    db: Session = Depends(get_db), payload: dict = Depends(validate_token)
+):
     user_id = payload.get("id")
     db_user = user_crud.get_user(db, user_id=user_id)
     if db_user is None:

@@ -38,3 +38,7 @@ class UserStation(StationBase):
 
     class Config:
         orm_mode = True
+
+
+class ExpoToken(BaseModel):
+    expo_token: str
