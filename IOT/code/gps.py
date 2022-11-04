@@ -1,32 +1,43 @@
-from re import I
 import serial
 import redis
 import time
 import traceback
+import pygame
+import asyncio
+from api.commuteOrLeave import CommuteOrLeave
+from haversine import haversine
+from api.api import get_station_list, send_station_alarm
+
 
 global lat_q, lng_q
 lat_q = [0] * 5
 lng_q = [0] * 5
+k = 0
+i = 0
+bus_name = "1호차"
 
-def redis_connect():
+
+async def redis_connect():
     try:
         global r
         r = redis.Redis(host="k7b202.p.ssafy.io", port=6379, db=0)
     except Exception:
         print(traceback.format_exc())
 
-def SER_connect():
+
+async def SER_connect():
     while True:
         try:
             global SER
-            SER = serial.Serial('/dev/ttyUSB0', 9600)
+            SER = serial.Serial("/dev/ttyUSB0", 9600)
             time.sleep(3)
             print("connect Success")
             break
         except:
             continue
 
-def get_lat_lng():
+
+async def get_lat_lng():
     global gpiostr, lat_decode, lng_decode
     gpiostr = ""
     while True:
@@ -34,23 +45,34 @@ def get_lat_lng():
             bytes = SER.read()
         except:
             continue
-        decode_bytes = str(bytes, 'utf-8')
+        decode_bytes = str(bytes, "utf-8")
         if decode_bytes == "$":
             gpiostr = ""
         gpiostr = gpiostr + decode_bytes
-        if decode_bytes == '\r':
+        if decode_bytes == "\r":
+            # if True:
+            #     gpiostr = "$GPGGA,083409.000,3621.2809,N,12717.8905"
             if gpiostr.startswith("$GPGGA"):
-                gpiostr_string = gpiostr.split(',')
+                gpiostr_string = gpiostr.split(",")
                 lat = gpiostr_string[2]
                 lng = gpiostr_string[4]
                 if lat == "" or lng == "":
                     continue
-                lat_decode = int(lat[0:2]) + int(lat[2:4])/60 + (int(lat[5:])/10000)/60 
-                lng_decode = int(lng[0:3]) + int(lng[3:5])/60 + (int(lng[6:])/10000)/60 
+                lat_decode = (
+                    int(lat[0:2]) + int(lat[2:4]) / 60 + (int(lat[5:]) / 10000) / 60
+                )
+                lng_decode = (
+                    int(lng[0:3]) + int(lng[3:5]) / 60 + (int(lng[6:]) / 10000) / 60
+                )
+                print("==========lat,lng_decode===========")
+                print((lat_decode, lng_decode))
                 break
 
-def get_avg(i: int):
-    global lat_avg, lng_avg
+
+async def get_avg():
+    global lat_avg, lng_avg, i
+    if lat_decode is None or lng_decode is None:
+        return
     lat_q[i] = lat_decode
     lng_q[i] = lng_decode
     a = 0
@@ -65,26 +87,83 @@ def get_avg(i: int):
         if lng_q[j] == 0:
             continue
         lng_sum += lng_q[j]
-    lat_avg = lat_sum/a
-    lng_avg = lng_sum/a
+    lat_avg = lat_sum / a
+    lng_avg = lng_sum / a
+    print("==========lat,lng_avg===========")
+    print((lat_avg, lng_avg))
 
-def pub_msg():
-    msg =f"{{\"lat\": \"" + str(lat_avg) + "\",\"lng\": \"" + str(lng_avg) + "\"}"
+
+async def pub_msg():
+    if lat_avg is None or lng_avg is None:
+        return
+    msg = f'{{"lat": "' + str(lat_avg) + '","lng": "' + str(lng_avg) + '"}'
     print(msg)
-    r.publish(channel="1호차", message=msg)
+    r.publish(channel=bus_name, message=msg)
 
-def main():
-    redis_connect()
-    SER_connect()
+
+async def send_msg():
     global i
-    i = 0
     while True:
-        get_lat_lng()
-        get_avg(i)
+        await get_lat_lng()
+        await get_avg()
+        await pub_msg()
+        await asyncio.sleep(0.5)
         i = i + 1
-        if i==5:
-            i=0
-        pub_msg()
+        if i == 5:
+            i = 0
+
+
+async def get_station():
+    global bus_name, station_list, commute_or_leave
+    now = time.localtime().tm_hour
+    if now >= 12 and now <= 24:
+        commute_or_leave = CommuteOrLeave.LEAVE
+    else:
+        commute_or_leave = CommuteOrLeave.COMMUTE
+    station_list = get_station_list(bus_name, commute_or_leave)
+    print(station_list)
+
+
+async def check_station_dist():
+    global k, file_name
+    station = station_list[k]
+    station_pos = (float(station["lat"]), float(station["lng"]))
+    print(station_pos)
+    station_id = int(station["id"])
+    station_name = station["name"]
+    if lat_avg is None or lng_avg is None:
+        return
+    bus_pos = (lat_avg, lng_avg)
+    print(haversine(station_pos, bus_pos, "m"))
+    if haversine(station_pos, bus_pos, "m") < 500:
+        k = k + 1
+        if send_station_alarm(station_id, station_name, commute_or_leave) > 0:
+            exist = "T"
+        else:
+            exist = "F"
+        file_name = "./mp3/" + commute_or_leave + "_" + exist + ".wav"
+        music(file_name)
+
+
+async def repeat():
+    while True:
+        await check_station_dist()
+        await asyncio.sleep(0.5)
+        if k == len(station_list):
+            break
+
+
+def music(file_name: str):
+    pygame.mixer.init()
+    pygame.mixer.music.set_volume(1.0)
+    pygame.mixer.music.load(file_name)
+    pygame.mixer.music.play()
+
+
+async def main():
+    await asyncio.gather(redis_connect(), SER_connect(), get_station())
+    await asyncio.gather(send_msg(), repeat())
+
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
