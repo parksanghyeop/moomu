@@ -23,8 +23,6 @@ def create_alarm(db: Session, alarm: AlarmCreate):
 def create_alarm_from_event(
     db: Session, model: models.Base, target_id: int, content: str, db_users: list
 ):
-
-    print(db_users)
     alarm_type = model.__tablename__
     if isinstance(db_users, list):
         for user in db_users:
