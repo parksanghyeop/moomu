@@ -26,23 +26,5 @@ const Logout = () => {
 export default Logout;
 
 
-// const logoutbutton = () => {
-//     Alert.alert(
-//       "로그아웃",
-//       "정말로 로그아웃 하시겠습니까?",
-//       [
-//         {
-//           text:"예",
-//           onPress: () => console.log("확인"),
-//         },
-//         { 
-//           text: "아니오", 
-//           onPress: () => console.log("취소"),
-//           style:"cancel",
-//          }, 
-//       ],
-//       {cancelable:false}
-//     );
-//   }
 
 
