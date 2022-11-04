@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Alert } from 'react-native';
 import Footer from '../components/footer';
 import Button2 from '../components/button2';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -36,7 +36,26 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
       <Button1
         text={'로그아웃'}
         onPress={() => {
-          Logout()
+          Alert.alert(
+            "로그아웃",
+            "정말로 로그아웃 하시겠습니까?",
+            [
+              {
+                text:"예",
+                onPress: () =>
+                Logout(),
+               // console.log("확인"),
+              
+              },
+              { 
+                text: "아니오", 
+                onPress: () => RootNavigation.navigate('Mainr'),
+                style:"cancel",
+               }, 
+            ],
+            {cancelable:false}
+          );
+         
         }}
       />
       <Button2
@@ -107,3 +126,6 @@ const styles = StyleSheet.create({
 });
 
 export default MainScreen;
+
+const logoutbutton = () => {
+  }
