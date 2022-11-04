@@ -48,7 +48,10 @@ async def get_lat_lng():
         decode_bytes = str(bytes, "utf-8")
         if decode_bytes == "$":
             gpiostr = ""
+        gpiostr = gpiostr + decode_bytes
         if decode_bytes == "\r":
+            # if True:
+            #     gpiostr = "$GPGGA,083409.000,3621.2809,N,12717.8905"
             if gpiostr.startswith("$GPGGA"):
                 gpiostr_string = gpiostr.split(",")
                 lat = gpiostr_string[2]
@@ -118,6 +121,7 @@ async def get_station():
     else:
         commute_or_leave = CommuteOrLeave.COMMUTE
     station_list = get_station_list(bus_name, commute_or_leave)
+    print(station_list)
 
 
 async def check_station_dist():
@@ -151,6 +155,7 @@ async def repeat():
 
 def music(file_name: str):
     pygame.mixer.init()
+    pygame.mixer.music.set_volume(1.0)
     pygame.mixer.music.load(file_name)
     pygame.mixer.music.play()
 
