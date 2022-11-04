@@ -16,6 +16,7 @@ export const loadRoute = createAsyncThunk("get route", async (busId) => {
   let dummy = [];
   const url = `https://k7b202.p.ssafy.io/api/shuttlebus/bus/${busId.id}`;
   const pget = await axios.get(url);
+  console.log(pget);
   for (var loc in pget.data.stations) {
     const data = pget.data.stations[loc];
     const mapLoc = new naver.maps.LatLng(data.lat, data.lng);
