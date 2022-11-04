@@ -1,103 +1,103 @@
-import React, {useState,useEffect} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  SafeAreaView,
-} from 'react-native';
-import { StackScreenProps } from "@react-navigation/stack";
-import { RootStackParamList} from "../types/StackNavigation"; 
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native';
+import { StackScreenProps } from '@react-navigation/stack';
+import { RootStackParamList } from '../types/StackNavigation';
 import Footer from '../components/footer';
 import axios from '../api/axios';
 import requests from '../api/requests';
 import Mapsvg from '../../assets/icons/map.svg';
+import * as RootNavigation from '../../RootNavigation';
 
-type StationScreenProps = StackScreenProps<RootStackParamList,"Station"> 
+type StationScreenProps = StackScreenProps<RootStackParamList, 'Station'>;
 
 interface station {
-  bus_id : number,
-  name : string,
-  lat : string,
-  lng : string,
-  order : number,
-  arrived_time : string,
-  id : number
-};
+  bus_id: number;
+  name: string;
+  lat: string;
+  lng: string;
+  order: number;
+  arrived_time: string;
+  id: number;
+}
 
 const DATA = [
-  { 
-    bus_id : 1,
-    name : "한남오거리",
-    lat : "36.1235",
-    lng : "121.42356",
-    order : 1,
-    arrived_time : "07:45",
-    id : 1
+  {
+    bus_id: 1,
+    name: '한남오거리',
+    lat: '36.1235',
+    lng: '121.42356',
+    order: 1,
+    arrived_time: '07:45',
+    id: 1,
   },
-  { 
-    bus_id : 1,
-    name : "재뜰네거리",
-    lat : "36.13589",
-    lng : "121.48431",
-    order : 2,
-    arrived_time : "07:55",
-    id : 2
+  {
+    bus_id: 1,
+    name: '재뜰네거리',
+    lat: '36.13589',
+    lng: '121.48431',
+    order: 2,
+    arrived_time: '07:55',
+    id: 2,
   },
-  { 
-    bus_id : 1,
-    name : "정부청사역",
-    lat : "36.13589",
-    lng : "121.48431",
-    order : 3,
-    arrived_time : "07:55",
-    id : 3
-  }
+  {
+    bus_id: 1,
+    name: '정부청사역',
+    lat: '36.13589',
+    lng: '121.48431',
+    order: 3,
+    arrived_time: '07:55',
+    id: 3,
+  },
 ];
 
-const Item = ( {name} : {name:string}) => (
+const Item = ({ name }: { name: string }) => (
   <View style={styles.item}>
     <Text style={styles.title}>{name}</Text>
   </View>
 );
 
 const StationScreen: React.FC<StationScreenProps> = (props) => {
-
-  const [stationList,setStationList] = useState<station[]>();
+  const [stationList, setStationList] = useState<station[]>();
 
   useEffect(() => {
     (async () => {
-        // 토큰 해석
-        
-        // JWT
+      // 토큰 해석
 
-        axios.get(requests.shuttlebus_notion+props.route.params.bus_id, {
-        })
+      // JWT
+
+      axios
+        .get(requests.shuttlebus_notion + props.route.params.bus_id, {})
         .then((response) => {
           setStationList(response.data.stations);
           // console.log(stationList);
-          
         })
         .catch((error) => {
           console.log(error);
-          
-        })
-
+        });
     })();
   }, []);
 
-  const renderItem = ( {item} : {item : station}) => <Item name={item.name} />;
+  const renderItem = ({ item }: { item: station }) => <Item name={item.name} />;
 
   return (
-    <View style={styles.container}> 
+    <View style={styles.container}>
       <SafeAreaView style={styles.container2}>
         <Text>{props.route.params.name}</Text>
-        <Mapsvg style={[{width:27, height:24}]} onPress={() => {props.navigation.navigate('BusMap')}} />
+        <Mapsvg
+          style={[{ width: 27, height: 24 }]}
+          onPress={() => {
+            RootNavigation.navigate('busMap');
+          }}
+        />
       </SafeAreaView>
       <View>
-        <FlatList data={stationList} renderItem={renderItem} keyExtractor={item => item.id.toString()} />
+        <FlatList
+          data={stationList}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+        />
       </View>
-      <Footer/>
+      <Footer />
     </View>
   );
 };

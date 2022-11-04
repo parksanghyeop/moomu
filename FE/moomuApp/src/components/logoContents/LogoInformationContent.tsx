@@ -1,14 +1,15 @@
-import React from "react";
-import { StyleSheet, Image, View, Text, ImageBackground } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import React from 'react';
+import { StyleSheet, Image, View, Text, ImageBackground } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import * as RootNavigation from '../../../RootNavigation';
 
 const LogoInformationContent = (props: any) => {
   return (
     <Text
       style={styles.logoContent}
       onPress={() => {
-        console.log("clicked");
-        props.navigation.navigate("Information");
+        console.log('clicked');
+        RootNavigation.navigate('Information');
       }}
     >
       <FontAwesome name="check" size={14} />
@@ -19,8 +20,8 @@ const LogoInformationContent = (props: any) => {
 
 const styles = StyleSheet.create({
   logoContent: {
-    color: "#63B3ED",
-    textAlign: "center",
+    color: '#63B3ED',
+    textAlign: 'center',
     marginTop: 20,
     fontSize: 16,
   },
