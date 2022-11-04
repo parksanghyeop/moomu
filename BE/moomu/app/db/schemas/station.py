@@ -1,5 +1,4 @@
-from datetime import time
-from pydantic import BaseModel
+from pydantic import BaseModel, typing
 
 
 class StationBase(BaseModel):
@@ -8,7 +7,7 @@ class StationBase(BaseModel):
     lat: str
     lng: str
     order: int
-    arrived_time: time
+    arrived_time: typing.Any
 
 
 class StationCreate(StationBase):
