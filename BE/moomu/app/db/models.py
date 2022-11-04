@@ -80,7 +80,7 @@ class Station(Base):
     __tablename__ = "station"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String(50), unique=True, index=True, nullable=False)
+    name = Column(String(50), index=True, nullable=False)
     bus_id = Column(Integer, ForeignKey("bus.id", ondelete="CASCADE"))
     lat = Column(String(50), nullable=False)
     lng = Column(String(50), nullable=False)
