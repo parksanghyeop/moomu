@@ -28,7 +28,7 @@ export const staionSlice = createSlice({
       const station08 = new naver.maps.LatLng(36.3917, 127.3151);
       let tmpStations = [location, station01, station02, station03, station04, station05, station06, station07, station08];
       for (var loc in tmpStations) {
-        const newItem = { stationLatLng: tmpStations[loc], staionName: "testtesttesttest", id: state.stations.length };
+        const newItem = { stationLatLng: tmpStations[loc], stationName: "testtesttesttest", id: state.stations.length };
         state.stations.push(newItem);
       }
       // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");

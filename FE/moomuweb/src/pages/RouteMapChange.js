@@ -5,8 +5,8 @@ import "./RouteMap.css";
 import Modal from "../componentes/modal";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { loadRoute, stationDown, staionUp, deleteStation, addStation, updateRoute } from "../reducers/stationSlice";
-import { useParams } from "react-router-dom";
+import { loadRoute, stationDown, staionUp, deleteStation, addStation, updateRoute, reload } from "../reducers/stationSlice";
+import { useParams, useNavigation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretUp, faSortUp, faCaretDown, faSortDown, faTrash } from "@fortawesome/free-solid-svg-icons";
 
@@ -26,6 +26,7 @@ function RouteMap() {
   const dataFetchedRef = useRef(false);
   const isLoaded = useSelector((state) => state.station.isLoaded);
   const stationInfos = useSelector((state) => state.station.stations);
+  const busName = useSelector((state) => state.station.routeName);
   const params = useParams();
   const [modalOpen, setModalOpen] = useState(false);
   const { naver } = window;
@@ -64,6 +65,16 @@ function RouteMap() {
   const staticMapUrl = function (coordinate, level) {
     return `/map-static/v2/raster?w=300&h=300&markers=type:d|size:mid|pos:${coordinate.x}%20${coordinate.y}&center=${coordinate.x},${coordinate.y}&level=${level}`;
   };
+
+  window.addEventListener("beforeunload", function (e) {
+    e.preventDefault();
+    e.returnValue = "";
+    dispatch(reload());
+  });
+
+  useEffect(() => {
+    return () => dispatch(reload());
+  }, [useNavigation]);
 
   useEffect(() => {
     if (dataFetchedRef.current) return;
@@ -226,14 +237,14 @@ function RouteMap() {
           {btnText}
         </button>
       </Modal>
-      <p className="bodyTitle "> 전체 노선 관리 </p>
+      <p className="bodyTitle "> {busName} 노선 관리 </p>
       <div className="mapContainer">
         <div className="routeContainer">
           <ul className="steps steps-vertical">
             {stationInfos.map((station) => {
               return (
                 <li className="step step-primary" key={station.id}>
-                  <span className="staionName">{station.staionName}</span>
+                  <span className="stationName">{station.stationName}</span>
                   <div className="updownBtnFrame">
                     <FontAwesomeIcon
                       icon={faCaretUp}
