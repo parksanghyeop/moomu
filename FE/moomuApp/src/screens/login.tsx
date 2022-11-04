@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   TextInput,
@@ -16,6 +16,7 @@ import * as AsyncStorage from '../utiles/AsyncService'; // 로컬 저장을 위�
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import * as RootNavigation from '../../RootNavigation';
+import instance from '../api/axios';
 
 const Login = (props: any) => {
   // 아이디
@@ -78,6 +79,35 @@ const Login = (props: any) => {
         const decoded = jwtDecode(token);
         // console.log(decoded);
 
+        // 푸시알림 토큰 세팅
+        registerForPushNotificationsAsync().then((expo_token) => {
+          AsyncStorage.storeData('expoToken', expo_token);
+
+          AsyncStorage.getData('expoToken').then((expo_token) => {
+            // console.log('expoToken', expoToken);
+            // 푸시알림 토큰 서버에 저장
+            console.log('asyncStore 엑스포토큰', expo_token);
+            instance
+              .post(
+                requests.expo_token,
+                {
+                  expo_token: expo_token,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': `application/json`,
+                  },
+                }
+              )
+              .then((response) => {
+                console.log('토큰 서버에 저장 완료');
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          });
+        });
         RootNavigation.navigate('Main');
       })
       .catch((error) => {
