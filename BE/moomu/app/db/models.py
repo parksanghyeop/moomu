@@ -85,7 +85,7 @@ class Station(Base):
     lat = Column(String(50), nullable=False)
     lng = Column(String(50), nullable=False)
     order = Column(Integer, nullable=False)
-    arrived_time = Column(TIME, nullable=False)
+    arrived_time = Column(TIME, nullable=True)
 
     bus = relationship("Bus", back_populates="bus_stations")
     start_users = relationship(
