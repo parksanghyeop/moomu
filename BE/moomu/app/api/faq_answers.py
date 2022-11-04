@@ -8,7 +8,7 @@ from app.service.jwt_service import validate_token
 
 router = APIRouter(
     prefix="/faq/answer",
-    tags=["faq-answers"],
+    tags=["faq-answer"],
     responses={404: {"description": "Not found"}},
 )
 
