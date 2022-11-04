@@ -8,6 +8,7 @@ export type RootStackParamList = {
   Station: {
     bus_id: number;
     name: string;
+    commute_or_leave: string;
   };
   Main: undefined;
   BusSearch: undefined;

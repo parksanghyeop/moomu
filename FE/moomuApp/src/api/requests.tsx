@@ -5,6 +5,10 @@ const requests = {
 
   // 회원가입
   register: "users/register",
+  // 사용자 셔틀버스 조회/수정/삭제
+  station: "users/station",
+  station_edit: "users/station/edit",
+  station_delete: "users/station/dleate",
   // 지역조회
   regions: "regions",
   // 셔틀버스

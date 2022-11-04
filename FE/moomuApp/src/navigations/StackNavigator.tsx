@@ -34,7 +34,7 @@ const StackNavigator = () => {
       <Stack.Screen name="Information" component={InformationScreen} />
       <Stack.Screen name="Main" component={MainScreen} />
       <Stack.Screen name="BusMap" component={BusMapScreen} />
-      <Stack.Screen name="Station" component={StationScreen} />
+      <Stack.Screen name="Station" component={StationScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Notification" component={NotificationScreen} />
     </Stack.Navigator>
   );
