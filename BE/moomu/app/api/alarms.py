@@ -4,6 +4,7 @@ from app.db.crud import alarm_crud, page_crud
 from app.db.schemas import AlarmCreate, Alarm, Page
 from app.db import models
 from app.dependencies import get_db
+from app.service.jwt_service import validate_token
 
 
 router = APIRouter(
@@ -13,20 +14,27 @@ router = APIRouter(
 )
 
 
-@router.get("", response_model=Page)
-def get_alarms(page: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    return page_crud.page(db, models.Alarm, page, limit)
+@router.get("", response_model=list[Alarm])
+def get_alarms_by_user(
+    db: Session = Depends(get_db), payload: dict = Depends(validate_token)
+):
+    print("hi")
+    user_id = payload.get("id")
+    db_alarms = alarm_crud.get_alarms_by_user(db, user_id=user_id)
+    return db_alarms
 
 
-@router.get("/{alarm_id}", response_model=Alarm)
-def get_alarm(alarm_id: int, db: Session = Depends(get_db)):
-    db_alarm = alarm_crud.get_alarm(db, alarm_id=alarm_id)
-    if db_alarm is None:
-        raise HTTPException(status_code=404, detail="알람을 찾을 수 없습니다.")
-    return db_alarm
+@router.delete("")
+def delete_alarms_by_user(
+    db: Session = Depends(get_db), payload: dict = Depends(validate_token)
+):
+    user_id = payload.get("id")
+    return alarm_crud.delete_alarms_by_user(db, user_id=user_id)
 
 
-@router.post("/register")
-def create_alarm(alarm: AlarmCreate, db: Session = Depends(get_db)):
-    alarm_crud.create_alarm(db=db, alarm=alarm)
-    return {"message": "알람이 등록되었습니다."}
+@router.put("")
+def update_read_alarm_by_user(
+    db: Session = Depends(get_db), payload: dict = Depends(validate_token)
+):
+    user_id = payload.get("id")
+    return alarm_crud.update_read_alarm_by_user(db, user_id=user_id)
