@@ -7,14 +7,38 @@ import { RootStackParamList } from '../types/StackNavigation';
 import { Logo3 } from '../components/logo';
 
 import * as RootNavigation from '../../RootNavigation';
+import Button1 from '../components/button1';
+import Logout from './logout';
+import * as AsyncStorage from '../utiles/AsyncService'; 
 
 type MainScreenProps = StackScreenProps<RootStackParamList, 'Main'>;
 
+let token : string;
+let decoded : jwt;
+AsyncStorage.getData("token").then((response) => {
+  token = response;
+});
+
+interface jwt {
+  exp : number,
+  id : number,
+  nickname : string,
+  region : number,
+  role : number
+}
+
 const MainScreen: React.FC<MainScreenProps> = (props) => {
+
   return (
     <View style={styles.container}>
       <Logo3 content="main" navigation={props.navigation} />
       <Text style={styles.text1}>김싸피</Text>
+      <Button1
+        text={'로그아웃'}
+        onPress={() => {
+          Logout()
+        }}
+      />
       <Button2
         text={'노선조회'}
         onPress={() => {
