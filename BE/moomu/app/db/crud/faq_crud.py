@@ -23,7 +23,7 @@ def create_faq(db: Session, faq: FaQCreate):
     db.refresh(db_faq)
 
     # 관리자 계정에게 알림 전송
-    db_users = db.query(models.User).filter(models.User.user_role == 1).all()
+    db_users = db.query(models.User).filter(models.User.user_role != 0).all()
 
     alarm_crud.create_alarm_from_event(
         db=db,

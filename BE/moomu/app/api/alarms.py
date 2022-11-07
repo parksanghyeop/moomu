@@ -18,13 +18,12 @@ router = APIRouter(
 def get_alarms_by_user(
     db: Session = Depends(get_db), payload: dict = Depends(validate_token)
 ):
-    print("hi")
     user_id = payload.get("id")
     db_alarms = alarm_crud.get_alarms_by_user(db, user_id=user_id)
     return db_alarms
 
 
-@router.delete("")
+@router.delete("/delete/all")
 def delete_alarms_by_user(
     db: Session = Depends(get_db), payload: dict = Depends(validate_token)
 ):
@@ -32,9 +31,29 @@ def delete_alarms_by_user(
     return alarm_crud.delete_alarms_by_user(db, user_id=user_id)
 
 
-@router.put("")
+@router.delete("/delete/{alarm_id}")
+def delete_alarm_by_id(
+    alarm_id: int,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(validate_token),
+):
+    user_id = payload.get("id")
+    return alarm_crud.delete_alarm_by_id(db, alarm_id=alarm_id, user_id=user_id)
+
+
+@router.put("/read/all")
 def update_read_alarm_by_user(
     db: Session = Depends(get_db), payload: dict = Depends(validate_token)
 ):
     user_id = payload.get("id")
-    return alarm_crud.update_read_alarm_by_user(db, user_id=user_id)
+    return alarm_crud.update_read_alarms_all_by_user
+
+
+@router.put("/read/{alarm_id}")
+def update_read_alarm_by_id(
+    alarm_id: int,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(validate_token),
+):
+    user_id = payload.get("id")
+    return alarm_crud.update_read_alarm_by_id(db, alarm_id=alarm_id, user_id=user_id)
