@@ -14,4 +14,5 @@ export type RootStackParamList = {
   Information: undefined;
   FAQ: undefined;
   Notification: undefined;
+  Setting: undefined;
 };
