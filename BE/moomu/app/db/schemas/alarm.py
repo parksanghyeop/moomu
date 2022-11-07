@@ -5,7 +5,8 @@ class AlarmBase(BaseModel):
     content: str
     read: bool
     user_id: int
-    alarm_type: int
+    alarm_type: str
+    created_date: str
     target_id: int
 
 
@@ -26,4 +27,3 @@ class Alarm(AlarmBase):
 
     class Config:
         orm_mode = True
-
