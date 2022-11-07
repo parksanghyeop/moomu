@@ -22,6 +22,7 @@ import Animated, {
     withSpring,
     withTiming,
 } from 'react-native-reanimated';
+import { ToggleBtn } from '../components/ToggleBtn';
 
 type LoginSignUpScreenProps = StackScreenProps<
     RootStackParamList,
@@ -60,47 +61,11 @@ const LoginSignUpScreen: React.FC<LoginSignUpScreenProps> = (props) => {
                 <Logo2 />
             </View>
             <View style={styles.container2}>
-                <Text style={[styles.text, { width: 53, height: 19 }]}>
-                    LOGIN
-                </Text>
-                <View
-                    style={{
-                        width: 54,
-                        height: 3,
-                        backgroundColor: '#63B3ED',
-                        marginLeft: 12,
-                        marginRight: 4,
-                        marginVertical: 8,
-                        borderRadius: 10,
-                    }}
-                >
-                    <Animated.View
-                        style={[
-                            {
-                                position: 'relative',
-                                bottom: 8,
-                            },
-                            animatedStyles,
-                        ]}
-                    >
-                        <TouchableOpacity
-                            activeOpacity={1}
-                            style={{
-                                width: 19,
-                                height: 19,
-                                borderRadius: 100 / 2,
-                                backgroundColor: '#63B3ED',
-                            }}
-                            onPress={toggle}
-                        />
-                    </Animated.View>
-                </View>
-
-                {/* <Switch style={styles.toggle} onValueChange={toggle} value={condition}></Switch> */}
-                <Text style={[styles.text, { width: 72, height: 15 }]}>
-                    SIGN UP
-                </Text>
+                <Text style={[styles.text, { width: 72 }]}>LOGIN</Text>
+                <ToggleBtn toggle={isLogin} setToggle={setIsLogin} />
+                <Text style={[styles.text, { width: 72 }]}>SIGNUP</Text>
             </View>
+
             {renderConditionInput}
             <Footer />
         </View>
@@ -130,8 +95,6 @@ const styles = StyleSheet.create({
         /* BLUE 500 */
         color: '#3182CE',
     },
-    toggle: {},
-    circleSignup: {},
 });
 
 export default LoginSignUpScreen;
