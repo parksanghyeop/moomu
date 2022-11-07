@@ -5,7 +5,7 @@ import "./RouteMap.css";
 import Modal from "../componentes/modal";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { loadRoute, stationDown, staionUp, deleteStation, addStation, updateRoute, reload } from "../reducers/stationSlice";
+import { loadRoute, stationDown, staionUp, deleteStation, addStation, updateStation, updateRoute, reload } from "../reducers/stationSlice";
 import { useParams, useNavigation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretUp, faSortUp, faCaretDown, faSortDown, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -19,8 +19,9 @@ function RouteMap() {
   const [delStation, setDelstation] = useState(null);
   const [newStation, setNewstation] = useState({});
   const [newStationName, setNewstationName] = useState("");
+  const [arrived_time, setArrivedTime] = useState("08:30");
   const [map, setNaverMap] = useState({});
-  const [markers, setmaker] = useState([]);
+  const [markers, setMarkers] = useState([]);
   const dispatch = useDispatch();
   const mapElement = useRef(null);
   const dataFetchedRef = useRef(false);
@@ -29,6 +30,8 @@ function RouteMap() {
   const busName = useSelector((state) => state.station.routeName);
   const params = useParams();
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen2, setModalOpen2] = useState(false);
+  const [targetMarker, setTarget] = useState(-1);
   const { naver } = window;
 
   const openModal = () => {
@@ -36,6 +39,12 @@ function RouteMap() {
   };
   const closeModal = () => {
     setModalOpen(false);
+  };
+  const openModal2 = () => {
+    setModalOpen2(true);
+  };
+  const closeModal2 = () => {
+    setModalOpen2(false);
   };
   const isEmpty = function (val) {
     if (val === "" || val === undefined || val === null || (val !== null && typeof val === "object" && !Object.keys(val).length)) {
@@ -108,10 +117,13 @@ function RouteMap() {
       const newMarker = new naver.maps.Marker({
         position: stationInfos[loc].stationLatLng,
         map: naverMap,
+        title: stationInfos[loc].stationName,
+        arrived_time: stationInfos[loc].arrived_time,
       });
+      naver.maps.Event.addListener(newMarker, "click", markerClick(loc));
       let tmpMarkers = markers;
       tmpMarkers.push(newMarker);
-      setmaker(tmpMarkers);
+      setMarkers(tmpMarkers);
       // console.log(markers, newMarker);
       points.push(convetLatLngCorr(stationInfos[loc].stationLatLng));
     }
@@ -192,17 +204,78 @@ function RouteMap() {
     const cordUrl = staticMapUrl(e.coord, 14);
     getStaticMap2Src(cordUrl, "cordMapImgTag");
   };
+  // "marker click" 함수
+  const markerClick = function (i) {
+    return function (e) {
+      console.log(modalOpen2);
+      setModalHeader("정류장 수정");
+      setbtnText("수정");
+      openModal2();
+      console.log(e);
+      const marker = markers[i];
+      console.log(marker, marker.position);
+      setNewstationName(marker.title);
+      setArrivedTime(marker.arrived_time);
+      setTarget(i);
+      const cordUrl = staticMapUrl(marker.position, 14);
+      getStaticMap2Src(cordUrl, "cordMapImgTag2");
+    };
+  };
 
   return (
     <div className="mapPage">
+      <Modal open={modalOpen2} close={closeModal2} header={modalHeader}>
+        {/* // Modal.js <main> {props.children} </main>에 내용이 입력된다. 리액트 함수형 모달 */}
+        {/* {newCord} */}
+        <label className="input-group input-group-lg justify-center	">
+          <span className="">이름</span>
+          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-3/4 max-w-xs text-center" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
+        </label>
+        <label className="input-group input-group-lg justify-center	">
+          <span className="">도착 시간</span>
+          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
+        </label>
+        <img id="cordMapImgTag2" alt="" />
+        <button
+          className="btn btn-primary mt-3"
+          onClick={() => {
+            // TODO: update station
+            let seq = targetMarker;
+            var tmpMarkers = markers;
+            var marker = tmpMarkers.splice(seq, 1);
+            marker[0].title = newStationName;
+            marker[0].arrived_time = arrived_time;
+            tmpMarkers.splice(seq, 0, marker[0]);
+            setMarkers(tmpMarkers);
+            marker.target = seq;
+            console.log(markers, marker);
+            dispatch(updateStation(marker));
+            closeModal2();
+          }}
+        >
+          {btnText}
+        </button>
+      </Modal>
       <Modal open={modalOpen} close={closeModal} header={modalHeader}>
         {/* // Modal.js <main> {props.children} </main>에 내용이 입력된다. 리액트 함수형 모달 */}
         {/* {newCord} */}
         {btnDet && (
-          <label className="input-group input-group-lg">
-            <span className="">이름</span>
-            <input type="text" placeholder="Type here" className="input input-bordered input-lg w-full max-w-xs" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
-          </label>
+          <div>
+            <label className="input-group input-group-lg justify-center	">
+              <span className="">이름</span>
+              <input
+                type="text"
+                placeholder="Type here"
+                className="input input-bordered input-lg w-3/4 max-w-xs text-center"
+                value={newStationName}
+                onChange={(e) => setNewstationName(e.target.value)}
+              />
+            </label>
+            <label className="input-group input-group-lg justify-center	">
+              <span className="">도착 시간</span>
+              <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
+            </label>
+          </div>
         )}
         <img id="cordMapImgTag" alt="" />
         <button
@@ -212,14 +285,17 @@ function RouteMap() {
               // TODO: Add station
               let data = newStation;
               data.name = newStationName;
+              data.arrived_time = arrived_time;
               const mapLoc = new naver.maps.LatLng(data.lat, data.lng);
               setNewstation(data);
               console.log(newStation);
               const newMarker = new naver.maps.Marker({
                 position: mapLoc,
                 map: map,
+                title: newStationName,
+                arrived_time: arrived_time,
               });
-              setmaker([...markers, newMarker]);
+              setMarkers([...markers, newMarker]);
               console.log(markers);
               dispatch(addStation(newStation));
               closeModal();

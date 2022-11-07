@@ -27,7 +27,7 @@ function RouteMap() {
   const isLoaded = useSelector((state) => state.station.isLoaded);
   const stationInfos = useSelector((state) => state.station.stations);
   const busName = useSelector((state) => state.station.routeName);
-  const params = useParams();
+  const params = { id: 55 };
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpen2, setModalOpen2] = useState(false);
   const [targetMarker, setTarget] = useState(-1);

@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 
 import "./DashBoard.css";
+import Pagenation from "../componentes/pagination";
 
 function DashBoard() {
   const [isLoading, setLoading] = useState(true);
@@ -83,9 +84,7 @@ function DashBoard() {
           </tbody>
         </table>
       </div>
-      {/* <button className="btn btn-primary btn-xs sm:btn-sm md:btn-md lg:btn-lg logInBtn" onClick={() => addRoute()}>
-        노선 추가
-      </button> */}
+      <Pagenation total={8} limit={10} page={5} setPage={() => {}} />
     </div>
   );
 }

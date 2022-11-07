@@ -20,7 +20,7 @@ export const loadRoute = createAsyncThunk("get route", async (busId) => {
   for (var loc in pget.data.stations) {
     const data = pget.data.stations[loc];
     const mapLoc = new naver.maps.LatLng(data.lat, data.lng);
-    const newItem = { id: loc, stationLatLng: mapLoc, stationName: data.name, stationId: data.id, order: data.order };
+    const newItem = { id: loc, stationLatLng: mapLoc, stationName: data.name, stationId: data.id, order: data.order, arrived_time: data.arrived_time };
     // dummy.push(data);
     dummy.push(newItem);
   }
@@ -44,7 +44,7 @@ export const updateRoute = createAsyncThunk("Update Bus Route", async (busId, { 
       lat: data.stationLatLng._lat,
       lng: data.stationLatLng._lng,
       order: data.order,
-      arrived_time: `7:${data.id}`,
+      arrived_time: data.arrived_time,
     });
   }
   var config = {
@@ -126,7 +126,7 @@ export const staionSlice = createSlice({
       const data = action.payload;
       console.log(data);
       const mapLoc = new naver.maps.LatLng(data.lat, data.lng);
-      const item = { id: state.stations.length, stationLatLng: mapLoc, stationName: data.name, order: state.stations.length };
+      const item = { id: state.stations.length, stationLatLng: mapLoc, stationName: data.name, order: state.stations.length, arrived_time: data.arrived_time };
       state.stations.push(item);
       console.log("This station is added", item);
     },
@@ -134,6 +134,7 @@ export const staionSlice = createSlice({
       const data = action.payload;
       console.log(data);
       state.stations[data.target].stationName = data[0].title;
+      state.stations[data.target].arrived_time = data[0].arrived_time;
     },
   },
   extraReducers: {
