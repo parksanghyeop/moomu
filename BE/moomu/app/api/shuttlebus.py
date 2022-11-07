@@ -1,4 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    status,
+    WebSocket,
+    WebSocketDisconnect,
+)
 from sqlalchemy.orm import Session
 from app.db.crud import shuttlebus_crud
 from app.db.schemas.bus import Bus, BusBase
@@ -7,6 +14,8 @@ from app.dependencies import get_db
 from app.service.shuttlebus_service import bus_near_station
 from app.db.schemas.commute_or_leave import CommuteOrLeave
 from app.service.jwt_service import validate_token
+from redis import Redis
+import asyncio
 
 router = APIRouter(
     prefix="/shuttlebus",
@@ -137,4 +146,41 @@ def create_station_alarm(
     commute_or_leave: CommuteOrLeave,
     db: Session = Depends(get_db),
 ):
-    return shuttlebus_crud.create_station_alarm(db, commute_or_leave, station_id, station_name)
+    return shuttlebus_crud.create_station_alarm(
+        db, commute_or_leave, station_id, station_name
+    )
+
+
+async def receive_message(websocket: WebSocket):
+    await websocket.receive_text()
+
+
+async def broadcast_message(websocket: WebSocket, s: Redis.pubsub):
+    msg = s.get_message(timeout=1)
+    if msg is not None:
+        await websocket.send_text(str(msg["data"]))
+
+
+@router.websocket("/shuttlebus/ws/{bus_name}")
+async def websocket_endpoint(websocket: WebSocket, bus_name: str):
+    await websocket.accept()
+    r = Redis(host="k7b202.p.ssafy.io", port=6379, db=0)
+    s = r.pubsub()
+    s.subscribe(bus_name)
+    try:
+        while True:
+            receive_message_task = asyncio.create_task(receive_message(websocket))
+            broadcast_message_task = asyncio.create_task(
+                broadcast_message(websocket, s)
+            )
+            done, pending = await asyncio.wait(
+                {receive_message_task, broadcast_message_task},
+                return_when=asyncio.FIRST_COMPLETED,
+            )
+            for task in pending:
+                task.cancel()
+            for task in done:
+                task.result()
+    except WebSocketDisconnect:
+        await websocket.close()
+        return
