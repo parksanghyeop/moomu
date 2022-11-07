@@ -73,10 +73,7 @@ const Login = (props: any) => {
       )
       .then((response) => {
         //console.log(response);
-        const token = response.data.access_token;
-        AsyncStorage.storeData('token', token);
-        const decoded = jwtDecode(token);
-        // console.log(decoded);
+        AsyncStorage.storeData('token', response.data.access_token);
 
         RootNavigation.navigate('Main');
       })

@@ -8,7 +8,8 @@ import requests from '../api/requests';
 import Mapsvg from '../../assets/icons/map.svg';
 import * as RootNavigation from '../../RootNavigation';
 import Button1 from '../components/button1';
-import * as AsyncStorage from '../utiles/AsyncService';
+import {LinearGradient } from 'expo-linear-gradient';
+import { LinearTextGradient } from "react-native-text-gradient";
 
 type StationScreenProps = StackScreenProps<RootStackParamList, 'Station'>;
 
@@ -36,8 +37,9 @@ const data : myStation = {
 
 const StationScreen: React.FC<StationScreenProps> = (props) => {
   const [stationList, setStationList] = useState<station[]>();
-  const [select,setSelect] = useState<boolean>(false);
-  const [mystation,setMystation] = useState<myStation>();
+  const [useselect,setUseSelect] = useState<boolean>(false);
+  const [mystation,setMystation] = useState<myStation>({} as myStation);
+  const [co_or_le,setco_or_le] = useState<string>(props.route.params.commute_or_leave);
 
   useEffect(() => {
     (async () => {
@@ -53,60 +55,74 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
         });
       // 승차/하차 등록 지점 조회
       setMystation(data);
-      axios.get(requests.station)
+      await axios.get(requests.station)
         .then((response) => {
             // setMystation(response.data);
-            setMystation(data);
-            console.log(response);
-            console.log(mystation);
+            console.log(response.data);
+            // console.log(mystation);
         })
         .catch((error) => {
-          
           console.log(error);
         });
 
     })();
   }, []);
 
-  const commute_or_leave = select ?
-  <Button1 text={"선택 확정"} onPress={() => setSelect(false)} /> :
-  <Button1 text={"승차지점변경"} onPress={() => setSelect(true)} />
+  const myStationOnpress = (id : any) => {
+    if(id == mystation.start_station_id){
+      setMystation({...mystation,start_station_id : null});
+    }
+    else if(id == mystation.end_station_id){
+      setMystation({...mystation,end_station_id : null});
+    }
+    else if(mystation.start_station_id == null){
+      setMystation({...mystation,start_station_id : id});
+    }
+    else if(mystation.end_station_id == null){
+      setMystation({...mystation,end_station_id : id});
+    }
+  }
+
+  const commute_or_leave = useselect ?
+  <Button1 text={"선택 확정"} onPress={() => setUseSelect(false)} /> :
+  <Button1 text={"승차지점변경"} onPress={() => setUseSelect(true)} />
+
+  const stationSelected = (id : number) => {
+    if((id == mystation.start_station_id) || (id == mystation.end_station_id)){
+      return(<Text style={styles.title}>{co_or_le == "COMMUTE" ? '내 승차지점' : '내 하차지점'}</Text>);
+    }
+    else return;
+  }
 
   const arriveTime = ( arrived_time : any) => {
     if(arrived_time != null){
       return (<Text style={styles.time}>
-        {props.route.params.commute_or_leave == "COMMUTE" ? arrived_time.substring(0,5) : +arrived_time.substring(0,1)-12 + arrived_time.substring(2,5) }
-        {props.route.params.commute_or_leave == "COMMUTE" ? " AM" : " PM"}
-        </Text>);
+        {co_or_le == "COMMUTE" ? arrived_time.substring(0,5) : +arrived_time.substring(0,1)-12 + arrived_time.substring(2,5) }
+        {co_or_le == "COMMUTE" ? " AM" : " PM"}</Text>);
     }
-  }
-
-  const stationSelected = (id : number) => {
-    if(id == mystation?.start_station_id){
-      return(<Text style={[styles.title]}>내 승차지점</Text>);
-    }
-    else if (id == mystation?.end_station_id){
-      return(<Text style={[styles.title]}>내 하차지점</Text>);
-    }else return;
   }
 
   const select_or_selectd = (id : number) => {
-    if(id == mystation?.start_station_id || id == mystation?.end_station_id){
-      return(<Text style={[styles.title,styles.select]}>선택됨</Text>);
+    if(useselect){
+      if(id == mystation.start_station_id){
+        return(<Text style={[styles.title,styles.select]} onPress={() => myStationOnpress(id)}>선택됨</Text>);
+      }
+      else if(id == mystation.end_station_id){
+        return(<Text style={[styles.title,styles.select]} onPress={() => myStationOnpress(id)}>선택됨</Text>);
+      }
+      else{
+        return(<Text style={[styles.title,styles.select]} onPress={() => myStationOnpress(id)}>선택</Text>);
+      }
     }
-    else {
-      return(<Text style={[styles.title,styles.select]}>선택</Text>);
-    };
   }
-
 
   const Item = ({ id,name, arrived_time }: { id:number,name: string, arrived_time : any }) => (
     <View style={styles.item}>
       <Text style={styles.title}>{name}</Text>
-      {arriveTime(arrived_time)}
-      {stationSelected(id)}
+        {arriveTime(arrived_time)}
+        {stationSelected(id)}
 
-      {select_or_selectd(id)}
+        {select_or_selectd(id)}
 
       <View style={styles.circle}/>
 
@@ -128,7 +144,7 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
         />
       </SafeAreaView>
       
-      <View style={[{width: '100%', height: '70%'}]}>
+      <View style={[{left:'1%',width: '99%', height: '70%'}]}>
         <FlatList
           data={stationList}
           renderItem={renderItem}
@@ -178,7 +194,7 @@ const styles = StyleSheet.create({
     color: '#718096',
   },
   line: {
-    height: '80%',
+    height: '83%',
     width: 3,
     position: 'absolute',
     backgroundColor: '#63B3ED',
