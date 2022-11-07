@@ -11,6 +11,7 @@ import Button1 from '../components/button1';
 import Logout from './logout';
 import * as AsyncStorage from '../utiles/AsyncService'; 
 import { AntDesign } from '@expo/vector-icons'; 
+import { Feather } from '@expo/vector-icons'; 
 
 type MainScreenProps = StackScreenProps<RootStackParamList, 'Main'>;
 
@@ -34,6 +35,9 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
     <View style={styles.container}>
       <Logo3 content="main" navigation={props.navigation} />
       <Text style={styles.text1}>김싸피</Text>
+      <Feather style={styles.logoContent} name="settings" size={20}
+      onPress={() => {RootNavigation.navigate('Setting');
+      }}/>
       <AntDesign style={styles.logoContent} name="logout" size={20}
         onPress={() => {
           Alert.alert(

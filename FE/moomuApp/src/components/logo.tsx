@@ -4,6 +4,7 @@ import LogoFaqContent from './logoContents/LogoFaqContent';
 import LogoInformationContent from './logoContents/LogoInformationContent';
 import LogoMainContent from './logoContents/logoMainContent';
 import LogoNotificationContent from './logoContents/LogoNotificationContent';
+import LogoSettingContent from './logoContents/LogoSettingContent';
 
 let big = require('../../assets/images/Logo.png');
 let small = require('../../assets/images/Logo2.jpg');
@@ -22,6 +23,7 @@ export const Logo3 = (props: any) => {
     information: <LogoInformationContent />,
     faq: <LogoFaqContent />,
     notification: <LogoNotificationContent />,
+    setting: <LogoSettingContent/>,
   };
 
   return (
