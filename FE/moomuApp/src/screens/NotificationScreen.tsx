@@ -18,6 +18,34 @@ import Button1 from '../components/button1';
 import { Notification } from '../components/notification';
 import instance from '../api/axios';
 
+const elapsedTime = (date: string) => {
+    const start: any = new Date(date);
+    const end: any = new Date(); // 현재 날짜
+
+    const diff = end - start; // 경과 시간
+
+    const times = [
+        { time: '분', milliSeconds: 1000 * 60 },
+        { time: '시간', milliSeconds: 1000 * 60 * 60 },
+        { time: '일', milliSeconds: 1000 * 60 * 60 * 24 },
+        { time: '개월', milliSeconds: 1000 * 60 * 60 * 24 * 30 },
+        { time: '년', milliSeconds: 1000 * 60 * 60 * 24 * 365 },
+    ].reverse();
+
+    // 년 단위부터 알맞는 단위 찾기
+    for (const value of times) {
+        const betweenTime = Math.floor(diff / value.milliSeconds);
+
+        // 큰 단위는 0보다 작은 소수 단위 나옴
+        if (betweenTime > 0) {
+            return `${betweenTime}${value.time} 전`;
+        }
+    }
+
+    // 모든 단위가 맞지 않을 시
+    return '방금 전';
+};
+
 type NotificationScreenProps = StackScreenProps<
     RootStackParamList,
     'Notification'
@@ -103,11 +131,14 @@ const NotificationScreen: React.FC<NotificationScreenProps> = (props) => {
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Text style={styles.modalText}>
-                            {notification?.alarm_type}
-                        </Text>
-                        <Text style={styles.modalText}>
-                            {notification?.created_date}
+                        <Text
+                            style={{
+                                fontSize: 14,
+                                color: '#000',
+                                marginBottom: 10,
+                            }}
+                        >
+                            {elapsedTime(notification?.created_date)}
                         </Text>
                         <Text style={styles.modalText}>
                             {notification?.content}
@@ -210,6 +241,7 @@ const styles = StyleSheet.create({
     },
     modalText: {
         marginBottom: 15,
+        fontSize: 18,
         textAlign: 'center',
     },
 });
