@@ -7,6 +7,8 @@ from app.db.crud import region_crud
 from app.db.schemas import RegionCreate, Region, RegionUpdate, RegionDelete
 from app.dependencies import get_db
 
+from app.service.jwt_service import validate_token
+
 router = APIRouter(
     prefix="/regions",
     tags=["regions"],

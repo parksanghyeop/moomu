@@ -19,7 +19,7 @@ const Button1 = ({
     colors={['#3182CE','#4BC9FF']}
     start={{x: 0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}
     style={styles.gradient}>
-    <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={onPress}>
+    <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={onPress} disabled={disabled}>
       <Text style={styles.text}>{text}</Text>
     </TouchableOpacity>
     </LinearGradient>
