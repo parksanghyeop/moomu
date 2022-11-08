@@ -1,0 +1,14 @@
+.noticeForm {
+  display: flex;
+  align-items: center;
+  /* width: 70vw; */
+  justify-items: center;
+  justify-content: center;
+}
+.noticeForm .form-area {
+  width: 90%;
+}
+.noticeForm .form-area .input {
+  font-size: calc(10px + 2vmin);
+  font-weight: 700;
+}

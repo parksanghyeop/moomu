@@ -14,6 +14,9 @@
 .custom-table :where(thead, tfoot) :where(th, td) {
   font-size: calc(10px + 1.5vmin) !important;
 }
+.custom-table :where(td) {
+  white-space: pre-wrap;
+}
 .routeTitle {
   font-size: calc(10px + 2vmin);
   text-align: center;
@@ -23,7 +26,7 @@
   align-items: center;
   display: flex;
   flex-direction: column;
-  width: 65vw;
+  width: 70vw;
 }
 .changeIcon {
   font-size: calc(10px + 2vmin) !important;

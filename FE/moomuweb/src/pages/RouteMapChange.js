@@ -5,7 +5,7 @@ import "./RouteMap.css";
 import Modal from "../componentes/modal";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { initRoute, stationDown, staionUp, deleteStation, addStation, updateRoute, reload, updateStation } from "../reducers/stationSlice";
+import { loadRoute, stationDown, staionUp, deleteStation, addStation, updateStation, updateRoute, reload } from "../reducers/stationSlice";
 import { useParams, useNavigation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretUp, faSortUp, faCaretDown, faSortDown, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -19,6 +19,7 @@ function RouteMap() {
   const [delStation, setDelstation] = useState(null);
   const [newStation, setNewstation] = useState({});
   const [newStationName, setNewstationName] = useState("");
+  const [arrived_time, setArrivedTime] = useState("08:30");
   const [map, setNaverMap] = useState({});
   const [markers, setMarkers] = useState([]);
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ function RouteMap() {
   const isLoaded = useSelector((state) => state.station.isLoaded);
   const stationInfos = useSelector((state) => state.station.stations);
   const busName = useSelector((state) => state.station.routeName);
-  const params = { id: 55 };
+  const params = useParams();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpen2, setModalOpen2] = useState(false);
   const [targetMarker, setTarget] = useState(-1);
@@ -90,7 +91,7 @@ function RouteMap() {
     console.log(params);
     console.log(routeEmpty);
     if (!isLoaded) {
-      dispatch(initRoute(params));
+      dispatch(loadRoute(params));
       console.log(stationInfos);
     }
   }, []);
@@ -117,6 +118,7 @@ function RouteMap() {
         position: stationInfos[loc].stationLatLng,
         map: naverMap,
         title: stationInfos[loc].stationName,
+        arrived_time: stationInfos[loc].arrived_time,
       });
       naver.maps.Event.addListener(newMarker, "click", markerClick(loc));
       let tmpMarkers = markers;
@@ -213,6 +215,7 @@ function RouteMap() {
       const marker = markers[i];
       console.log(marker, marker.position);
       setNewstationName(marker.title);
+      setArrivedTime(marker.arrived_time);
       setTarget(i);
       const cordUrl = staticMapUrl(marker.position, 14);
       getStaticMap2Src(cordUrl, "cordMapImgTag2");
@@ -224,9 +227,13 @@ function RouteMap() {
       <Modal open={modalOpen2} close={closeModal2} header={modalHeader}>
         {/* // Modal.js <main> {props.children} </main>에 내용이 입력된다. 리액트 함수형 모달 */}
         {/* {newCord} */}
-        <label className="input-group input-group-lg">
+        <label className="input-group input-group-lg justify-center	">
           <span className="">이름</span>
-          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-full max-w-xs" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
+          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-3/4 max-w-xs text-center" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
+        </label>
+        <label className="input-group input-group-lg justify-center	">
+          <span className="">도착 시간</span>
+          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
         </label>
         <img id="cordMapImgTag2" alt="" />
         <button
@@ -237,6 +244,7 @@ function RouteMap() {
             var tmpMarkers = markers;
             var marker = tmpMarkers.splice(seq, 1);
             marker[0].title = newStationName;
+            marker[0].arrived_time = arrived_time;
             tmpMarkers.splice(seq, 0, marker[0]);
             setMarkers(tmpMarkers);
             marker.target = seq;
@@ -252,10 +260,22 @@ function RouteMap() {
         {/* // Modal.js <main> {props.children} </main>에 내용이 입력된다. 리액트 함수형 모달 */}
         {/* {newCord} */}
         {btnDet && (
-          <label className="input-group input-group-lg">
-            <span className="">이름</span>
-            <input type="text" placeholder="Type here" className="input input-bordered input-lg w-full max-w-xs" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
-          </label>
+          <div>
+            <label className="input-group input-group-lg justify-center	">
+              <span className="">이름</span>
+              <input
+                type="text"
+                placeholder="Type here"
+                className="input input-bordered input-lg w-3/4 max-w-xs text-center"
+                value={newStationName}
+                onChange={(e) => setNewstationName(e.target.value)}
+              />
+            </label>
+            <label className="input-group input-group-lg justify-center	">
+              <span className="">도착 시간</span>
+              <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
+            </label>
+          </div>
         )}
         <img id="cordMapImgTag" alt="" />
         <button
@@ -265,12 +285,15 @@ function RouteMap() {
               // TODO: Add station
               let data = newStation;
               data.name = newStationName;
+              data.arrived_time = arrived_time;
               const mapLoc = new naver.maps.LatLng(data.lat, data.lng);
               setNewstation(data);
               console.log(newStation);
               const newMarker = new naver.maps.Marker({
                 position: mapLoc,
                 map: map,
+                title: newStationName,
+                arrived_time: arrived_time,
               });
               setMarkers([...markers, newMarker]);
               console.log(markers);
@@ -290,7 +313,7 @@ function RouteMap() {
           {btnText}
         </button>
       </Modal>
-      <p className="bodyTitle "> {busName} 노선 추가 </p>
+      <p className="bodyTitle "> {busName} 노선 관리 </p>
       <div className="mapContainer">
         <div className="routeContainer">
           <ul className="steps steps-vertical">
@@ -340,7 +363,7 @@ function RouteMap() {
           dispatch(updateRoute(params));
         }}
       >
-        노선 추가
+        변경 사항 저장
       </button>
     </div>
   );
