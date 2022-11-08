@@ -13,6 +13,7 @@ import { RootStackParamList } from "../types/StackNavigation";
 import FaqScreen from "../screens/FaqScreen";
 import InformationScreen from "../screens/InformationScreen";
 import NotificationScreen from "../screens/NotificationScreen";
+import SettingScreen from "../screens/SettingScreen";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -34,8 +35,9 @@ const StackNavigator = () => {
       <Stack.Screen name="Information" component={InformationScreen} />
       <Stack.Screen name="Main" component={MainScreen} />
       <Stack.Screen name="BusMap" component={BusMapScreen} />
-      <Stack.Screen name="Station" component={StationScreen} />
+      <Stack.Screen name="Station" component={StationScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Notification" component={NotificationScreen} />
+      <Stack.Screen name="Setting" component={SettingScreen} />
     </Stack.Navigator>
   );
 };

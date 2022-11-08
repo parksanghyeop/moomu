@@ -110,7 +110,7 @@ const BusScreen: React.FC<BusScreenProps> = (props) => {
       let isDecoded = false;
       await AsyncStorage.getData('token').then((response) => {
         token = response;
-        decoded = jwtDecode(response);
+        decoded = jwtDecode(token);
         isDecoded = true;
       });
 
@@ -144,6 +144,7 @@ const BusScreen: React.FC<BusScreenProps> = (props) => {
             RootNavigation.navigate('Station', {
               bus_id: busList[i].id,
               name: busList[i].name,
+              commute_or_leave: busList[i].commute_or_leave,
             })
           }
         ></Button1>

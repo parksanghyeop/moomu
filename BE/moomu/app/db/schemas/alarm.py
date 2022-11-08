@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 
 class AlarmBase(BaseModel):
@@ -6,7 +7,7 @@ class AlarmBase(BaseModel):
     read: bool
     user_id: int
     alarm_type: str
-    created_date: str
+    created_date: datetime | None = None
     target_id: int
 
 

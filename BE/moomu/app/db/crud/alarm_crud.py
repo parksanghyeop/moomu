@@ -63,11 +63,12 @@ def create_alarm_from_event(
     return len(db_users) if isinstance(db_users, list) else 1
 
 
-def delete_alarm(db: Session, alarm_id: int):
-    db_alarm = db.query(models.Alarm).filter(models.Alarm.id == alarm_id).first()
-    db.delete(db_alarm)
+def delete_alarm_by_id(db: Session, alarm_id: int, user_id: int):
+    db.query(models.Alarm).filter(
+        models.Alarm.id == alarm_id, models.Alarm.user_id == user_id
+    ).delete()
     db.commit()
-    return db_alarm
+    return {"message": "알람이 삭제되었습니다."}
 
 
 def delete_alarms_by_user(db: Session, user_id: int):
@@ -76,12 +77,20 @@ def delete_alarms_by_user(db: Session, user_id: int):
     return {"message": "알람이 모두 삭제되었습니다."}
 
 
-def update_read_alarm_by_user(db: Session, user_id: int):
+def update_read_alarms_all_by_user(db: Session, user_id: int):
     db.query(models.Alarm).filter(models.Alarm.user_id == user_id).update(
         {models.Alarm.read: True}
     )
     db.commit()
     return {"message": "알람이 모두 읽음 처리되었습니다."}
+
+
+def update_read_alarm_by_id(db: Session, alarm_id: int, user_id: int):
+    db.query(models.Alarm).filter(
+        models.Alarm.id == alarm_id, models.Alarm.user_id == user_id
+    ).update({models.Alarm.read: True})
+    db.commit()
+    return {"message": "알람이 읽음 처리되었습니다."}
 
 
 def get_token_list(user_list):
