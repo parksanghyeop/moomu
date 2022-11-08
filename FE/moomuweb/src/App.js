@@ -9,6 +9,8 @@ import DashBoard from "./pages/DashBoard";
 import RouteMap from "./pages/RouteMap";
 import RouteMapChange from "./pages/RouteMapChange";
 import NoticeBoard from "./pages/NoticeBoard";
+import NoticeWriting from "./pages/NoticeWriting";
+import NoticeDeatil from "./pages/NoticeDeatil";
 import UserBoard from "./pages/UserBoard";
 import MenuSidebar from "./componentes/menuSidebar";
 function App() {
@@ -22,6 +24,8 @@ function App() {
             <Route path="/main" element={<DashBoard />} />
             <Route path="/map" element={<RouteMap />} />
             <Route path="/notice" element={<NoticeBoard />} />
+            <Route path="/notice/new" element={<NoticeWriting />} />
+            <Route path="/notice/:id" element={<NoticeDeatil />} />
             <Route path="/users" element={<UserBoard />} />
             <Route path="/map/:id" onLeave={reload()} element={<RouteMapChange />}></Route>
           </Routes>

@@ -1,9 +1,15 @@
 import React from "react";
 
-export default function Pagination({ page, totalPosts, limit, setPage }) {
+export default function Pagination({ page, total, limit, setPage }) {
   const pageLimit = limit;
   let firstNum = page - (page % pageLimit) + 1;
   let lastNum = page - (page % pageLimit) + pageLimit;
+  let lastPage = page;
+  if (total < lastNum) {
+    lastPage = total - firstNum;
+  } else {
+    lastPage = lastNum - firstNum;
+  }
 
   return (
     <div>
@@ -18,10 +24,10 @@ export default function Pagination({ page, totalPosts, limit, setPage }) {
           >
             «
           </button>
-          <button onClick={() => setPage(firstNum)} aria-current={page === firstNum ? "page" : null}>
+          <button onClick={() => setPage(firstNum)} className={"btn " + (page === firstNum ? "btn-active" : "")}>
             {firstNum}
           </button>
-          {Array(pageLimit - 1)
+          {Array(lastPage)
             .fill()
             .map((_, i) => {
               if (i <= pageLimit - 1) {
@@ -32,14 +38,14 @@ export default function Pagination({ page, totalPosts, limit, setPage }) {
                     onClick={() => {
                       setPage(firstNum + 1 + i);
                     }}
-                    classNames={"btn" + (page === firstNum + 1 + i ? "btn-active" : null)}
+                    className={"btn " + (page === firstNum + 1 + i ? "btn-active" : "")}
                   >
                     {firstNum + 1 + i}
                   </button>
                 );
               } else if (i >= pageLimit - 2) {
                 return (
-                  <button border="true" key={i + 1} onClick={() => setPage(lastNum)} classNames={"btn" + (page === firstNum + 1 + i ? "btn-active" : null)}>
+                  <button border="true" key={i + 1} onClick={() => setPage(lastNum)} className={"btn" + (page === firstNum + 1 + i ? "btn-active" : null)}>
                     {lastNum}
                   </button>
                 );

@@ -11,17 +11,24 @@ import Pagenation from "../componentes/pagination";
 function DashBoard() {
   const [isLoading, setLoading] = useState(true);
   const [notices, setNotices] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageLimit, setPageLimit] = useState(10);
+  const [maxPage, setMaxPage] = useState(5);
   const rawToken = useSelector((state) => state.token.rawToken.access_token);
-  let getNoticeUrl = "https://k7b202.p.ssafy.io/api/notice?page=0&limit=10";
+  // let getNoticeUrl = "https://k7b202.p.ssafy.io/api/notice?page=0&limit=10";
 
   useEffect(() => {
-    getNotices();
-  }, []);
+    getNotices(currentPage - 1, pageLimit);
+  }, [currentPage]);
 
-  const getNotices = async () => {
+  const getNoticeUrl = function (page, limit) {
+    return `https://k7b202.p.ssafy.io/api/notice?page=${page}&limit=${limit}`;
+  };
+
+  const getNotices = async (page, limit) => {
     var config = {
       method: "get",
-      url: getNoticeUrl,
+      url: getNoticeUrl(page, limit),
       headers: {
         accept: "application/json",
         Authorization: `Bearer ${rawToken}`,
@@ -29,6 +36,7 @@ function DashBoard() {
     };
     const response = await axios(config);
     setNotices(response.data.items);
+    setMaxPage(response.data.total_pages);
     console.log(response);
     console.log(notices);
     setLoading(false);
@@ -37,8 +45,11 @@ function DashBoard() {
   let addRoute = function () {
     navigate("/map");
   };
-  const answerNotice = function (routeId) {
-    navigate(`/notices/${routeId}`);
+  const createNotice = function () {
+    navigate(`/notice/new`);
+  };
+  const noticeDetail = function (noticeId) {
+    navigate(`/notice/${noticeId}`);
   };
 
   // const options = {
@@ -58,17 +69,21 @@ function DashBoard() {
           {/* <!-- head --> */}
           <thead>
             <tr className="text-primary font-bold table-title">
-              <th className="w-60 ">노선명</th>
-              <th className="w-36 ">노선 변경</th>
-              <th className="w-36 ">노선 삭제</th>
+              <th className=" ">공지</th>
+              {/* <th className="w-36 ">노선 변경</th>
+              <th className="w-36 ">노선 삭제</th> */}
             </tr>
           </thead>
           <tbody className="">
             {notices.map((notice) => {
               return (
                 <tr key={notice.id}>
-                  <td className="font-bold routeTitle">{notice.title}</td>
-                  <td>
+                  <td className="font-bold routeTitle">
+                    <a className="link link-hover link-primary" onClick={() => noticeDetail(notice.id)}>
+                      {notice.title}
+                    </a>
+                  </td>
+                  {/* <td>
                     <button className="btn btn-ghost btn-lg changeIcon">
                       <FontAwesomeIcon icon={faRoute} onClick={() => answerNotice(notice.id)} />
                     </button>
@@ -77,14 +92,33 @@ function DashBoard() {
                     <button className="btn btn-ghost btn-lg deleteIcon">
                       <FontAwesomeIcon icon={faTrashCan} />
                     </button>
-                  </td>
+                  </td> */}
                 </tr>
               );
             })}
           </tbody>
         </table>
       </div>
-      <Pagenation total={8} limit={10} page={5} setPage={() => {}} />
+      <footer className="flex">
+        <Pagenation
+          total={maxPage}
+          limit={pageLimit}
+          page={currentPage}
+          setPage={(num) => {
+            setCurrentPage(num);
+            console.log(currentPage);
+          }}
+          classNames="justify-self-center	"
+        />
+        <button
+          className="btn btn-primary justify-self-end ml-16"
+          onClick={() => {
+            createNotice();
+          }}
+        >
+          작성
+        </button>
+      </footer>
     </div>
   );
 }
