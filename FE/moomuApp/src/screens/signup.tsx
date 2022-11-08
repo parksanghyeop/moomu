@@ -83,7 +83,7 @@ const SignUp = ( props : any) => {
       username : username,
       password : password,
       nickname : nickname,
-      region_id : region,
+      region_id : region, 
       class_group : group,
     }, {
       headers : {"Content-Type": `application/json`}

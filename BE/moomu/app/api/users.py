@@ -18,6 +18,20 @@ router = APIRouter(
 )
 
 
+@router.get("/admin", response_model=list[User])
+def get_all_user(db: Session = Depends(get_db), payload: dict = Depends(validate_token)):
+    user_role = payload.get("role")
+    if user_role < 5:
+        raise HTTPException(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
+            detail="권한이 없습니다."
+        )
+    db_users = user_crud.get_users(db)
+    if db_users is None:
+        raise HTTPException(status_code=404, detail="Users not found")
+    return db_users
+
+
 @router.get("/profile", response_model=User)
 def read_user(db: Session = Depends(get_db), payload: dict = Depends(validate_token)):
     user_id = payload.get("id")
