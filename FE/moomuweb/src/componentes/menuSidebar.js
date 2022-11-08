@@ -35,6 +35,11 @@ export default function MenuSidebar() {
             </Link>
           </li>
           <li>
+            <Link className="AppMenu-link" to="/faq">
+              문의사항
+            </Link>
+          </li>
+          <li>
             <Link className="AppMenu-link" to="/users">
               회원 조회
             </Link>

@@ -57,9 +57,9 @@ function DashBoard() {
           {/* <!-- head --> */}
           <thead>
             <tr className="text-primary font-bold table-title">
-              <th className="w-60 ">노선명</th>
-              <th className="w-36 ">노선 변경</th>
-              <th className="w-36 ">노선 삭제</th>
+              <th className="w-60 ">사용자</th>
+              <th className="w-36 ">변경</th>
+              <th className="w-36 ">삭제</th>
             </tr>
           </thead>
           <tbody className="" style={{ overflowY: "scroll" }}>
