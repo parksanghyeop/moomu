@@ -159,11 +159,12 @@ def get_user_station(
 
 @router.put("/station/edit", response_model=User)
 def edit_user_station(
-    station_id: int,
+    station_id: str,
     commute_or_leave: CommuteOrLeave,
     db: Session = Depends(get_db),
     payload: dict = Depends(validate_token),
 ):
+    station_id = None if station_id == '' else int(station_id)
     user_id = payload.get("id")
     db_user = user_crud.update_user_station(db, user_id, station_id, commute_or_leave)
     if db_user is None:

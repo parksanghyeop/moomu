@@ -76,7 +76,7 @@ def get_exists_user_at_station(
 
 
 def update_user_station(
-    db: Session, user_id: int, station_id: int, commute_or_leave: CommuteOrLeave
+    db: Session, user_id: int, station_id: int | None, commute_or_leave: CommuteOrLeave
 ):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if commute_or_leave == CommuteOrLeave.COMMUTE:
