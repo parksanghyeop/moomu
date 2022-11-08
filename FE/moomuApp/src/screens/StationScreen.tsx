@@ -227,6 +227,7 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
                     onPress={() => {
                         RootNavigation.navigate('BusMap', {
                             stationList: stationList,
+                            commute_or_leave: co_or_le,
                         });
                     }}
                 />
