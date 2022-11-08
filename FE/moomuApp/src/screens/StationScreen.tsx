@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/StackNavigation';
-import Footer from '../components/footer';
 import axios from '../api/axios';
 import requests from '../api/requests';
 import Mapsvg from '../../assets/icons/map.svg';
+import Refreshsvg from '../../assets/icons/refresh.svg';
 import * as RootNavigation from '../../RootNavigation';
 import Button1 from '../components/button1';
-import {LinearGradient } from 'expo-linear-gradient';
-import { LinearTextGradient } from "react-native-text-gradient";
 
 type StationScreenProps = StackScreenProps<RootStackParamList, 'Station'>;
 
@@ -39,25 +37,18 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
   const [stationList, setStationList] = useState<station[]>();
   const [useselect,setUseSelect] = useState<boolean>(false);
   const [mystation,setMystation] = useState<myStation>({} as myStation);
+  const [mytemp, setMytemp] = useState<myStation>({} as myStation);
   const [co_or_le,setco_or_le] = useState<string>(props.route.params.commute_or_leave);
 
   useEffect(() => {
     (async () => {
       // 셔틀버스 노선 조회
-      axios
-        .get(requests.shuttlebus_notion + props.route.params.bus_id)
-        .then((response) => {
-          setStationList(response.data.stations);
-          // console.log(stationList);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      refresh();
       // 승차/하차 등록 지점 조회
-      setMystation(data);
       await axios.get(requests.station)
         .then((response) => {
-            // setMystation(response.data);
+            setMystation(response.data);
+            setMytemp(response.data);
             console.log(response.data);
             // console.log(mystation);
         })
@@ -69,23 +60,71 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
   }, []);
 
   const myStationOnpress = (id : any) => {
-    if(id == mystation.start_station_id){
-      setMystation({...mystation,start_station_id : null});
+    
+    if(mytemp.start_station_id == null){
+      setMytemp({...mytemp,start_station_id : id});
     }
-    else if(id == mystation.end_station_id){
-      setMystation({...mystation,end_station_id : null});
+    else if(mytemp.end_station_id == null){
+      setMytemp({...mytemp,end_station_id : id});
     }
-    else if(mystation.start_station_id == null){
-      setMystation({...mystation,start_station_id : id});
-    }
-    else if(mystation.end_station_id == null){
-      setMystation({...mystation,end_station_id : id});
+    else {
+      console.log('이미 등록된 정류장이 있습니다.');
     }
   }
 
+  const unStationOnpress = (id : any) => {
+    if(id == mytemp.start_station_id){
+      setMytemp({...mytemp,start_station_id : null});
+    }
+    else if(id == mytemp.end_station_id){
+      setMytemp({...mytemp,end_station_id : null});
+    }
+  }
+
+  const canclePress = () => {
+    setMytemp(mystation);
+    setUseSelect(false);
+  }
+
+  const confirmPress = async () => {
+    if(mystation == mytemp){
+      console.log('변경사항이 없습니다.');
+      return;
+    }
+    setMystation(mytemp);
+    // axios 요청으로 변경된 내용 서버로 전송
+    await axios.put(requests.station_edit, {
+      station_id : co_or_le == "COMMUTE" ? mystation.start_station_id : mystation.end_station_id,
+      commute_or_leave : co_or_le
+    })
+    .then((response) => {
+      setUseSelect(false);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  }
+
   const commute_or_leave = useselect ?
-  <Button1 text={"선택 확정"} onPress={() => setUseSelect(false)} /> :
+  <Button1 text={"선택 확정"} onPress={confirmPress} /> :
   <Button1 text={"승차지점변경"} onPress={() => setUseSelect(true)} />
+
+  const back_or_cancle = useselect ? 
+  <Button1 text={"취소"} onPress={canclePress}/> :
+  <Button1 text={"이전으로"} onPress={() => RootNavigation.goBack()} />
+
+  const refresh = async () => {
+    await axios
+    .get(requests.shuttlebus_notion + props.route.params.bus_id)
+    .then((response) => {
+      setStationList(response.data.stations);
+      // console.log(stationList);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+  
 
   const stationSelected = (id : number) => {
     if((id == mystation.start_station_id) || (id == mystation.end_station_id)){
@@ -104,11 +143,8 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
 
   const select_or_selectd = (id : number) => {
     if(useselect){
-      if(id == mystation.start_station_id){
-        return(<Text style={[styles.title,styles.select]} onPress={() => myStationOnpress(id)}>선택됨</Text>);
-      }
-      else if(id == mystation.end_station_id){
-        return(<Text style={[styles.title,styles.select]} onPress={() => myStationOnpress(id)}>선택됨</Text>);
+      if(id == mytemp.start_station_id || id == mytemp.end_station_id){
+        return(<Text style={[styles.title,styles.select]} onPress={() => unStationOnpress(id)}>선택됨</Text>);
       }
       else{
         return(<Text style={[styles.title,styles.select]} onPress={() => myStationOnpress(id)}>선택</Text>);
@@ -136,10 +172,12 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
       
       <SafeAreaView style={styles.container2}>
         <Text>{props.route.params.name}</Text>
+        <Refreshsvg style={[{ width: 27, height: 24 }]}
+          onPress={refresh} />
         <Mapsvg
           style={[{ width: 27, height: 24 }]}
           onPress={() => {
-            RootNavigation.navigate('BusMap');
+            RootNavigation.navigate('BusMap',{stationList:stationList});
           }}
         />
       </SafeAreaView>
@@ -153,7 +191,7 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
       </View>
       <View style={styles.line}/>
       <View style={[{flexDirection: 'row'}]}>
-        <Button1 text={"이전으로"} onPress={() => RootNavigation.goBack()} />
+        {back_or_cancle}
         {commute_or_leave}
       </View>
     </View>
