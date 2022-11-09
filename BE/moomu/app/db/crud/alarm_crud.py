@@ -95,8 +95,11 @@ def update_read_alarm_by_id(db: Session, alarm_id: int, user_id: int):
 
 def get_token_list(user_list):
     token_list = []
-    for user in user_list:
-        token_list.append(user.expo_token)
+    if isinstance(user_list, list):
+        for user in user_list:
+            token_list.append(user.expo_token)
+    else:
+        token_list.append(user_list.expo_token)
 
     return token_list
 
