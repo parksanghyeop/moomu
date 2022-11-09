@@ -13,3 +13,20 @@ export interface myStation {
     end_station_id: any;
     id: number;
 }
+
+export interface Bus {
+    region_id: number;
+    name: string;
+    commute_or_leave: string;
+    id: number;
+    stations: station[];
+    cur: any[];
+}
+
+export interface jwt {
+    exp: number;
+    id: number;
+    nickname: string;
+    region: number;
+    role: number;
+}

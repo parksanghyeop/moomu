@@ -9,36 +9,6 @@ import { station } from '../types/types';
 
 type BusMapScreenProps = StackScreenProps<RootStackParamList, 'BusMap'>;
 
-const DATA = [
-    {
-        bus_id: 1,
-        name: '한남오거리',
-        lat: '36.1235',
-        lng: '121.42356',
-        order: 1,
-        arrived_time: '07:45',
-        id: 1,
-    },
-    {
-        bus_id: 1,
-        name: '재뜰네거리',
-        lat: '36.13589',
-        lng: '121.48431',
-        order: 2,
-        arrived_time: '07:55',
-        id: 2,
-    },
-    {
-        bus_id: 1,
-        name: '정부청사역',
-        lat: '36.13589',
-        lng: '121.48431',
-        order: 3,
-        arrived_time: '07:55',
-        id: 3,
-    },
-];
-
 const line = [
     {
         longitude: 127.2982711,
@@ -147,6 +117,12 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
                 ref={mapRef}
                 showsUserLocation={true}
                 provider={'google'}
+                initialRegion={{
+                    latitude: 36.38,
+                    longitude: 127.51,
+                    latitudeDelta: 3,
+                    longitudeDelta: 4,
+                }}
             >
                 {MarkList()}
                 <Polyline
@@ -171,7 +147,9 @@ const styles = StyleSheet.create({
     },
     map: {
         width: '99%',
-        height: '80%',
+        height: '95%',
+        position: 'absolute',
+        bottom: 5,
     },
 });
 

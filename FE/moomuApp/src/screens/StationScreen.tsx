@@ -210,7 +210,7 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
 
             {select_or_selectd(id)}
 
-            <View style={styles.circle} />
+            <View style={[styles.circle]} />
         </View>
     );
 
@@ -221,7 +221,7 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
     return (
         <View style={styles.container}>
             <SafeAreaView style={styles.container2}>
-                <Text>{props.route.params.name}</Text>
+                <Text style={styles.name}>{props.route.params.name}</Text>
                 <Refreshsvg
                     style={[{ width: 27, height: 24, margin: 5 }]}
                     onPress={refresh}
@@ -310,6 +310,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 50,
         top: 10,
+    },
+    name: {
+        fontFamily: 'Pretendard Variable',
+        fontStyle: 'normal',
+        fontWeight: '400',
+        fontSize: 24,
+        lineHeight: 29,
+        textAlign: 'center',
     },
 });
 
