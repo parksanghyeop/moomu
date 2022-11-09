@@ -5,18 +5,9 @@ import { RootStackParamList } from '../types/StackNavigation';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import Button1 from '../components/button1';
+import { station } from '../types/types';
 
 type BusMapScreenProps = StackScreenProps<RootStackParamList, 'BusMap'>;
-
-interface station {
-    bus_id: number;
-    name: string;
-    lat: string;
-    lng: string;
-    order: number;
-    arrived_time: any;
-    id: number;
-}
 
 const DATA = [
     {
@@ -124,6 +115,10 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
     const goToMyLocation = async () => {
         mapRef.current.animateCamera({
             center: { latitude: lat, longitude: lon },
+            pitch: 2,
+            heading: 0,
+            altitude: 3000,
+            zoom: 14,
         });
     };
 
@@ -147,7 +142,12 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
 
     return (
         <View style={styles.container}>
-            <MapView style={styles.map} ref={mapRef} showsUserLocation={true}>
+            <MapView
+                style={styles.map}
+                ref={mapRef}
+                showsUserLocation={true}
+                provider={'google'}
+            >
                 {MarkList()}
                 <Polyline
                     coordinates={line}
@@ -155,7 +155,9 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
                     strokeWidth={5}
                 />
             </MapView>
-            <Button1 text={'내 위치'} onPress={goToMyLocation} />
+            <View style={[{ position: 'absolute', left: 0 }]}>
+                <Button1 text={'내 위치'} onPress={goToMyLocation} />
+            </View>
         </View>
     );
 };
@@ -168,8 +170,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     map: {
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height * 0.6,
+        width: '99%',
+        height: '80%',
     },
 });
 

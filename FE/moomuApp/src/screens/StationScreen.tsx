@@ -16,24 +16,9 @@ import Mapsvg from '../../assets/icons/map.svg';
 import Refreshsvg from '../../assets/icons/refresh.svg';
 import * as RootNavigation from '../../RootNavigation';
 import Button1 from '../components/button1';
+import { station, myStation } from '../types/types';
 
 type StationScreenProps = StackScreenProps<RootStackParamList, 'Station'>;
-
-interface station {
-    bus_id: number;
-    name: string;
-    lat: string;
-    lng: string;
-    order: number;
-    arrived_time: any;
-    id: number;
-}
-
-interface myStation {
-    start_station_id: any;
-    end_station_id: any;
-    id: number;
-}
 
 const StationScreen: React.FC<StationScreenProps> = (props) => {
     const [stationList, setStationList] = useState<station[]>();
@@ -64,9 +49,9 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
     }, []);
 
     const myStationOnpress = (id: any) => {
-        if (mytemp.start_station_id == '' && co_or_le == 'COMMUTE') {
+        if (mytemp.start_station_id == null && co_or_le == 'COMMUTE') {
             setMytemp({ ...mytemp, start_station_id: id });
-        } else if (mytemp.end_station_id == '' && co_or_le != 'COMMUTE') {
+        } else if (mytemp.end_station_id == null && co_or_le != 'COMMUTE') {
             setMytemp({ ...mytemp, end_station_id: id });
         } else {
             console.log('이미 등록된 정류장이 있습니다.');
@@ -75,9 +60,9 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
 
     const unStationOnpress = (id: any) => {
         if (id == mytemp.start_station_id && co_or_le == 'COMMUTE') {
-            setMytemp({ ...mytemp, start_station_id: '' });
+            setMytemp({ ...mytemp, start_station_id: null });
         } else if (id == mytemp.end_station_id && co_or_le != 'COMMUTE') {
-            setMytemp({ ...mytemp, end_station_id: '' });
+            setMytemp({ ...mytemp, end_station_id: null });
         }
     };
 
@@ -87,14 +72,33 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
     };
 
     const confirmPress = async () => {
-        console.log(mytemp);
+        // console.log(mytemp);
 
         if (mystation == mytemp) {
             console.log('변경사항이 없습니다.');
             return;
         }
 
+        if (
+            (mystation.start_station_id != null &&
+                mytemp.start_station_id == null) ||
+            (mystation.end_station_id != null && mytemp.end_station_id == null)
+        ) {
+            await instance
+                .delete(
+                    requests.station_delete + '?commute_or_leave=' + co_or_le
+                )
+                .then((response) => {
+                    setMystation(mytemp);
+                    setUseSelect(false);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            return;
+        }
         // axios 요청으로 변경된 내용 서버로 전송
+
         await instance
             .put(
                 requests.station_edit +
@@ -219,11 +223,11 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
             <SafeAreaView style={styles.container2}>
                 <Text>{props.route.params.name}</Text>
                 <Refreshsvg
-                    style={[{ width: 27, height: 24 }]}
+                    style={[{ width: 27, height: 24, margin: 5 }]}
                     onPress={refresh}
                 />
                 <Mapsvg
-                    style={[{ width: 27, height: 24 }]}
+                    style={[{ width: 27, height: 24, margin: 5 }]}
                     onPress={() => {
                         RootNavigation.navigate('BusMap', {
                             stationList: stationList,
