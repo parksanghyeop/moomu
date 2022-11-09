@@ -49,12 +49,10 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
     }, []);
 
     const myStationOnpress = (id: any) => {
-        if (mytemp.start_station_id == null && co_or_le == 'COMMUTE') {
+        if ( co_or_le == 'COMMUTE') {
             setMytemp({ ...mytemp, start_station_id: id });
-        } else if (mytemp.end_station_id == null && co_or_le != 'COMMUTE') {
+        } else if ( co_or_le != 'COMMUTE') {
             setMytemp({ ...mytemp, end_station_id: id });
-        } else {
-            console.log('이미 등록된 정류장이 있습니다.');
         }
     };
 
