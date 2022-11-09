@@ -13,7 +13,7 @@ import * as AsyncStorage from '../utiles/AsyncService';
 import { AntDesign } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
 
-type MainScreenProps = StackScreenProps<RootStackParamList, 'Main'>;
+type MainScreenProps = StackScreenProps<RootStackParamList, 'Main'> ;
 
 let token : string;
 let decoded : jwt;
@@ -34,7 +34,7 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
   return (
     <View style={styles.container}>
       <Logo3 content="main" navigation={props.navigation} />
-      <Text style={styles.text1}>김싸피</Text>
+      <View style={styles.container2}>  
       <Feather style={styles.logoContent} name="settings" size={20}
       onPress={() => {RootNavigation.navigate('Setting');
       }}/>
@@ -62,6 +62,9 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
          
         }}
       />
+      </View>
+      
+
       <Button2
         text={'노선조회'}
         onPress={() => {
@@ -91,7 +94,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     paddingTop: 50,
-    // justifyContent: "center",
+  //  justifyContent: "center",
+  },
+  container2: {
+    flexDirection: 'row',
+    paddingTop: 30,
+    margin: 20,
+  },
+  container3: {
+    flexDirection: 'row',
+    paddingTop: 30,
+    margin: 20,
   },
   text: {
     position: 'absolute',
@@ -129,13 +142,11 @@ const styles = StyleSheet.create({
   },
   logoContent: {
     color: '#63B3ED',
-    textAlign: 'center',
+    justifyContent: 'center',
     marginTop: 20,
     fontSize: 16,
+    marginLeft: 10,
   },
 });
 
 export default MainScreen;
-
-const logoutbutton = () => {
-  }

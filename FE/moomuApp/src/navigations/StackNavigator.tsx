@@ -11,6 +11,7 @@ import StationScreen from "../screens/StationScreen";
 import MainScreen from "../screens/MainScreen";
 import { RootStackParamList } from "../types/StackNavigation";
 import FaqScreen from "../screens/FaqScreen";
+import InformationDetailScreen from "../screens/InformationDetailScreen";
 import InformationScreen from "../screens/InformationScreen";
 import NotificationScreen from "../screens/NotificationScreen";
 import SettingScreen from "../screens/SettingScreen";
@@ -38,6 +39,7 @@ const StackNavigator = () => {
       <Stack.Screen name="Station" component={StationScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Notification" component={NotificationScreen} />
       <Stack.Screen name="Setting" component={SettingScreen} />
+      <Stack.Screen name="InformationDetail" component={InformationDetailScreen} />
     </Stack.Navigator>
   );
 };
