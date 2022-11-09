@@ -19,29 +19,28 @@ import SettingScreen from "../screens/SettingScreen";
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
-  return (
-    <Stack.Navigator initialRouteName="Start">
-      <Stack.Screen
-        name="Start"
-        component={StartScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="LoginSignUp"
-        component={LoginSingUpScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen name="Bus" component={BusScreen} />
-      <Stack.Screen name="FAQ" component={FaqScreen} />
-      <Stack.Screen name="Information" component={InformationScreen} />
-      <Stack.Screen name="Main" component={MainScreen} />
-      <Stack.Screen name="BusMap" component={BusMapScreen} />
-      <Stack.Screen name="Station" component={StationScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Notification" component={NotificationScreen} />
-      <Stack.Screen name="Setting" component={SettingScreen} />
+    return (
+        <Stack.Navigator
+            screenOptions={{ headerShown: false }}
+            initialRouteName="Start"
+        >
+            <Stack.Screen name="Start" component={StartScreen} />
+            <Stack.Screen name="LoginSignUp" component={LoginSingUpScreen} />
+            <Stack.Screen name="Bus" component={BusScreen} />
+            <Stack.Screen name="FAQ" component={FaqScreen} />
+            <Stack.Screen name="Information" component={InformationScreen} />
+            <Stack.Screen name="Main" component={MainScreen} />
+            <Stack.Screen
+                name="BusMap"
+                component={BusMapScreen}
+                options={{ headerShown: true }}
+            />
+            <Stack.Screen name="Station" component={StationScreen} />
+            <Stack.Screen name="Notification" component={NotificationScreen} />
+            <Stack.Screen name="Setting" component={SettingScreen} />
       <Stack.Screen name="InformationDetail" component={InformationDetailScreen} />
-    </Stack.Navigator>
-  );
+        </Stack.Navigator>
+    );
 };
 
 export default StackNavigator;
