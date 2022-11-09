@@ -1,19 +1,20 @@
-import React from 'react';
+import React from "react";
 import {
-    createStackNavigator,
-    StackNavigationProp,
-} from '@react-navigation/stack';
-import StartScreen from '../screens/StartScreen';
-import LoginSingUpScreen from '../screens/LoginSingUpScreen';
-import BusScreen from '../screens/BusScreen';
-import BusMapScreen from '../screens/BusMapScreen';
-import StationScreen from '../screens/StationScreen';
-import MainScreen from '../screens/MainScreen';
-import { RootStackParamList } from '../types/StackNavigation';
-import FaqScreen from '../screens/FaqScreen';
-import InformationScreen from '../screens/InformationScreen';
-import NotificationScreen from '../screens/NotificationScreen';
-import SettingScreen from '../screens/SettingScreen';
+  createStackNavigator,
+  StackNavigationProp,
+} from "@react-navigation/stack";
+import StartScreen from "../screens/StartScreen";
+import LoginSingUpScreen from "../screens/LoginSingUpScreen";
+import BusScreen from "../screens/BusScreen";
+import BusMapScreen from "../screens/BusMapScreen";
+import StationScreen from "../screens/StationScreen";
+import MainScreen from "../screens/MainScreen";
+import { RootStackParamList } from "../types/StackNavigation";
+import FaqScreen from "../screens/FaqScreen";
+import InformationDetailScreen from "../screens/InformationDetailScreen";
+import InformationScreen from "../screens/InformationScreen";
+import NotificationScreen from "../screens/NotificationScreen";
+import SettingScreen from "../screens/SettingScreen";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -37,6 +38,7 @@ const StackNavigator = () => {
             <Stack.Screen name="Station" component={StationScreen} />
             <Stack.Screen name="Notification" component={NotificationScreen} />
             <Stack.Screen name="Setting" component={SettingScreen} />
+      <Stack.Screen name="InformationDetail" component={InformationDetailScreen} />
         </Stack.Navigator>
     );
 };

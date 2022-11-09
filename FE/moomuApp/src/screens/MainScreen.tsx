@@ -15,7 +15,7 @@ import { Feather } from '@expo/vector-icons';
 import jwtDecode from 'jwt-decode';
 import instance from '../api/axios';
 
-type MainScreenProps = StackScreenProps<RootStackParamList, 'Main'>;
+type MainScreenProps = StackScreenProps<RootStackParamList, 'Main'> ;
 
 let token: string;
 let decoded: jwt;
@@ -140,7 +140,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         paddingTop: 50,
-        // justifyContent: "center",
+      //  justifyContent: "center",
+  },
+  container2: {
+    flexDirection: 'row',
+    paddingTop: 30,
+    margin: 20,
+  },
+  container3: {
+    flexDirection: 'row',
+    paddingTop: 30,
+    margin: 20,
     },
     text: {
         position: 'absolute',
@@ -216,5 +226,3 @@ const styles = StyleSheet.create({
 });
 
 export default MainScreen;
-
-const logoutbutton = () => {};
