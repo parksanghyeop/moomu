@@ -1,5 +1,13 @@
 import React, { Component, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, Alert } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    Image,
+    Alert,
+    StatusBar,
+    SafeAreaView,
+} from 'react-native';
 import Footer from '../components/footer';
 import Button2 from '../components/button2';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -7,7 +15,6 @@ import { RootStackParamList } from '../types/StackNavigation';
 import { Logo3 } from '../components/logo';
 
 import * as RootNavigation from '../../RootNavigation';
-import Button1 from '../components/button1';
 import Logout from './logout';
 import * as AsyncStorage from '../utiles/AsyncService';
 import { AntDesign } from '@expo/vector-icons';
@@ -15,7 +22,7 @@ import { Feather } from '@expo/vector-icons';
 import jwtDecode from 'jwt-decode';
 import instance from '../api/axios';
 
-type MainScreenProps = StackScreenProps<RootStackParamList, 'Main'> ;
+type MainScreenProps = StackScreenProps<RootStackParamList, 'Main'>;
 
 let token: string;
 let decoded: jwt;
@@ -39,7 +46,6 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
             setUser(decoded);
         });
         instance.get('/users/bus').then((response) => {
-            console.log(response.data);
             let data = {
                 commute: null,
                 leave: null,
@@ -57,7 +63,8 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
     }, []);
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <StatusBar barStyle="dark-content" backgroundColor="#ecf0f1" />
             <Logo3 content="main" navigation={props.navigation} />
             <View style={styles.usernameContainer}>
                 <Text style={styles.usernameText}>{user?.nickname}</Text>
@@ -130,7 +137,7 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
                 }}
             />
             <Footer />
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -140,17 +147,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         paddingTop: 50,
-      //  justifyContent: "center",
-  },
-  container2: {
-    flexDirection: 'row',
-    paddingTop: 30,
-    margin: 20,
-  },
-  container3: {
-    flexDirection: 'row',
-    paddingTop: 30,
-    margin: 20,
+        //  justifyContent: "center",
+    },
+    container2: {
+        flexDirection: 'row',
+        paddingTop: 30,
+        margin: 20,
+    },
+    container3: {
+        flexDirection: 'row',
+        paddingTop: 30,
+        margin: 20,
     },
     text: {
         position: 'absolute',

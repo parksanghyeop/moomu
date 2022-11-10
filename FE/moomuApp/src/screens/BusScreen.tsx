@@ -7,6 +7,7 @@ import {
     Pressable,
     Animated,
     SafeAreaView,
+    StatusBar,
 } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/StackNavigation';
@@ -235,6 +236,7 @@ const BusScreen: React.FC<BusScreenProps> = (props) => {
 
     return (
         <SafeAreaView style={styles.container}>
+            <StatusBar barStyle="dark-content" backgroundColor="#ecf0f1" />
             {commuteLeaveState ? (
                 <View style={styles.header}>
                     <Pressable style={{ width: '50%' }}>
