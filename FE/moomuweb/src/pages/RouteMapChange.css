@@ -31,8 +31,6 @@
 .updownBtnFrame {
   display: flex;
   grid-column-start: 2;
-  justify-self: center;
-  font-size: calc(10px + 2vmin);
 }
 .steps-vertical .step:before {
   height: 170%;
@@ -40,21 +38,4 @@
 .steps-vertical .step {
   grid-template-rows: 40px 20px;
   grid-row-gap: 1px;
-}
-.stationUpDown {
-  text-align: center;
-  margin: 0 10px;
-}
-.stationDelete {
-  text-align: center;
-  margin: 0 10px;
-  font-size: calc(10px + 1vmin);
-}
-.stationName {
-  text-align: center;
-  justify-self: center;
-}
-.saveBtn {
-  width: 40vw;
-  align-self: center;
 }

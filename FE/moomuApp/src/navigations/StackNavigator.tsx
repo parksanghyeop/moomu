@@ -11,16 +11,23 @@ import StationScreen from '../screens/StationScreen';
 import MainScreen from '../screens/MainScreen';
 import { RootStackParamList } from '../types/StackNavigation';
 import FaqScreen from '../screens/FaqScreen';
+import InformationDetailScreen from '../screens/InformationDetailScreen';
 import InformationScreen from '../screens/InformationScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import SettingScreen from '../screens/SettingScreen';
-import FaqDetailScreen from '../screens/FaqDetailScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
     return (
-        <Stack.Navigator initialRouteName="Start">
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: true,
+                headerShadowVisible: false,
+                headerBackTitleVisible: false,
+            }}
+            initialRouteName="Start"
+        >
             <Stack.Screen
                 name="Start"
                 component={StartScreen}
@@ -31,19 +38,50 @@ const StackNavigator = () => {
                 component={LoginSingUpScreen}
                 options={{ headerShown: false }}
             />
-            <Stack.Screen name="Bus" component={BusScreen} />
-            <Stack.Screen name="FAQ" component={FaqScreen} />
-            <Stack.Screen name="Information" component={InformationScreen} />
-            <Stack.Screen name="Main" component={MainScreen} />
-            <Stack.Screen name="BusMap" component={BusMapScreen} />
+            <Stack.Screen
+                name="Bus"
+                component={BusScreen}
+                options={{ title: '노선조회' }}
+            />
+            <Stack.Screen
+                name="FAQ"
+                component={FaqScreen}
+                options={{ title: '건의사항' }}
+            />
+            <Stack.Screen
+                name="Information"
+                component={InformationScreen}
+                options={{ title: '공지사항' }}
+            />
+            <Stack.Screen
+                name="Main"
+                component={MainScreen}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="BusMap"
+                component={BusMapScreen}
+                options={{ title: '노선정보' }}
+            />
             <Stack.Screen
                 name="Station"
                 component={StationScreen}
-                options={{ headerShown: false }}
+                options={({ route }) => ({ title: route.params.stationName })}
             />
-            <Stack.Screen name="Notification" component={NotificationScreen} />
-            <Stack.Screen name="Setting" component={SettingScreen} />
-            <Stack.Screen name="FaqDetail" component={FaqDetailScreen} />
+            <Stack.Screen
+                name="Notification"
+                component={NotificationScreen}
+                options={{ title: '알림' }}
+            />
+            <Stack.Screen
+                name="Setting"
+                component={SettingScreen}
+                options={{ title: '개인정보 관리' }}
+            />
+            <Stack.Screen
+                name="InformationDetail"
+                component={InformationDetailScreen}
+            />
         </Stack.Navigator>
     );
 };

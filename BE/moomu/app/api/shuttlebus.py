@@ -156,9 +156,13 @@ async def receive_message(websocket: WebSocket):
 
 
 async def broadcast_message(websocket: WebSocket, s: Redis.pubsub):
-    msg = s.get_message(timeout=1)
-    if msg is not None:
-        await websocket.send_text(str(msg["data"]))
+    msg = s.get_message(timeout=3)
+    if msg is not None and type(msg["data"]) == bytes:
+        result = str(msg["data"], 'utf-8')
+    else:
+        result = '{"lat": null, "lng": null}'
+    print(result)
+    await websocket.send_text(result)
 
 
 @router.websocket("/shuttlebus/ws/{bus_name}")

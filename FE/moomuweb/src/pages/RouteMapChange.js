@@ -5,8 +5,8 @@ import "./RouteMap.css";
 import Modal from "../componentes/modal";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { initRoute, stationDown, staionUp, deleteStation, addStation, updateRoute, reload, updateStation } from "../reducers/stationSlice";
-import { useParams, useNavigation } from "react-router-dom";
+import { loadRoute, stationDown, staionUp, deleteStation, addStation, updateStation, updateRoute, reload } from "../reducers/stationSlice";
+import { useParams, useNavigation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretUp, faSortUp, faCaretDown, faSortDown, faTrash } from "@fortawesome/free-solid-svg-icons";
 
@@ -19,6 +19,7 @@ function RouteMap() {
   const [delStation, setDelstation] = useState(null);
   const [newStation, setNewstation] = useState({});
   const [newStationName, setNewstationName] = useState("");
+  const [arrived_time, setArrivedTime] = useState("08:30");
   const [map, setNaverMap] = useState({});
   const [markers, setMarkers] = useState([]);
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ function RouteMap() {
   const isLoaded = useSelector((state) => state.station.isLoaded);
   const stationInfos = useSelector((state) => state.station.stations);
   const busName = useSelector((state) => state.station.routeName);
-  const params = { id: 55 };
+  const params = useParams();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpen2, setModalOpen2] = useState(false);
   const [targetMarker, setTarget] = useState(-1);
@@ -79,6 +80,10 @@ function RouteMap() {
     e.returnValue = "";
     dispatch(reload());
   });
+  const navigate = useNavigate();
+  const goList = function () {
+    navigate("/main");
+  };
 
   useEffect(() => {
     return () => dispatch(reload());
@@ -90,7 +95,7 @@ function RouteMap() {
     console.log(params);
     console.log(routeEmpty);
     if (!isLoaded) {
-      dispatch(initRoute(params));
+      dispatch(loadRoute(params));
       console.log(stationInfos);
     }
   }, []);
@@ -111,12 +116,16 @@ function RouteMap() {
     };
     const naverMap = new naver.maps.Map(mapElement.current, mapOptions);
     let points = [];
+    let centerLat = 0;
+    let centerLng = 0;
+    let zoomLevel = 12;
 
     for (var loc in stationInfos) {
       const newMarker = new naver.maps.Marker({
         position: stationInfos[loc].stationLatLng,
         map: naverMap,
         title: stationInfos[loc].stationName,
+        arrived_time: stationInfos[loc].arrived_time,
       });
       naver.maps.Event.addListener(newMarker, "click", markerClick(loc));
       let tmpMarkers = markers;
@@ -124,7 +133,15 @@ function RouteMap() {
       setMarkers(tmpMarkers);
       // console.log(markers, newMarker);
       points.push(convetLatLngCorr(stationInfos[loc].stationLatLng));
+      if (loc == 0 || loc == stationInfos.length - 1) {
+        centerLat += stationInfos[loc].stationLatLng._lat;
+        centerLng += stationInfos[loc].stationLatLng._lng;
+      }
     }
+    centerLat /= 2;
+    centerLng /= 2;
+    const cneterLoc = new naver.maps.LatLng(centerLat, centerLng);
+
     // console.log("////////////////////////////////");
     // console.log(points);
     // console.log(points[0].toString());
@@ -135,7 +152,7 @@ function RouteMap() {
       temp.push(points[i]);
     }
     const waypoints = temp.join("|");
-    const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
+    const direction15Url = `https://naveropenapi.apigw.ntruss.com/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
     console.log(direction15Url);
     // naver.maps.Service.geocode(
     //   {
@@ -160,9 +177,12 @@ function RouteMap() {
       axios
         .get(direction15Url, {
           headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
+            "Access-Control-Allow-Credentials": "true",
             "X-NCP-APIGW-API-KEY-ID": "yxdllgza3i",
             "X-NCP-APIGW-API-KEY": "avFkOp6qAIH3quEtCysdzfCfqSWkeyhqgYl8x8t9",
-            // "x-requested-with": "http://192.168.0.13:3000",
+            "x-requested-with": "https://k7b202.p.ssafy.io/",
           },
         })
         .then((response) => {
@@ -170,7 +190,12 @@ function RouteMap() {
           let paths = response.data.route.trafast[0].path;
           setRoutesDriving(response.data.route.trafast[0].path);
           let polylinePath = [];
-          // console.log(paths, routesDriving);
+          const distance = response.data.route.trafast[0].summary.distance;
+          // if (distance >= 20000) zoomLevel -= 1;
+          if (distance >= 30000) zoomLevel -= 1;
+          if (distance >= 40000) zoomLevel -= 1;
+          console.log(distance, zoomLevel);
+          naverMap.updateBy(cneterLoc, zoomLevel);
           paths.map((path) => {
             polylinePath.push(new naver.maps.LatLng(path[1], path[0]));
           });
@@ -213,6 +238,7 @@ function RouteMap() {
       const marker = markers[i];
       console.log(marker, marker.position);
       setNewstationName(marker.title);
+      setArrivedTime(marker.arrived_time);
       setTarget(i);
       const cordUrl = staticMapUrl(marker.position, 14);
       getStaticMap2Src(cordUrl, "cordMapImgTag2");
@@ -224,9 +250,13 @@ function RouteMap() {
       <Modal open={modalOpen2} close={closeModal2} header={modalHeader}>
         {/* // Modal.js <main> {props.children} </main>에 내용이 입력된다. 리액트 함수형 모달 */}
         {/* {newCord} */}
-        <label className="input-group input-group-lg">
+        <label className="input-group input-group-lg justify-center	">
           <span className="">이름</span>
-          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-full max-w-xs" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
+          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-3/4 max-w-xs text-center" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
+        </label>
+        <label className="input-group input-group-lg justify-center	">
+          <span className="">도착 시간</span>
+          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
         </label>
         <img id="cordMapImgTag2" alt="" />
         <button
@@ -237,6 +267,7 @@ function RouteMap() {
             var tmpMarkers = markers;
             var marker = tmpMarkers.splice(seq, 1);
             marker[0].title = newStationName;
+            marker[0].arrived_time = arrived_time;
             tmpMarkers.splice(seq, 0, marker[0]);
             setMarkers(tmpMarkers);
             marker.target = seq;
@@ -252,10 +283,22 @@ function RouteMap() {
         {/* // Modal.js <main> {props.children} </main>에 내용이 입력된다. 리액트 함수형 모달 */}
         {/* {newCord} */}
         {btnDet && (
-          <label className="input-group input-group-lg">
-            <span className="">이름</span>
-            <input type="text" placeholder="Type here" className="input input-bordered input-lg w-full max-w-xs" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
-          </label>
+          <div>
+            <label className="input-group input-group-lg justify-center	">
+              <span className="">이름</span>
+              <input
+                type="text"
+                placeholder="Type here"
+                className="input input-bordered input-lg w-3/4 max-w-xs text-center"
+                value={newStationName}
+                onChange={(e) => setNewstationName(e.target.value)}
+              />
+            </label>
+            <label className="input-group input-group-lg justify-center	">
+              <span className="">도착 시간</span>
+              <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
+            </label>
+          </div>
         )}
         <img id="cordMapImgTag" alt="" />
         <button
@@ -265,12 +308,15 @@ function RouteMap() {
               // TODO: Add station
               let data = newStation;
               data.name = newStationName;
+              data.arrived_time = arrived_time;
               const mapLoc = new naver.maps.LatLng(data.lat, data.lng);
               setNewstation(data);
               console.log(newStation);
               const newMarker = new naver.maps.Marker({
                 position: mapLoc,
                 map: map,
+                title: newStationName,
+                arrived_time: arrived_time,
               });
               setMarkers([...markers, newMarker]);
               console.log(markers);
@@ -290,7 +336,7 @@ function RouteMap() {
           {btnText}
         </button>
       </Modal>
-      <p className="bodyTitle "> {busName} 노선 추가 </p>
+      <p className="bodyTitle "> {busName} 노선 관리 </p>
       <div className="mapContainer">
         <div className="routeContainer">
           <ul className="steps steps-vertical">
@@ -336,11 +382,12 @@ function RouteMap() {
       </div>
       <button
         className="btn btn-primary saveBtn mt-3"
-        onClick={() => {
-          dispatch(updateRoute(params));
+        onClick={async function () {
+          await dispatch(updateRoute(params));
+          goList();
         }}
       >
-        노선 추가
+        변경 사항 저장
       </button>
     </div>
   );

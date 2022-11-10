@@ -4,7 +4,11 @@ export type RootStackParamList = {
         id: number;
     };
     Bus: undefined;
-    BusMap: undefined;
+    BusMap: {
+        stationList: Array<object>;
+        commute_or_leave: string;
+        name: string;
+    };
     Station: {
         bus_id: number;
         name: string;
@@ -18,5 +22,8 @@ export type RootStackParamList = {
     Setting: undefined;
     FaqDetail: {
         faq: any;
+    };
+    InformationDetail: {
+        information: any;
     };
 };
