@@ -21,8 +21,8 @@ const LogoMainContent = (props: any) => {
                 RootNavigation.navigate('Notification');
             }}
         >
-            <FontAwesome name="bell" size={14} />{' '}
-            <Text>{notificationCount}</Text>
+            <FontAwesome name="bell" size={20} />{' '}
+            <Text style={{ fontSize: 20 }}>{notificationCount}</Text>
         </Text>
     );
 };
