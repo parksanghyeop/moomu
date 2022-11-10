@@ -4,19 +4,15 @@ from datetime import datetime
 
 class FaQBase(BaseModel):
     title: str
+    content: str
+
+
+class FaQCreate(FaQBase):
     region_id: int
     user_id: int
 
 
-class FaQCreate(FaQBase):
-    content: str
-
-
 class FaQUpdate(FaQBase):
-    content: str
-
-
-class FaQDelete(BaseModel):
     pass
 
 
@@ -31,7 +27,7 @@ class FaQList(FaQBase):
 
 class FaQ(BaseModel):
     faq: object
-    answer: object
+    answer: list[object]
 
     class Config:
         orm_mode = True

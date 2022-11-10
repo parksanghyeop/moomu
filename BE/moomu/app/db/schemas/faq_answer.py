@@ -3,12 +3,12 @@ from datetime import datetime
 
 
 class FaQAnswerBase(BaseModel):
-    question_id: int
+    faq_id: int
     content: str
 
 
 class FaQAnswerCreate(FaQAnswerBase):
-    pass
+    user_id: int
 
 
 class FaQAnswerUpdate(FaQAnswerBase):
