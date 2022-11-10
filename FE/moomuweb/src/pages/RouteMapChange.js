@@ -152,7 +152,7 @@ function RouteMap() {
       temp.push(points[i]);
     }
     const waypoints = temp.join("|");
-    const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
+    const direction15Url = `https://naveropenapi.apigw.ntruss.com/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
     console.log(direction15Url);
     // naver.maps.Service.geocode(
     //   {
@@ -177,9 +177,12 @@ function RouteMap() {
       axios
         .get(direction15Url, {
           headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
+            "Access-Control-Allow-Credentials": "true",
             "X-NCP-APIGW-API-KEY-ID": "yxdllgza3i",
             "X-NCP-APIGW-API-KEY": "avFkOp6qAIH3quEtCysdzfCfqSWkeyhqgYl8x8t9",
-            // "x-requested-with": "http://192.168.0.13:3000",
+            "x-requested-with": "https://k7b202.p.ssafy.io/",
           },
         })
         .then((response) => {
