@@ -5,14 +5,17 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
+import { useAuth } from "../context/Auth";
 import { login } from "../reducers/tokenSlice";
 // import { tokenSelector } from "../reducers/tokenSlice";
 
 function LogiInPage() {
   const [ID, setID] = useState("");
   const [PW, setPW] = useState("");
+  const { setUser } = useAuth();
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token.token);
+  const userRole = useSelector((state) => state.token.decoded.role);
 
   //password type 변경용 state
   const [passwordType, setPasswordType] = useState({
@@ -77,14 +80,14 @@ function LogiInPage() {
                   "Content-Type": "application/json",
                   "Access-Controle-Allow-Origin": "*",
                   "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
-                  "Access-Control-Allow-Headers": "Content-Type, Authorization, Content-Length, x-Requested-With",
-                  "Access-Control-Allow-Origin": "http://localhost:3000",
                   "Access-Control-Allow-Credentials": "true",
                   "X-Requested-With": "XMLHttpRequest",
                 },
               };
               axios.post(url, body, config).then((res) => {
                 dispatch(login(res.data));
+                setUser({ userRole });
+
                 console.log(token);
                 goToMain();
               });

@@ -1,6 +1,10 @@
 .table-title {
   font-size: calc(10px + 2vmin);
 }
+.custom-table-container {
+  overflow-y: scroll;
+  height: 70vh;
+}
 .custom-table {
   @apply table;
   display: table;

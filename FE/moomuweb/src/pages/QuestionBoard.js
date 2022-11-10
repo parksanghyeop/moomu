@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRoute, faTrashCan } from "@fortawesome/free-solid-svg-icons";
@@ -7,6 +8,7 @@ import axios from "axios";
 
 import "./DashBoard.css";
 import Pagenation from "../componentes/pagination";
+import LoadingComponent from "../componentes/Loading";
 
 function DashBoard() {
   const [isLoading, setLoading] = useState(true);
@@ -64,7 +66,7 @@ function DashBoard() {
   };
 
   if (isLoading) {
-    return <div className="App">Loading...</div>;
+    return <LoadingComponent />;
   }
   return (
     <div className="tablePage">
@@ -73,7 +75,7 @@ function DashBoard() {
         <table className="custom-table w-full">
           {/* <!-- head --> */}
           <thead>
-            <tr className="text-primary font-bold table-title">
+            <tr className="text-primary font-bold table-title sticky top-0">
               {/* <th className=" ">공지</th> */}
               {/* <th className="w-36 ">노선 변경</th>
               <th className="w-36 ">노선 삭제</th> */}
@@ -104,7 +106,7 @@ function DashBoard() {
           </tbody>
         </table>
       </div>
-      <footer className="flex">
+      <footer className="flex mb-1">
         <Pagenation
           total={maxPage}
           limit={pageLimit}

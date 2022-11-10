@@ -14,7 +14,7 @@ export default function MenuSidebar() {
   const token = useSelector((state) => state.token.isToken);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  let logOut = function () {
+  const logOut = function () {
     dispatch(logout());
     navigate("/");
   };
