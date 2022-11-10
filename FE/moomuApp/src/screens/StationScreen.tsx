@@ -28,6 +28,9 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
     const [co_or_le, setco_or_le] = useState<string>(
         props.route.params.commute_or_leave
     );
+    const [busName, setBusName] = useState<String>(
+        props.route.params.name
+    )
 
     useEffect(() => {
         (async () => {
@@ -232,6 +235,7 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
                         RootNavigation.navigate('BusMap', {
                             stationList: stationList,
                             commute_or_leave: co_or_le,
+                            name: busName
                         });
                     }}
                 />

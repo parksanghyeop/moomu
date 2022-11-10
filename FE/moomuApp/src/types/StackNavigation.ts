@@ -7,6 +7,7 @@ export type RootStackParamList = {
     BusMap: {
         stationList: Array<object>;
         commute_or_leave: string;
+        name: string;
     };
     Station: {
         bus_id: number;
