@@ -22,6 +22,8 @@ import { Feather } from '@expo/vector-icons';
 import jwtDecode from 'jwt-decode';
 import instance from '../api/axios';
 
+import { useFocusEffect } from '@react-navigation/core';
+
 type MainScreenProps = StackScreenProps<RootStackParamList, 'Main'>;
 
 let token: string;
@@ -39,27 +41,34 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
     const [user, setUser] = useState<jwt>();
     const [buses, setBuses] = useState<any>();
 
-    useEffect(() => {
-        AsyncStorage.getData('token').then((response) => {
-            token = response;
-            decoded = jwtDecode(token);
-            setUser(decoded);
-        });
-        instance.get('/users/bus').then((response) => {
-            let data = {
-                commute: null,
-                leave: null,
-            };
-
-            response.data.map((item: any) => {
-                if (item.commute_or_leave === 'COMMUTE') {
-                    data.commute = item.bus_name;
-                } else {
-                    data.leave = item.bus_name;
-                }
+    useFocusEffect(
+        React.useCallback(() => {
+            AsyncStorage.getData('token').then((response) => {
+                token = response;
+                decoded = jwtDecode(token);
+                setUser(decoded);
             });
-            setBuses(data);
-        });
+            instance.get('/users/bus').then((response) => {
+                let data = {
+                    commute: null,
+                    leave: null,
+                };
+
+                console.log(response.data);
+                response.data.map((item: any) => {
+                    if (item.commute_or_leave === 'COMMUTE') {
+                        data.commute = item.bus_name;
+                    } else {
+                        data.leave = item.bus_name;
+                    }
+                });
+                setBuses(data);
+            });
+        }, [])
+    );
+
+    useEffect(() => {
+        console.log('그냥 useeffect');
     }, []);
 
     return (
