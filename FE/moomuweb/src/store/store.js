@@ -3,7 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import tokenReducer from "../reducers/tokenSlice";
 import stationReducer from "../reducers/stationSlice";
 
-export default configureStore({
+export const store = configureStore({
   reducer: { token: tokenReducer, station: stationReducer },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -11,3 +11,5 @@ export default configureStore({
     }),
   // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
+
+export default store;

@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import axios from "axios";
+// import https from "https";
 import "./RouteMap.css";
 import Modal from "../componentes/modal";
 import { useEffect, useRef, useState } from "react";
@@ -152,7 +153,7 @@ function RouteMap() {
       temp.push(points[i]);
     }
     const waypoints = temp.join("|");
-    const direction15Url = `https://naveropenapi.apigw.ntruss.com/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
+    const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
     console.log(direction15Url);
     // naver.maps.Service.geocode(
     //   {
@@ -171,42 +172,46 @@ function RouteMap() {
     // );
     // let tmpURL = "navermap" + direction15Url;
     // console.log(tmpURL);
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
+    const options = {
+      method: "get",
+      headers: {
+        // "Access-Control-Allow-Origin": "*",
+        // "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
+        // "Access-Control-Allow-Credentials": "true",
+        // "x-requested-with": "*",
+        "X-NCP-APIGW-API-KEY-ID": "yxdllgza3i",
+        "X-NCP-APIGW-API-KEY": "avFkOp6qAIH3quEtCysdzfCfqSWkeyhqgYl8x8t9",
+      },
+      // httpsAgent: new https.Agent({
+      //   rejectUnauthorized: false, //허가되지 않은 인증을 reject하지 않겠다!
+      // }),
+    };
     // naverMap 길찾기 요청, 경로 그리기
     if (isLoaded)
-      axios
-        .get(direction15Url, {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
-            "Access-Control-Allow-Credentials": "true",
-            "X-NCP-APIGW-API-KEY-ID": "yxdllgza3i",
-            "X-NCP-APIGW-API-KEY": "avFkOp6qAIH3quEtCysdzfCfqSWkeyhqgYl8x8t9",
-            "x-requested-with": "https://k7b202.p.ssafy.io/",
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-          let paths = response.data.route.trafast[0].path;
-          setRoutesDriving(response.data.route.trafast[0].path);
-          let polylinePath = [];
-          const distance = response.data.route.trafast[0].summary.distance;
-          // if (distance >= 20000) zoomLevel -= 1;
-          if (distance >= 30000) zoomLevel -= 1;
-          if (distance >= 40000) zoomLevel -= 1;
-          console.log(distance, zoomLevel);
-          naverMap.updateBy(cneterLoc, zoomLevel);
-          paths.map((path) => {
-            polylinePath.push(new naver.maps.LatLng(path[1], path[0]));
-          });
-          new naver.maps.Polyline({
-            path: polylinePath, //좌표배열
-            strokeColor: "#3182CE", //선의 색 파랑
-            strokeOpacity: 0.8, //선의 투명도
-            strokeWeight: 6, //선의 두께
-            map: naverMap, //만들어 놓은 지도
-          });
+      axios(direction15Url, options).then((response) => {
+        console.log(response.data);
+        let paths = response.data.route.trafast[0].path;
+        setRoutesDriving(response.data.route.trafast[0].path);
+        let polylinePath = [];
+        const distance = response.data.route.trafast[0].summary.distance;
+        // if (distance >= 20000) zoomLevel -= 1;
+        if (distance >= 30000) zoomLevel -= 1;
+        if (distance >= 40000) zoomLevel -= 1;
+        console.log(distance, zoomLevel);
+        naverMap.updateBy(cneterLoc, zoomLevel);
+        paths.map((path) => {
+          polylinePath.push(new naver.maps.LatLng(path[1], path[0]));
         });
+        new naver.maps.Polyline({
+          path: polylinePath, //좌표배열
+          strokeColor: "#3182CE", //선의 색 파랑
+          strokeOpacity: 0.8, //선의 투명도
+          strokeWeight: 6, //선의 두께
+          map: naverMap, //만들어 놓은 지도
+        });
+      });
 
     // 클릭 event listener
     naverMap.addListener("click", (e) => mapClick(e));
