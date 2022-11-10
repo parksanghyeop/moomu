@@ -16,12 +16,14 @@ export type RootStackParamList = {
     };
     Main: undefined;
     BusSearch: undefined;
-    Information: undefined;  
+    Information: undefined;
     FAQ: undefined;
     Notification: undefined;
     Setting: undefined;
-  InformationDetail: {
-    information: any;
-};
-
+    FaqDetail: {
+        faq: any;
+    };
+    InformationDetail: {
+        information: any;
+    };
 };
