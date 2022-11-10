@@ -1,0 +1,41 @@
+.naverMap {
+  min-width: 49vw;
+  height: 60vh;
+  align-self: center;
+}
+.mapPage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.mapContainer {
+  display: flex;
+}
+.menu {
+  width: 20vw;
+}
+.custom-steps {
+  @apply steps;
+  /* overflow-: scroll; */
+}
+.routeContainer {
+  overflow-y: scroll;
+  height: 70vh;
+  min-width: 15vw;
+}
+
+.btn-up {
+  @apply btn-primary;
+  grid-column-start: 2;
+}
+.updownBtnFrame {
+  display: flex;
+  grid-column-start: 2;
+}
+.steps-vertical .step:before {
+  height: 170%;
+}
+.steps-vertical .step {
+  grid-template-rows: 40px 20px;
+  grid-row-gap: 1px;
+}

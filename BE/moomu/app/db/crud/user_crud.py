@@ -18,7 +18,13 @@ def get_user_by_username(db: Session, username: str):
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).filter(models.User.user_role == 0).offset(skip).limit(limit).all()
+    return (
+        db.query(models.User)
+        .filter(models.User.user_role == 0)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
 
 def create_user(db: Session, user: UserCreate):
@@ -97,3 +103,26 @@ def delete_user_station(db: Session, user_id: int, commute_or_leave: CommuteOrLe
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def get_user_bus(db: Session, user_id: int):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+
+    query = db.query(
+        models.User.id.label("user_id"),
+        models.Bus.name.label("bus_name"),
+        models.Bus.commute_or_leave,
+        models.Station.name.label("station_name"),
+    )
+    query = query.join(
+        models.Station,
+        (models.User.start_station_id == models.Station.id)
+        | (models.User.end_station_id == models.Station.id),
+    )
+    query = query.join(
+        models.Bus,
+        models.Station.bus_id == models.Bus.id,
+    )
+    result = query.filter(models.User.id == user_id).all()
+
+    return result

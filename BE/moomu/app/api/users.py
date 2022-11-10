@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.db.crud import user_crud
 from app.db.schemas.user import UserUpdate, UserStation
-from app.db.schemas import UserCreate, User, UserLogin, ExpoToken
+from app.db.schemas import UserCreate, User, UserLogin, ExpoToken, UserBus
 from app.dependencies import get_db
 import bcrypt
 
@@ -19,12 +19,13 @@ router = APIRouter(
 
 
 @router.get("/admin", response_model=list[User])
-def get_all_user(db: Session = Depends(get_db), payload: dict = Depends(validate_token)):
+def get_all_user(
+    db: Session = Depends(get_db), payload: dict = Depends(validate_token)
+):
     user_role = payload.get("role")
     if user_role < 5:
         raise HTTPException(
-            status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
-            detail="권한이 없습니다."
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
         )
     db_users = user_crud.get_users(db)
     if db_users is None:
@@ -183,3 +184,11 @@ def delete_user_station(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
+
+
+@router.get("/bus", response_model=list[UserBus])
+def get_user_bus(
+    db: Session = Depends(get_db), payload: dict = Depends(validate_token)
+):
+    user_id = payload.get("id")
+    return user_crud.get_user_bus(db, user_id)

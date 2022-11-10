@@ -95,7 +95,18 @@ def update_read_alarm_by_id(db: Session, alarm_id: int, user_id: int):
 
 def get_token_list(user_list):
     token_list = []
-    for user in user_list:
-        token_list.append(user.expo_token)
+    if isinstance(user_list, list):
+        for user in user_list:
+            token_list.append(user.expo_token)
+    else:
+        token_list.append(user_list.expo_token)
 
     return token_list
+
+
+def get_count_not_read_alarms(db: Session, user_id: int):
+    return (
+        db.query(models.Alarm)
+        .filter(models.Alarm.user_id == user_id, models.Alarm.read == False)
+        .count()
+    )

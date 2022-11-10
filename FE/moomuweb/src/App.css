@@ -1,6 +1,7 @@
 .App {
   text-align: center;
   display: flex;
+  height: 100vh;
 }
 
 .App-link {
@@ -17,11 +18,8 @@
   justify-content: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.loading {
+  width: 35vw;
+  margin-left: 20vw;
+  height: 1.5rem;
 }

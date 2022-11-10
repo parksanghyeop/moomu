@@ -50,8 +50,8 @@ type NotificationScreenProps = StackScreenProps<
     RootStackParamList,
     'Notification'
 >;
-
-const NotificationScreen: React.FC<NotificationScreenProps> = (props) => {
+    
+const NotificationScreen: React.FC<NotificationScreenProps>  = (props) => {
     const [notifications, setNotifications] = useState<any>([]);
     const [notification, setNotification] = useState<any>(null);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
