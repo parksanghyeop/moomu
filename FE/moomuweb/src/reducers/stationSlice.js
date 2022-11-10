@@ -14,26 +14,67 @@ export const loadRoute = createAsyncThunk("get route", async (busId) => {
   const location = new naver.maps.LatLng(36.354683, 127.298177);
   const initLoc = { id: 0, stationLatLng: location, stationName: "ssafy", stationId: 0, order: 0 };
   let dummy = [];
-  const url = `https://k7b202.p.ssafy.io/api/shuttlebus/bus/${busId.id}`;
-  const pget = await axios.get(url);
-  console.log(pget);
-  for (var loc in pget.data.stations) {
-    const data = pget.data.stations[loc];
+  const busUrl = `https://k7b202.p.ssafy.io/api/shuttlebus/bus/${busId.id}`;
+  const dget = await axios.get(busUrl);
+  console.log(dget);
+  for (var loc in dget.data.stations) {
+    const data = dget.data.stations[loc];
     const mapLoc = new naver.maps.LatLng(data.lat, data.lng);
     const newItem = { id: loc, stationLatLng: mapLoc, stationName: data.name, stationId: data.id, order: data.order, arrived_time: data.arrived_time };
     // dummy.push(data);
     dummy.push(newItem);
   }
+  const polyUrl = `https://k7b202.p.ssafy.io/api/shuttlebus/station/polyline/${busId.id}`;
+  const pget = await axios.get(polyUrl);
   const data = {
     data: dummy,
-    name: pget.data.name,
+    poly: pget.data,
+    name: dget.data.name,
   };
   return data;
 });
 
 export const updateRoute = createAsyncThunk("Update Bus Route", async (busId, { getState }) => {
   const state = await getState();
-  // console.log(state.token);
+  let points = [];
+  for (let loc = 0; loc < state.station.stations.length; loc++) {
+    const element = state.station.stations[loc].stationLatLng;
+    points.push(element.x.toString() + "," + element.y.toString());
+  }
+  const start = points[0];
+  const goal = points.slice(-1);
+  var temp = [];
+  for (var i = 1; i < points.length - 1; i++) {
+    temp.push(points[i]);
+  }
+  const waypoints = temp.join("|");
+  const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
+  console.log(direction15Url);
+
+  const options = {
+    method: "get",
+    headers: {
+      // "Access-Control-Allow-Origin": "*",
+      // "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
+      // "Access-Control-Allow-Credentials": "true",
+      // "x-requested-with": "*",
+      "X-NCP-APIGW-API-KEY-ID": "yxdllgza3i",
+      "X-NCP-APIGW-API-KEY": "avFkOp6qAIH3quEtCysdzfCfqSWkeyhqgYl8x8t9",
+    },
+  };
+  let polyLine = [];
+  await axios(direction15Url, options).then((response) => {
+    console.log(response.data);
+    let paths = response.data.route.trafast[0].path;
+    console.log(polyLine);
+    paths.map((path) => {
+      polyLine.push({
+        bus_id: busId.id,
+        lat: path[1],
+        lng: path[0],
+      });
+    });
+  });
   const updateUrl = `https://k7b202.p.ssafy.io/api/shuttlebus/station/edit/${busId.id}`;
   let bodyData = [];
   for (let i in state.station.stations) {
@@ -54,7 +95,10 @@ export const updateRoute = createAsyncThunk("Update Bus Route", async (busId, { 
       accept: "application/json",
       Authorization: `Bearer ${state.token.rawToken.access_token}`,
     },
-    data: [...bodyData],
+    data: {
+      station_list: bodyData,
+      poly_list: polyLine,
+    },
   };
   console.log(config);
   const response = await axios(config);
@@ -63,33 +107,16 @@ export const updateRoute = createAsyncThunk("Update Bus Route", async (busId, { 
 
 export const staionSlice = createSlice({
   name: "staionSlice",
-  initialState: { routeName: "", stations: [], isLoaded: false },
+  initialState: { routeName: "", stations: [], poly: [], isLoaded: false },
   reducers: {
     initRoute: (state) => {
       state.routeName = "";
-      state.stations = [];
-      // state.isLoaded = isEmpty(state.stations);
-      const location = new naver.maps.LatLng(36.354683, 127.298177);
-      const station01 = new naver.maps.LatLng(36.3484, 127.2982);
-      const station02 = new naver.maps.LatLng(36.3457, 127.3017);
-      const station03 = new naver.maps.LatLng(36.3417, 127.3055);
-      const station04 = new naver.maps.LatLng(36.3538, 127.3416);
-      const station05 = new naver.maps.LatLng(36.3741, 127.318);
-      const station06 = new naver.maps.LatLng(36.3796, 127.318);
-      const station07 = new naver.maps.LatLng(36.3841, 127.3203);
-      const station08 = new naver.maps.LatLng(36.3917, 127.3151);
-      let tmpStations = [location, station01, station02, station03, station04, station05, station06, station07, station08];
-      for (var loc in tmpStations) {
-        const newItem = { stationLatLng: tmpStations[loc], stationName: "testtesttesttest", id: state.stations.length };
-        state.stations.push(newItem);
-      }
-      // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      // console.log(state.stations);
-      state.isLoaded = true;
+      state.poly = [];
     },
     reload: (state) => {
       state.routeName = "";
       state.stations = [];
+      state.poly = [];
       state.isLoaded = false;
     },
     staionUp: (state, action) => {
@@ -141,6 +168,7 @@ export const staionSlice = createSlice({
     [loadRoute.fulfilled]: (state, { payload }) => {
       // state.stations = [];
       state.stations = payload.data;
+      state.poly = payload.poly;
       state.routeName = payload.name;
       state.isLoaded = true;
     },
