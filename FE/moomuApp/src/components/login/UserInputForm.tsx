@@ -43,6 +43,16 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
     const [password, setPassword] = useState('');
     const [pwcheck, setPWCheck] = useState('');
     const [nickname, setNickname] = useState('');
+    const [region, setRegion] = useState<number>();
+    const [group, setGroup] = useState<number>();
+
+    // 지역 정보
+    const [regions, setRegions] = useState<
+        {
+            name: string;
+            id: number;
+        }[]
+    >([]);
 
     // 로그인 요청
     const loginbutton = () => {
@@ -84,7 +94,7 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
             ></SimpleInput>
             <Animated.View style={[animatedStyles]}>
                 <SimpleInput
-                    placeholder="비밀번호확인"
+                    placeholder="비밀번호 확인"
                     value={pwcheck}
                     onChangeText={(t) => setPWCheck(t)}
                     secureTextEntry

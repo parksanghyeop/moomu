@@ -18,7 +18,7 @@ export const SimpleInput = (props: TextInputProps) => {
             style={{
                 position: 'relative',
                 width: 220,
-                height: 40,
+                height: 38,
                 marginBottom: 10,
             }}
         >

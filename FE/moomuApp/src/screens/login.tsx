@@ -43,7 +43,7 @@ const Login = (props: any) => {
                 const decoded = jwtDecode(token);
                 // console.log(decoded);
 
-                RootNavigation.navigate('Main');
+                RootNavigation.reset('Main');
             })
             .catch((error) => {
                 console.log(error);
