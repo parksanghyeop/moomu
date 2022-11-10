@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { useLocation, Navigate, Outlet } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { logout } from "../reducers/tokenSlice";
 
@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const RequireAuth = () => {
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.token.decoded.role);
   const location = useLocation();
   const dispatch = useDispatch();
 

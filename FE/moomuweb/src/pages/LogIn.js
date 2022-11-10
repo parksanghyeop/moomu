@@ -78,7 +78,7 @@ function LogiInPage() {
               let config = {
                 headers: {
                   "Content-Type": "application/json",
-                  "Access-Controle-Allow-Origin": "*",
+                  "Access-Control-Allow-Origin": "*",
                   "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
                   "Access-Control-Allow-Credentials": "true",
                   "X-Requested-With": "XMLHttpRequest",
