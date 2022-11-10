@@ -9,29 +9,36 @@ import { Logo3 } from '../components/logo';
 import * as RootNavigation from '../../RootNavigation';
 import { ScrollView } from 'react-native-gesture-handler';
 
-type InformationDetailScreenProps = StackScreenProps<RootStackParamList, 'InformationDetail'>;
+type InformationDetailScreenProps = StackScreenProps<
+    RootStackParamList,
+    'InformationDetail'
+>;
 
-const InformationDetailScreen: React.FC<InformationDetailScreenProps> = (props) => {
+const InformationDetailScreen: React.FC<InformationDetailScreenProps> = (
+    props
+) => {
     return (
         <View style={styles.container}>
             <View
                 style={[
                     {
-                        width: '70%',   
+                        width: '70%',
                         flex: 1,
                         alignItems: 'center',
                         marginTop: 50,
                     },
                 ]}
             >
-<Logo3 content="information" />
+                <Logo3 content="information" />
                 <View style={styles.titleContainer}>
                     <Text style={styles.titleText}>
-                        {props.route.params.information?.title}
+                        {props.route.params.information.title}
                     </Text>
                 </View>
-                <Text>{props.route.params.information?.title}</Text>
-                <Text>{props.route.params.information?.created_date}</Text>
+                <Text>{props.route.params.information.content}</Text>
+                <Text>
+                    {props.route.params.information.created_dated}
+                </Text>
                 <View style={{ marginBottom: 60 }}>
                     <Button1
                         text={'목록'}

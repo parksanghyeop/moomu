@@ -4,14 +4,18 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as RootNavigation from '../../../RootNavigation';
 import instance from '../../api/axios';
 
+import { useFocusEffect } from '@react-navigation/core';
+
 const LogoMainContent = (props: any) => {
     const [notificationCount, setNotificationCount] = React.useState(0);
 
-    React.useEffect(() => {
-        instance.get('/alarms/count-not-read').then((response) => {
-            setNotificationCount(response.data);
-        });
-    }, []);
+    useFocusEffect(
+        React.useCallback(() => {
+            instance.get('/alarms/count-not-read').then((response) => {
+                setNotificationCount(response.data);
+            });
+        }, [])
+    );
 
     return (
         <Text
@@ -21,8 +25,8 @@ const LogoMainContent = (props: any) => {
                 RootNavigation.navigate('Notification');
             }}
         >
-            <FontAwesome name="bell" size={14} />{' '}
-            <Text>{notificationCount}</Text>
+            <FontAwesome name="bell" size={20} />{' '}
+            <Text style={{ fontSize: 20 }}>{notificationCount}</Text>
         </Text>
     );
 };

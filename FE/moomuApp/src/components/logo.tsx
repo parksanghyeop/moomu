@@ -10,60 +10,61 @@ let big = require('../../assets/images/Logo.png');
 let small = require('../../assets/images/Logo2.jpg');
 
 export const Logo = () => {
-  return <Image style={styles.big} source={big} />;
+    return <Image style={styles.big} source={big} />;
 };
 
 export const Logo2 = () => {
-  return <Image style={styles.small} source={small} />;
+    return <Image style={styles.small} source={small} />;
 };
 
 export const Logo3 = (props: any) => {
-  const logoContent: any = {
-    main: <LogoMainContent />,
-    information: <LogoInformationContent />,
-    faq: <LogoFaqContent />,
-    notification: <LogoNotificationContent />,
-    setting: <LogoSettingContent/>,
-  };
+    const logoContent: any = {
+        main: <LogoMainContent />,
+        information: <LogoInformationContent />,
+        faq: <LogoFaqContent />,
+        notification: <LogoNotificationContent />,
+        setting: <LogoSettingContent />,
+    };
 
-  return (
-    <View style={styles.customLogo}>
-      <Text style={styles.logoText}>MOOMU</Text>
-      {logoContent[props.content]}
-    </View>
-  );
+    return (
+        <View style={styles.customLogo}>
+            <Text style={styles.logoText}>MOOMU</Text>
+            {logoContent[props.content]}
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
-  customLogo: {
-    width: 160,
-    height: 160,
-    resizeMode: 'contain',
-    borderWidth: 1,
-    borderColor: '#63B3ED',
-    justifyContent: 'center',
-  },
-  logoText: {
-    textAlign: 'center',
-    fontSize: 26,
-    color: '#63B3ED',
-  },
+    customLogo: {
+        width: 160,
+        height: 160,
+        marginTop: 40,
+        resizeMode: 'contain',
+        borderWidth: 1,
+        borderColor: '#63B3ED',
+        justifyContent: 'center',
+    },
+    logoText: {
+        textAlign: 'center',
+        fontSize: 26,
+        color: '#63B3ED',
+    },
 
-  container: {
-    flex: 1,
-  },
-  image: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  big: {
-    width: 264,
-    height: 264,
-    resizeMode: 'contain',
-  },
-  small: {
-    width: 160,
-    height: 160,
-    resizeMode: 'contain',
-  },
+    container: {
+        flex: 1,
+    },
+    image: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    big: {
+        width: 264,
+        height: 264,
+        resizeMode: 'contain',
+    },
+    small: {
+        width: 160,
+        height: 160,
+        resizeMode: 'contain',
+    },
 });

@@ -62,6 +62,10 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
     const [bus_lat, setBusLat] = useState<number>();
     const [bus_lng, setBusLng] = useState<number>();
     const [visible, setVisible] = useState(false);
+    const [isLoding, setIsLoding] = useState<boolean>(false);
+
+    const [avglat, setAvgLat] = useState<number>(36.3550227);
+    const [avglon, setAvgLon] = useState<number>(127.2998406);
 
     const mapRef = React.useRef<any>();
     const ws = React.useRef<any>();
@@ -91,6 +95,16 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
 
             setLatitude(latitude);
             setLongitude(longitude);
+            let sumlat = 0;
+            let sumlon = 0;
+            for (let i = 0; i < stationList.length; i++) {
+                sumlat += +stationList[i].lat;
+                sumlon += +stationList[i].lng;
+            }
+            setAvgLat(sumlat / stationList.length);
+            setAvgLon(sumlon / stationList.length);
+
+            setIsLoding(true);
         })();
         
         ws.current = new WebSocket(`ws://k7b202.p.ssafy.io:8000/shuttlebus/ws/` + busName )
@@ -170,29 +184,36 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
         if(bus_lat != null && bus_lng != null)
             return (<Marker coordinate={{latitude: +bus_lat, longitude: +bus_lng}} title={"버스"} />)
     }
+    const mapView = (lat: number, lon: number) => {
+        if (isLoding) {
+            return (
+                <MapView
+                    style={styles.map}
+                    ref={mapRef}
+                    showsUserLocation={true}
+                    provider={'google'}
+                    initialRegion={{
+                        latitude: lat,
+                        longitude: lon,
+                        latitudeDelta: 0.4,
+                        longitudeDelta: 0.4,
+                    }}
+                >
+                    {MarkList()}
+                    {visible ? Gps() : null}
+                    <Polyline
+                        coordinates={line}
+                        strokeColor="#F00"
+                        strokeWidth={5}
+                    />
+                </MapView>
+            );
+        }
+    };
 
     return (
         <View style={styles.container}>
-            <MapView
-                style={styles.map}
-                ref={mapRef}
-                showsUserLocation={true}
-                provider={'google'}
-                initialRegion={{
-                    latitude: 36.38,
-                    longitude: 127.51,
-                    latitudeDelta: 3,
-                    longitudeDelta: 4,
-                }}
-            >
-                {MarkList()}
-                {visible ? Gps() : null}
-                <Polyline
-                    coordinates={line}
-                    strokeColor="#F00"
-                    strokeWidth={5}
-                />
-            </MapView>
+            {mapView(avglat, avglon)}
             <View style={[{ position: 'absolute', left: 0 }]}>
                 <Button1 text={'내 위치'} onPress={goToMyLocation} />
             </View>
@@ -208,10 +229,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     map: {
-        width: '99%',
+        width: '100%',
         height: '95%',
-        position: 'absolute',
-        bottom: 5,
+        flex: 1,
     },
 });
 
