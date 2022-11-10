@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.db import models
 from app.db.schemas import NoticeCreate, NoticeUpdate
+from app.db.crud import alarm_crud
 
 
 def get_notice(db: Session, notice_id: int):
@@ -20,6 +21,24 @@ def create_notice(db: Session, notice: NoticeCreate):
     db.add(db_notice)
     db.commit()
     db.refresh(db_notice)
+
+    db_users = (
+        db.query(models.User).filter(models.User.user_role == 0).all()
+        if db_notice.region_id == 600
+        else db.query(models.User)
+        .filter(
+            models.User.region_id == db_notice.region_id, models.User.user_role == 0
+        )
+        .all()
+    )
+
+    alarm_crud.create_alarm_from_event(
+        db=db,
+        model=models.Notice,
+        target_id=db_notice.id,
+        content=db_notice.title,
+        db_users=db_users,
+    )
     return db_notice
 
 

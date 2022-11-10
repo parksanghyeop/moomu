@@ -1,8 +1,18 @@
-from datetime import datetime
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Text, TIME
+from sqlalchemy import (
+    Boolean,
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    DateTime,
+    Text,
+    TIME,
+    Enum,
+)
 from sqlalchemy.orm import relationship
-
+from sqlalchemy.sql import func
 from app.db.database import Base
+from app.db.schemas.commute_or_leave import CommuteOrLeave
 
 
 class Region(Base):
@@ -27,7 +37,8 @@ class User(Base):
     region_id = Column(Integer, ForeignKey("region.id"))
     start_station_id = Column(Integer, ForeignKey("station.id", ondelete="SET NULL"))
     end_station_id = Column(Integer, ForeignKey("station.id", ondelete="SET NULL"))
-    fcm_token = Column(String(100), nullable=True)
+    expo_token = Column(String(255), nullable=True)
+    user_role = Column(Integer, nullable=False, default=0)
 
     region = relationship("Region", back_populates="users")
     alarms = relationship("Alarm", back_populates="user")
@@ -43,11 +54,11 @@ class Alarm(Base):
     __tablename__ = "alarm"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    content = Column(String(255), unique=True, index=True, nullable=False)
+    content = Column(String(255), nullable=False)
     read = Column(Boolean, default=False)
-    created_date = Column(DateTime, default=datetime.now)
+    created_date = Column(DateTime, server_default=func.now())
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
-    alarm_type = Column(Integer, nullable=False)
+    alarm_type = Column(String(30), nullable=False)
     target_id = Column(Integer, nullable=False)
 
     user = relationship("User", back_populates="alarms")
@@ -59,6 +70,7 @@ class Bus(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String(50), unique=True, index=True, nullable=False)
     region_id = Column(Integer, ForeignKey("region.id"))
+    commute_or_leave = Column(Enum(CommuteOrLeave))
 
     bus_stations = relationship("Station", back_populates="bus")
     region = relationship("Region", back_populates="bus")
@@ -68,13 +80,12 @@ class Station(Base):
     __tablename__ = "station"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String(50), unique=True, index=True, nullable=False)
+    name = Column(String(50), index=True, nullable=False)
     bus_id = Column(Integer, ForeignKey("bus.id", ondelete="CASCADE"))
     lat = Column(String(50), nullable=False)
     lng = Column(String(50), nullable=False)
     order = Column(Integer, nullable=False)
-    arrived_time = Column(TIME, nullable=False)
-    commute_or_leave = Column(Boolean, nullable=False)
+    arrived_time = Column(TIME, nullable=True)
 
     bus = relationship("Bus", back_populates="bus_stations")
     start_users = relationship(
@@ -91,8 +102,8 @@ class Notice(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     title = Column(String(50), nullable=False)
     content = Column(Text, nullable=False)
-    created_date = Column(DateTime, default=datetime.now)
-    updated_date = Column(DateTime, default=datetime.now)
+    created_date = Column(DateTime, server_default=func.now())
+    updated_date = Column(DateTime, server_default=func.now(), onupdate=func.now())
     region_id = Column(Integer, ForeignKey("region.id"))
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
 
@@ -106,8 +117,8 @@ class FaQ(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     title = Column(String(50), nullable=False)
     content = Column(Text, nullable=False)
-    created_date = Column(DateTime, default=datetime.now)
-    updated_date = Column(DateTime, default=datetime.now)
+    created_date = Column(DateTime, server_default=func.now())
+    updated_date = Column(DateTime, server_default=func.now(), onupdate=func.now())
     region_id = Column(Integer, ForeignKey("region.id"))
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
 
@@ -118,11 +129,10 @@ class FaQ(Base):
 
 class FaQAnswer(Base):
     __tablename__ = "faq_answer"
-
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     content = Column(Text, nullable=False)
-    created_date = Column(DateTime, default=datetime.now)
-    updated_date = Column(DateTime, default=datetime.now)
+    created_date = Column(DateTime, server_default=func.now())
+    updated_date = Column(DateTime, server_default=func.now(), onupdate=func.now())
     faq_id = Column(Integer, ForeignKey("faq.id", ondelete="CASCADE"))
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
 

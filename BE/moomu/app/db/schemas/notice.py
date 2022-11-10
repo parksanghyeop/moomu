@@ -5,12 +5,11 @@ from datetime import datetime
 class NoticeBase(BaseModel):
     title: str
     content: str
-    region_id: int
-    user_id: int
 
 
 class NoticeCreate(NoticeBase):
-    pass
+    region_id: int
+    user_id: int
 
 
 class NoticeUpdate(NoticeBase):
