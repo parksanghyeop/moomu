@@ -6,6 +6,7 @@ import {
     Dimensions,
     Pressable,
     Animated,
+    SafeAreaView,
 } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/StackNavigation';
@@ -208,6 +209,7 @@ const BusScreen: React.FC<BusScreenProps> = (props) => {
                             bus_id: temp[i].id,
                             name: temp[i].name,
                             commute_or_leave: temp[i].commute_or_leave,
+                            stationName: temp[i].name,
                         })
                     }
                     style={styles.busCard}
@@ -232,7 +234,7 @@ const BusScreen: React.FC<BusScreenProps> = (props) => {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             {commuteLeaveState ? (
                 <View style={styles.header}>
                     <Pressable style={{ width: '50%' }}>
@@ -278,7 +280,7 @@ const BusScreen: React.FC<BusScreenProps> = (props) => {
                 style={[
                     {
                         position: 'absolute',
-                        top: 70,
+                        top: 60,
                         height: 2,
                         width: '50%',
                         left: 0,
@@ -290,7 +292,9 @@ const BusScreen: React.FC<BusScreenProps> = (props) => {
                 ]}
             />
             {/* 버스 목록 */}
-            <View style={{ flexDirection: 'row', width: '100%' }}>
+            <View
+                style={{ flexDirection: 'row', width: '100%', marginTop: 20 }}
+            >
                 <Animated.View
                     style={{
                         width: width,
@@ -314,7 +318,7 @@ const BusScreen: React.FC<BusScreenProps> = (props) => {
             </View>
 
             <Footer />
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -331,13 +335,14 @@ const styles = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
-        marginVertical: 20,
+        marginVertical: 10,
         justifyContent: 'space-between',
     },
     headerText: {
         fontSize: 20,
         padding: 10,
         textAlign: 'center',
+        color: '#718096',
     },
     active: {
         color: '#63B3ED',
