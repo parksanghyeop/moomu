@@ -18,6 +18,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
 import instance from '../api/axios';
 import * as RootNavigation from '../../RootNavigation';
+import { WebView } from 'react-native-webview';
 
 type FaqScreenProps = StackScreenProps<RootStackParamList, 'FAQ'>;
 
@@ -36,72 +37,79 @@ const FaqScreen: React.FC<FaqScreenProps> = (props) => {
     }, []);
 
     return (
-        <View style={styles.container}>
-            <View
-                style={[
-                    {
-                        width: '70%',
-                        flex: 1,
-                        alignItems: 'center',
-                        marginTop: 50,
-                    },
-                ]}
-            >
-                <Logo3 content="faq" />
-                <View style={styles.titleContainer}>
-                    <Text style={styles.titleText}>내 건의사항</Text>
-                    <FontAwesome
-                        name="edit"
-                        size={16}
-                        color={'#63B3ED'}
-                        style={styles.titleText}
-                    />
-                </View>
-                <ScrollView style={{ width: '100%' }}>
-                    {faqs.map((faq: any, index: any) => {
-                        return (
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                }}
-                            >
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        RootNavigation.navigate('FaqDetail', {
-                                            faq: faq,
-                                        });
-                                    }}
-                                    style={{ width: '85%' }}
-                                >
-                                    <Text
-                                        key={index}
-                                        style={styles.listText}
-                                        numberOfLines={1}
-                                        ellipsizeMode="tail"
-                                    >
-                                        {faq?.title}
-                                    </Text>
-                                </TouchableOpacity>
-                                {/* <FontAwesome
-                                    name="check"
-                                    size={16}
-                                    color={'#63B3ED'}
-                                /> */}
-                            </View>
-                        );
-                    })}
-                </ScrollView>
-                <View style={{ marginBottom: 60 }}>
-                    <Button1
-                        text={'뒤로가기'}
-                        onPress={() => RootNavigation.goBack()}
-                    />
-                </View>
-                <Footer />
-            </View>
+        <View style={{ flex: 1 }}>
+            <WebView
+                source={{
+                    uri: 'http://pf.kakao.com/_xkxeTXxj/chat',
+                }}
+            />
         </View>
+        // <View style={styles.container}>
+        //     <View
+        //         style={[
+        //             {
+        //                 width: '70%',
+        //                 flex: 1,
+        //                 alignItems: 'center',
+        //                 marginTop: 50,
+        //             },
+        //         ]}
+        //     >
+        //         <Logo3 content="faq" />
+        //         <View style={styles.titleContainer}>
+        //             <Text style={styles.titleText}>내 건의사항</Text>
+        //             <FontAwesome
+        //                 name="edit"
+        //                 size={16}
+        //                 color={'#63B3ED'}
+        //                 style={styles.titleText}
+        //             />
+        //         </View>
+        //         <ScrollView style={{ width: '100%' }}>
+        //             {faqs.map((faq: any, index: any) => {
+        //                 return (
+        //                     <View
+        //                         style={{
+        //                             flexDirection: 'row',
+        //                             alignItems: 'center',
+        //                             justifyContent: 'space-between',
+        //                         }}
+        //                     >
+        //                         <TouchableOpacity
+        //                             onPress={() => {
+        //                                 RootNavigation.navigate('FaqDetail', {
+        //                                     faq: faq,
+        //                                 });
+        //                             }}
+        //                             style={{ width: '85%' }}
+        //                         >
+        //                             <Text
+        //                                 key={index}
+        //                                 style={styles.listText}
+        //                                 numberOfLines={1}
+        //                                 ellipsizeMode="tail"
+        //                             >
+        //                                 {faq?.title}
+        //                             </Text>
+        //                         </TouchableOpacity>
+        //                         {/* <FontAwesome
+        //                             name="check"
+        //                             size={16}
+        //                             color={'#63B3ED'}
+        //                         /> */}
+        //                     </View>
+        //                 );
+        //             })}
+        //         </ScrollView>
+        //         {/* <View style={{ marginBottom: 60 }}>
+        //             <Button1
+        //                 text={'뒤로가기'}
+        //                 onPress={() => RootNavigation.goBack()}
+        //             />
+        //         </View> */}
+        //         <Footer />
+        //     </View>
+        // </View>
     );
 };
 

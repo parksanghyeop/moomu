@@ -32,12 +32,12 @@ const FaqDetailScreen: React.FC<FaqDetailScreenProps> = (props) => {
                 </View>
                 <Text>{props.route.params.faq?.title}</Text>
                 <Text>{props.route.params.faq?.created_date}</Text>
-                <View style={{ marginBottom: 60 }}>
+                {/* <View style={{ marginBottom: 60 }}>
                     <Button1
                         text={'뒤로가기'}
                         onPress={() => RootNavigation.goBack()}
                     />
-                </View>
+                </View> */}
                 <Footer />
             </View>
         </View>
