@@ -7,7 +7,7 @@ class PolyLineBase(BaseModel):
     lng: str
 
 
-class PolyLinePos(BaseModel):
+class PolyLinePosBase(BaseModel):
     lat: str
     lng: str
 
@@ -15,5 +15,10 @@ class PolyLinePos(BaseModel):
 class PolyLine(PolyLineBase):
     id: int
 
+    class Config:
+        orm_mode = True
+
+
+class PolyLinePos(PolyLinePosBase):
     class Config:
         orm_mode = True
