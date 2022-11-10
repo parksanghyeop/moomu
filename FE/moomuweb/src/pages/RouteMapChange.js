@@ -6,7 +6,7 @@ import Modal from "../componentes/modal";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { loadRoute, stationDown, staionUp, deleteStation, addStation, updateStation, updateRoute, reload } from "../reducers/stationSlice";
-import { useParams, useNavigation } from "react-router-dom";
+import { useParams, useNavigation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretUp, faSortUp, faCaretDown, faSortDown, faTrash } from "@fortawesome/free-solid-svg-icons";
 
@@ -80,6 +80,10 @@ function RouteMap() {
     e.returnValue = "";
     dispatch(reload());
   });
+  const navigate = useNavigate();
+  const goList = function () {
+    navigate("/main");
+  };
 
   useEffect(() => {
     return () => dispatch(reload());
@@ -112,6 +116,9 @@ function RouteMap() {
     };
     const naverMap = new naver.maps.Map(mapElement.current, mapOptions);
     let points = [];
+    let centerLat = 0;
+    let centerLng = 0;
+    let zoomLevel = 12;
 
     for (var loc in stationInfos) {
       const newMarker = new naver.maps.Marker({
@@ -126,7 +133,15 @@ function RouteMap() {
       setMarkers(tmpMarkers);
       // console.log(markers, newMarker);
       points.push(convetLatLngCorr(stationInfos[loc].stationLatLng));
+      if (loc == 0 || loc == stationInfos.length - 1) {
+        centerLat += stationInfos[loc].stationLatLng._lat;
+        centerLng += stationInfos[loc].stationLatLng._lng;
+      }
     }
+    centerLat /= 2;
+    centerLng /= 2;
+    const cneterLoc = new naver.maps.LatLng(centerLat, centerLng);
+
     // console.log("////////////////////////////////");
     // console.log(points);
     // console.log(points[0].toString());
@@ -172,7 +187,12 @@ function RouteMap() {
           let paths = response.data.route.trafast[0].path;
           setRoutesDriving(response.data.route.trafast[0].path);
           let polylinePath = [];
-          // console.log(paths, routesDriving);
+          const distance = response.data.route.trafast[0].summary.distance;
+          // if (distance >= 20000) zoomLevel -= 1;
+          if (distance >= 30000) zoomLevel -= 1;
+          if (distance >= 40000) zoomLevel -= 1;
+          console.log(distance, zoomLevel);
+          naverMap.updateBy(cneterLoc, zoomLevel);
           paths.map((path) => {
             polylinePath.push(new naver.maps.LatLng(path[1], path[0]));
           });
@@ -359,8 +379,9 @@ function RouteMap() {
       </div>
       <button
         className="btn btn-primary saveBtn mt-3"
-        onClick={() => {
-          dispatch(updateRoute(params));
+        onClick={async function () {
+          await dispatch(updateRoute(params));
+          goList();
         }}
       >
         변경 사항 저장

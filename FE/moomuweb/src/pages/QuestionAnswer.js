@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Question.css";
 
-export default function NewQuestion(props) {
+export default function AnswerQuestion(props) {
   const [content, setContent] = useState("");
   const rawToken = useSelector((state) => state.token.rawToken.access_token);
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ export default function NewQuestion(props) {
               type="textarea"
               id="subject"
               placeholder="Subject"
-              maxlength="900"
+              maxLength="900"
               value={content}
               onChange={(e) => setContent(e.target.value)}
             ></textarea>

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRoute, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faIdBadge, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
 import "./DashBoard.css";
+import LoadingComponent from "../componentes/Loading";
 
 function DashBoard() {
   const [isLoading, setLoading] = useState(true);
@@ -37,7 +38,7 @@ function DashBoard() {
     navigate("/map");
   };
   const changeRoute = function (userId) {
-    navigate(`/user/${userId}`);
+    // navigate(`/user/${userId}`);
   };
 
   // const options = {
@@ -47,7 +48,7 @@ function DashBoard() {
   // };
 
   if (isLoading) {
-    return <div className="App">Loading...</div>;
+    return <LoadingComponent />;
   }
   return (
     <div className="tablePage" style={{ width: "100%" }}>
@@ -56,7 +57,7 @@ function DashBoard() {
         <table className="custom-table w-full">
           {/* <!-- head --> */}
           <thead>
-            <tr className="text-primary font-bold table-title">
+            <tr className="text-primary font-bold table-title sticky top-0">
               <th className="w-60 ">사용자</th>
               <th className="w-36 ">변경</th>
               <th className="w-36 ">삭제</th>
@@ -69,7 +70,7 @@ function DashBoard() {
                   <td className="font-bold routeTitle">{user.nickname}</td>
                   <td>
                     <button className="btn btn-ghost btn-lg changeIcon">
-                      <FontAwesomeIcon icon={faRoute} onClick={() => changeRoute(user.id)} />
+                      <FontAwesomeIcon icon={faIdBadge} onClick={() => changeRoute(user.id)} />
                     </button>
                   </td>
                   <td>

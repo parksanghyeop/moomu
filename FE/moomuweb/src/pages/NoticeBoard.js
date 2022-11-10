@@ -7,6 +7,7 @@ import axios from "axios";
 
 import "./DashBoard.css";
 import Pagenation from "../componentes/pagination";
+import LoadingComponent from "../componentes/Loading";
 
 function DashBoard() {
   const [isLoading, setLoading] = useState(true);
@@ -62,7 +63,7 @@ function DashBoard() {
   }, [currentPage, reload]);
 
   if (isLoading) {
-    return <div className="App">Loading...</div>;
+    return <LoadingComponent />;
   }
   return (
     <div className="tablePage">
@@ -71,7 +72,7 @@ function DashBoard() {
         <table className="custom-table w-full">
           {/* <!-- head --> */}
           <thead>
-            <tr className="text-primary font-bold table-title">
+            <tr className="text-primary font-bold table-title sticky top-0">
               <th className="w-max">제목</th>
               {/* <th className="w-36 ">노선 변경</th> */}
               <th className="w-2/12 ">삭제</th>
@@ -102,7 +103,7 @@ function DashBoard() {
           </tbody>
         </table>
       </div>
-      <footer className="flex">
+      <footer className="flex mb-1">
         <Pagenation
           total={maxPage}
           limit={pageLimit}

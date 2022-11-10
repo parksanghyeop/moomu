@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import NewQuestion from "./QuestionWriting";
+import AnswerQuestion from "./QuestionAnswer";
+import LoadingComponent from "../componentes/Loading";
 
 import axios from "axios";
 
@@ -45,7 +46,7 @@ export default function NewPost() {
   }, []);
 
   if (isLoading) {
-    return <div className="App">Loading...</div>;
+    return <LoadingComponent />;
   }
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -62,7 +63,7 @@ export default function NewPost() {
             );
           })}
           <div className="divider w-8/9 mt-3"></div>
-          {onOff && <NewQuestion id={params.id}></NewQuestion>}
+          {onOff && <AnswerQuestion id={params.id}></AnswerQuestion>}
           <button
             className="btn btn-primary mx-2"
             onClick={() => {
