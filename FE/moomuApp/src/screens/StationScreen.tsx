@@ -17,6 +17,8 @@ import Refreshsvg from '../../assets/icons/refresh.svg';
 import * as RootNavigation from '../../RootNavigation';
 import Button1 from '../components/button1';
 import { station, myStation } from '../types/types';
+import MaskedView from '@react-native-community/masked-view';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type StationScreenProps = StackScreenProps<RootStackParamList, 'Station'>;
 
@@ -49,12 +51,10 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
     }, []);
 
     const myStationOnpress = (id: any) => {
-        if (mytemp.start_station_id == null && co_or_le == 'COMMUTE') {
+        if (co_or_le == 'COMMUTE') {
             setMytemp({ ...mytemp, start_station_id: id });
-        } else if (mytemp.end_station_id == null && co_or_le != 'COMMUTE') {
+        } else if (co_or_le != 'COMMUTE') {
             setMytemp({ ...mytemp, end_station_id: id });
-        } else {
-            console.log('이미 등록된 정류장이 있습니다.');
         }
     };
 
@@ -148,9 +148,26 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
             id == mystation.end_station_id
         ) {
             return (
-                <Text style={styles.title}>
-                    {co_or_le == 'COMMUTE' ? '내 승차지점' : '내 하차지점'}
-                </Text>
+                // <Text style={styles.title}>
+                //     {co_or_le == 'COMMUTE' ? '내 승차지점' : '내 하차지점'}
+                // </Text>
+                <MaskedView
+                    style={{ height: 21 }}
+                    maskElement={
+                        <Text style={styles.title}>
+                            {co_or_le == 'COMMUTE'
+                                ? '내 승차지점'
+                                : '내 하차지점'}
+                        </Text>
+                    }
+                >
+                    <LinearGradient
+                        colors={['#28E9F5', '#37A6F8']}
+                        start={{ x: 0.2, y: 0.2 }}
+                        end={{ x: 1, y: 1 }}
+                        style={{ flex: 1 }}
+                    />
+                </MaskedView>
             );
         } else return;
     };
@@ -161,7 +178,7 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
                 <Text style={styles.time}>
                     {co_or_le == 'COMMUTE'
                         ? arrived_time.substring(0, 5)
-                        : +arrived_time.substring(0, 1) -
+                        : +arrived_time.substring(0, 2) -
                           12 +
                           arrived_time.substring(2, 5)}
                     {co_or_le == 'COMMUTE' ? ' AM' : ' PM'}
@@ -204,9 +221,11 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
         arrived_time: any;
     }) => (
         <View style={styles.item}>
-            <Text style={styles.title}>{name}</Text>
-            {arriveTime(arrived_time)}
-            {stationSelected(id)}
+            <View>
+                <Text style={styles.title}>{name}</Text>
+                {arriveTime(arrived_time)}
+                {stationSelected(id)}
+            </View>
 
             {select_or_selectd(id)}
 
@@ -269,6 +288,7 @@ const styles = StyleSheet.create({
         padding: 10,
         marginVertical: 8,
         marginHorizontal: 16,
+        flexDirection: 'column',
     },
     title: {
         fontFamily: 'Pretendard Variable',
