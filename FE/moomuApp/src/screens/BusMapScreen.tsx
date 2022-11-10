@@ -53,15 +53,27 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
         props.route.params.stationList
     );
     const [location, setLocation] = useState();
+    const [busName, setBusName] = useState<String>(
+        props.route.params.name
+    )
 
-    const [lat, setLatitude] = useState<number>(36.3550227);
-    const [lon, setLongitude] = useState<number>(127.2998406);
+    const [lat, setLatitude] = useState<number>();
+    const [lon, setLongitude] = useState<number>();
+    const [bus_lat, setBusLat] = useState<number>();
+    const [bus_lng, setBusLng] = useState<number>();
+    const [visible, setVisible] = useState(false);
     const [isLoding, setIsLoding] = useState<boolean>(false);
 
     const [avglat, setAvgLat] = useState<number>(36.3550227);
     const [avglon, setAvgLon] = useState<number>(127.2998406);
 
     const mapRef = React.useRef<any>();
+    const ws = React.useRef<any>();
+
+    interface Location {
+        lat: number;
+        lng: number;
+    }
 
     useEffect(() => {
         (async () => {
@@ -94,6 +106,50 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
 
             setIsLoding(true);
         })();
+        
+        ws.current = new WebSocket(`ws://k7b202.p.ssafy.io:8000/shuttlebus/ws/` + busName )
+        // ws.current = new WebSocket(`ws://10.0.2.2:8000/shuttlebus/ws/` + busName )
+        console.log(ws.current)
+        ws.current.onopen = () => {
+            // connection opened
+            console.log('connected')
+        };
+
+        ws.current.onmessage = (e: any) => {
+            let gps: Location = JSON.parse(e.data); 
+            // console.log(e);
+            console.log(gps)
+            if (gps.lat == null || gps.lng == null) {
+                setVisible(false)
+                setBusLat(0)
+                setBusLng(0)
+            }
+            else {
+                setVisible(true)
+                setBusLat(gps.lat)
+                setBusLng(gps.lng)
+            }
+
+            // console.log(gps.lat);
+        };
+
+        ws.current.onerror = (e: React.SyntheticEvent<HTMLInputElement>) => {
+            setVisible(false)
+            setBusLat(0)
+            setBusLng(0)
+            // an error occurred
+            console.log(e);
+        };
+
+        ws.current.onclose = (e: React.SyntheticEvent<HTMLInputElement>) => {
+            // connection closed
+            console.log(e);
+        };
+
+        return () => {
+            console.log("동작")
+            ws.current.close();
+        };
     }, []);
 
     const goToMyLocation = async () => {
@@ -124,6 +180,10 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
         return result;
     };
 
+    const Gps = () => {
+        if(bus_lat != null && bus_lng != null)
+            return (<Marker coordinate={{latitude: +bus_lat, longitude: +bus_lng}} title={"버스"} />)
+    }
     const mapView = (lat: number, lon: number) => {
         if (isLoding) {
             return (
@@ -140,6 +200,7 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
                     }}
                 >
                     {MarkList()}
+                    {visible ? Gps() : null}
                     <Polyline
                         coordinates={line}
                         strokeColor="#F00"
