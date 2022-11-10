@@ -44,7 +44,7 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
                 commute: null,
                 leave: null,
             };
-
+            
             response.data.map((item: any) => {
                 if (item.commute_or_leave === 'COMMUTE') {
                     data.commute = item.bus_name;

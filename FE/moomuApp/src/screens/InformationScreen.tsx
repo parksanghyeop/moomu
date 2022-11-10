@@ -81,7 +81,14 @@ const InformationScreen: React.FC<InformationScreenProps> = (props) => {
                                         style={styles.listText}
                                         numberOfLines={1}
                                     >
-                                        {information?.title}
+                                        {information.title}
+                                    </Text>
+                                    <Text
+                                        key={index}
+                                        style={styles.listText1}
+                                        numberOfLines={1}
+                                    >
+                                        {information.created_date}
                                     </Text>
                                 </TouchableOpacity>
                             </View>
@@ -161,6 +168,11 @@ const styles = StyleSheet.create({
     listText: {
         fontSize: 20,
         color: '#63B3ED',
+        paddingVertical: 4,
+    },
+    listText1: {
+        fontSize: 12,
+        color: '#000000',
         paddingVertical: 4,
     },
 });
