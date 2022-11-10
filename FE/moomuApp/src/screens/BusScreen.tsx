@@ -19,92 +19,9 @@ import jwtDecode from 'jwt-decode';
 
 import * as RootNavigation from '../../RootNavigation';
 import { FontAwesome } from '@expo/vector-icons';
+import { jwt, Bus } from '../types/types';
 
 type BusScreenProps = StackScreenProps<RootStackParamList, 'Bus'>;
-
-interface station {
-    bus_id: number;
-    name: string;
-    lat: string;
-    lng: string;
-    order: number;
-    arrived_time: string;
-    id: number;
-}
-
-interface Bus {
-    region_id: number;
-    name: string;
-    commute_or_leave: string;
-    id: number;
-    stations: station[];
-    cur: any[];
-}
-
-interface jwt {
-    exp: number;
-    id: number;
-    nickname: string;
-    region: number;
-    role: number;
-}
-
-const data = [
-    {
-        region_id: 200,
-        name: '1호차',
-        commute_or_leave: 'COMMUTE',
-        id: 2,
-        stations: [
-            {
-                bus_id: 1,
-                name: '한남오거리',
-                lat: '36.1235',
-                lng: '121.42356',
-                order: 1,
-                arrived_time: '07:45',
-                id: 1,
-            },
-            {
-                bus_id: 2,
-                name: '재뜰네거리',
-                lat: '36.13589',
-                lng: '121.48431',
-                order: 2,
-                arrived_time: '07:55',
-                id: 2,
-            },
-        ],
-        cur: [],
-    },
-    {
-        region_id: 200,
-        name: '2호차',
-        commute_or_leave: 'COMMUTE',
-        id: 3,
-        stations: [
-            {
-                bus_id: 2,
-                name: '한남오거리',
-                lat: '36.1235',
-                lng: '121.42356',
-                order: 1,
-                arrived_time: '07:45',
-                id: 1,
-            },
-            {
-                bus_id: 2,
-                name: '재뜰네거리',
-                lat: '36.13589',
-                lng: '121.48431',
-                order: 2,
-                arrived_time: '07:55',
-                id: 2,
-            },
-        ],
-        cur: [],
-    },
-];
 
 const BusScreen: React.FC<BusScreenProps> = (props) => {
     let decoded: jwt;

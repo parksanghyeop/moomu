@@ -18,7 +18,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
 import instance from '../api/axios';
 import * as RootNavigation from '../../RootNavigation';
-import { WebView } from 'react-native-webview';
+// import { WebView } from 'react-native-webview';
 
 type FaqScreenProps = StackScreenProps<RootStackParamList, 'FAQ'>;
 
@@ -38,11 +38,11 @@ const FaqScreen: React.FC<FaqScreenProps> = (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <WebView
+            {/* <WebView
                 source={{
                     uri: 'http://pf.kakao.com/_xkxeTXxj/chat',
                 }}
-            />
+            /> */}
         </View>
         // <View style={styles.container}>
         //     <View

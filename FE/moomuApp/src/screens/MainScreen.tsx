@@ -24,19 +24,12 @@ import instance from '../api/axios';
 
 import { useFocusEffect } from '@react-navigation/core';
 import * as Linking from 'expo-linking';
+import { jwt } from '../types/types';
 
 type MainScreenProps = StackScreenProps<RootStackParamList, 'Main'>;
 
 let token: string;
 let decoded: jwt;
-
-interface jwt {
-    exp: number;
-    id: number;
-    nickname: string;
-    region: number;
-    role: number;
-}
 
 const MainScreen: React.FC<MainScreenProps> = (props) => {
     const [user, setUser] = useState<jwt>();
