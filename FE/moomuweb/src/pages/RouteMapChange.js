@@ -182,7 +182,7 @@ function RouteMap() {
             "Access-Control-Allow-Credentials": "true",
             "X-NCP-APIGW-API-KEY-ID": "yxdllgza3i",
             "X-NCP-APIGW-API-KEY": "avFkOp6qAIH3quEtCysdzfCfqSWkeyhqgYl8x8t9",
-            // "x-requested-with": "http://192.168.0.13:3000",
+            "x-requested-with": "https://k7b202.p.ssafy.io/",
           },
         })
         .then((response) => {
