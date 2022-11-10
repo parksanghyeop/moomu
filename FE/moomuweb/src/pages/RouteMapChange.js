@@ -152,7 +152,7 @@ function RouteMap() {
       temp.push(points[i]);
     }
     const waypoints = temp.join("|");
-    const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
+    const direction15Url = `https://naveropenapi.apigw.ntruss.com/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
     console.log(direction15Url);
     // naver.maps.Service.geocode(
     //   {
