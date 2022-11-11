@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import Footer from '../components/footer';
 import 'react-native-gesture-handler';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -16,6 +16,7 @@ import Animated, {
 import { ToggleBtn } from '../components/login/ToggleBtn';
 import { GradientText } from '../components/common/GradientText';
 import { UserInputForm } from '../components/login/UserInputForm';
+import { ScrollView } from 'react-native-gesture-handler';
 
 type LoginSignUpScreenProps = StackScreenProps<
     RootStackParamList,
@@ -35,7 +36,16 @@ const LoginSignUpScreen: React.FC<LoginSignUpScreenProps> = (props) => {
     );
 
     return (
-        <View style={styles.container}>
+        <View
+            style={{
+                // backgroundColor: 'green',
+                flex: 1,
+                position: 'relative',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                backgroundColor: 'white',
+            }}
+        >
             <View style={[{ alignItems: 'center', marginTop: 88 }]}>
                 <Logo2 />
             </View>
@@ -47,7 +57,7 @@ const LoginSignUpScreen: React.FC<LoginSignUpScreenProps> = (props) => {
             <UserInputForm isLogin={isLogin} />
 
             {/* {renderConditionInput} */}
-            <Footer />
+            {/* <Footer /> */}
         </View>
     );
 };
@@ -57,7 +67,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'flex-end',
     },
     container2: {
         flexDirection: 'row',

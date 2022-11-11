@@ -8,9 +8,9 @@ import {
     TextInputChangeEventData,
     Modal,
     Pressable,
+    KeyboardAvoidingView,
 } from 'react-native';
 import Button1 from '../button1';
-import axios from '../../api/axios';
 import requests from '../../api/requests';
 import jwtDecode from 'jwt-decode';
 import * as AsyncStorage from '../../utiles/AsyncService'; // 로컬 저장을 위한 AsyncStorage 사용 함수
@@ -25,9 +25,13 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import axios from '../../api/axios';
+import { useHeaderHeight } from '@react-navigation/elements';
+import instance from '../../api/axios';
 
 export const UserInputForm = (props: { isLogin: boolean }) => {
     const { isLogin } = props;
+    const height = useHeaderHeight();
 
     // 전환 애니메이션
     const exposure = useSharedValue(isLogin ? 0 : 140);
@@ -35,6 +39,7 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
         return {
             overflow: 'hidden',
             height: withTiming(exposure.value),
+            marginBottom: 8,
         };
     });
     useEffect(() => {
@@ -90,19 +95,94 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                     }
                 )
                 .then((response) => {
+                    console.log('[로그인] 로그인 성공');
                     const token = response.data.access_token;
                     AsyncStorage.storeData('token', token);
                     const decoded = jwtDecode(token);
 
-                    RootNavigation.reset('Main');
+                    if (Device.isDevice) {
+                        // 실제 장치일 경우에만
+                        registerForPushNotificationsAsync().then(
+                            (expo_token) => {
+                                AsyncStorage.storeData('expoToken', expo_token);
+
+                                AsyncStorage.getData('expoToken').then(
+                                    (expo_token) => {
+                                        // console.log('expoToken', expoToken);
+                                        // 푸시알림 토큰 서버에 저장
+                                        console.log(
+                                            'asyncStore 엑스포토큰',
+                                            expo_token
+                                        );
+                                        instance
+                                            .post(
+                                                requests.expo_token,
+                                                {
+                                                    expo_token: expo_token,
+                                                },
+                                                {
+                                                    headers: {
+                                                        Authorization: `Bearer ${token}`,
+                                                        'Content-Type': `application/json`,
+                                                    },
+                                                }
+                                            )
+                                            .then((response) => {
+                                                console.log(
+                                                    '토큰 서버에 저장 완료'
+                                                );
+                                            })
+                                            .catch((error) => {
+                                                console.log(error);
+                                            });
+                                    }
+                                );
+                            }
+                        );
+                    }
+
+                    RootNavigation.resetDefault('Main');
                 })
                 .catch((error) => {
                     console.log(error);
                 });
         } else {
-            Alert.alert('testalert');
+            Alert.alert('', '아이디와 패스워드를 입력해주세요.');
         }
     };
+
+    async function registerForPushNotificationsAsync() {
+        let token;
+        if (Device.isDevice) {
+            const { status: existingStatus } =
+                await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+            if (existingStatus !== 'granted') {
+                const { status } =
+                    await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+            if (finalStatus !== 'granted') {
+                alert('Failed to get push token for push notification!');
+                return;
+            }
+            token = (await Notifications.getExpoPushTokenAsync()).data;
+            console.log(token);
+        } else {
+            alert('Must use physical device for Push Notifications');
+        }
+
+        if (Platform.OS === 'android') {
+            Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: '#FF231F7C',
+            });
+        }
+
+        return token;
+    }
 
     // 회원 등록 버튼 onPress
     const signupFunc = () => {
@@ -113,7 +193,7 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                     username: username,
                     password: password,
                     nickname: nickname,
-                    region_id: region,
+                    region_id: region?.id,
                     class_group: group,
                 },
                 {
@@ -143,24 +223,24 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
     };
 
     return (
-        <View
+        <KeyboardAvoidingView
+            behavior="padding"
             style={{
                 flex: 1,
                 alignItems: 'center',
+                marginTop: 8,
             }}
-        >
+            enabled>
             {/* 입력 */}
             <SimpleInput
                 placeholder="아이디"
                 value={username}
-                onChangeText={(t) => setUsername(t)}
-            ></SimpleInput>
+                onChangeText={(t) => setUsername(t)}></SimpleInput>
             <SimpleInput
                 placeholder="비밀번호"
                 value={password}
                 onChangeText={(t) => setPassword(t)}
-                secureTextEntry
-            ></SimpleInput>
+                secureTextEntry></SimpleInput>
 
             {/* 회원가입시에만 입력 */}
             <Animated.View style={[animatedStyles]}>
@@ -168,28 +248,25 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                     placeholder="비밀번호 확인"
                     value={pwcheck}
                     onChangeText={(t) => setPWCheck(t)}
-                    secureTextEntry
-                ></SimpleInput>
+                    secureTextEntry></SimpleInput>
                 <SimpleInput
                     placeholder="이름"
                     value={nickname}
-                    onChangeText={(t) => setNickname(t)}
-                ></SimpleInput>
+                    onChangeText={(t) => setNickname(t)}></SimpleInput>
                 <View style={[{ flexDirection: 'row' }]}>
                     <Pressable onPress={() => setModalVisible((b) => !b)}>
                         <SimpleInput
                             placeholder="지역"
                             value={region?.name}
                             style={{ width: 100, height: 38, marginRight: 20 }}
-                            editable={false}
-                        ></SimpleInput>
+                            editable={false}></SimpleInput>
                     </Pressable>
                     <SimpleInput
                         placeholder="반"
+                        keyboardType="number-pad"
                         value={group ? group.toString() : ''}
                         onChangeText={(t) => setGroup(parseInt(t))}
-                        style={{ width: 100, height: 38 }}
-                    ></SimpleInput>
+                        style={{ width: 100, height: 38 }}></SimpleInput>
                 </View>
             </Animated.View>
 
@@ -204,8 +281,7 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                 <Button1
                     text={'회원가입'}
                     onPress={signupFunc}
-                    disabled={!(username && password)}
-                ></Button1>
+                    disabled={!(username && password)}></Button1>
             )}
 
             {/* 모달 */}
@@ -213,8 +289,7 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                 visible={modalVisible}
                 animationType="fade"
                 transparent={true}
-                style={{ width: 200 }}
-            >
+                style={{ width: 200 }}>
                 <Pressable
                     style={{
                         flex: 1,
@@ -223,8 +298,7 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                         alignItems: 'center',
                         backgroundColor: '#000000bb',
                     }}
-                    onPress={() => setModalVisible((b) => !b)}
-                >
+                    onPress={() => setModalVisible((b) => !b)}>
                     <View
                         style={{
                             width: 220,
@@ -233,8 +307,7 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                             backgroundColor: 'white',
                             borderColor: '#0BC5EA',
                             borderWidth: 1,
-                        }}
-                    >
+                        }}>
                         {regions.map((item, idx) => (
                             <Pressable
                                 key={idx}
@@ -249,8 +322,7 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                                 onPress={() => {
                                     setRegion(item);
                                     setModalVisible((b) => !b);
-                                }}
-                            >
+                                }}>
                                 <Text>{item.name}</Text>
                             </Pressable>
                         ))}
@@ -262,14 +334,13 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                 }}
-                                onPress={() => setModalVisible((b) => !b)}
-                            >
+                                onPress={() => setModalVisible((b) => !b)}>
                                 <Text>닫기</Text>
                             </Pressable>
                         </View>
                     </View>
                 </Pressable>
             </Modal>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
