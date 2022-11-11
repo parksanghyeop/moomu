@@ -8,26 +8,29 @@ import {
     StyleSheet,
     TextInputProps,
 } from 'react-native';
-import { LinearTextGradient } from 'react-native-text-gradient';
 
 export const SimpleInput = (props: TextInputProps) => {
     const [focus, setFocus] = useState(false);
 
     return (
         <View
-            style={{
-                position: 'relative',
-                width: 220,
-                height: 38,
-                marginBottom: 10,
-            }}
+            style={[
+                {
+                    position: 'relative',
+                    width: 220,
+                    height: 38,
+                    marginBottom: 10,
+                },
+                props.style,
+            ]}
         >
             <TextInput
+                {...props}
                 style={[
                     {
-                        padding: 8,
-                        width: 220,
-                        height: 38,
+                        width: '100%',
+                        height: '100%',
+                        paddingHorizontal: 8,
                         backgroundColor: 'white',
                     },
                     focus ? styles.onfocus : styles.onblur,
@@ -35,13 +38,12 @@ export const SimpleInput = (props: TextInputProps) => {
                 onFocus={() => setFocus(true)}
                 onBlur={() => setFocus(false)}
                 selectionColor="#63B3ED"
-                {...props}
             ></TextInput>
             <LinearGradient
                 colors={['#63B3ED', '#9DECF9']}
                 style={{
                     height: focus ? 3 : 2,
-                    width: 220,
+                    width: '100%',
                     position: 'absolute',
                     bottom: 0,
                 }}

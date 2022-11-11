@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
     View,
-    TextInput,
-    StyleSheet,
+    Alert,
+    Text,
     Platform,
     NativeSyntheticEvent,
     TextInputChangeEventData,
+    Modal,
+    Pressable,
 } from 'react-native';
 import Button1 from '../button1';
 import axios from '../../api/axios';
@@ -22,20 +24,21 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export const UserInputForm = (props: { isLogin: boolean }) => {
     const { isLogin } = props;
 
-    const exposure = useSharedValue(isLogin ? 0 : 80);
+    // 전환 애니메이션
+    const exposure = useSharedValue(isLogin ? 0 : 140);
     const animatedStyles = useAnimatedStyle(() => {
         return {
             overflow: 'hidden',
             height: withTiming(exposure.value),
         };
     });
-
     useEffect(() => {
-        exposure.value = isLogin ? 0 : 120;
+        exposure.value = isLogin ? 0 : 140;
     }, [isLogin]);
 
     // 입력값
@@ -43,7 +46,10 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
     const [password, setPassword] = useState('');
     const [pwcheck, setPWCheck] = useState('');
     const [nickname, setNickname] = useState('');
-    const [region, setRegion] = useState<number>();
+    const [region, setRegion] = useState<{
+        name: string;
+        id: number;
+    }>();
     const [group, setGroup] = useState<number>();
 
     // 지역 정보
@@ -53,26 +59,83 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
             id: number;
         }[]
     >([]);
+    // 지역 받아오기
+    useEffect(() => {
+        axios
+            .get(requests.regions)
+            .then((response) => {
+                setRegions(response.data);
+                console.log('[로그인] 지역정보 조회 성공.');
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
+    // 지역 모달
+    const [modalVisible, setModalVisible] = useState(false);
 
     // 로그인 요청
-    const loginbutton = () => {
+    const loginFunc = () => {
+        if (username && password) {
+            axios
+                .post(
+                    requests.login,
+                    {
+                        username: username,
+                        password: password,
+                    },
+                    {
+                        headers: { 'Content-Type': `application/json` },
+                    }
+                )
+                .then((response) => {
+                    const token = response.data.access_token;
+                    AsyncStorage.storeData('token', token);
+                    const decoded = jwtDecode(token);
+
+                    RootNavigation.reset('Main');
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } else {
+            Alert.alert('testalert');
+        }
+    };
+
+    // 회원 등록 버튼 onPress
+    const signupFunc = () => {
         axios
             .post(
-                requests.login,
+                requests.register,
                 {
                     username: username,
                     password: password,
+                    nickname: nickname,
+                    region_id: region,
+                    class_group: group,
                 },
                 {
                     headers: { 'Content-Type': `application/json` },
                 }
             )
             .then((response) => {
-                const token = response.data.access_token;
-                AsyncStorage.storeData('token', token);
-                const decoded = jwtDecode(token);
-
-                RootNavigation.navigate('Main');
+                // console.log('회원가입성공');
+                Alert.alert(
+                    // 말그대로 Alert를 띄운다
+                    '회원 등록 완료', // 첫번째 text: 타이틀 제목
+                    nickname + '님 감사합니다.', // 두번째 text: 그 밑에 작은 제목
+                    [
+                        // 버튼 배열
+                        {
+                            text: '확인', // 버튼 제목
+                            onPress: () => console.log('확인'), //onPress 이벤트시 콘솔창에 로그를 찍는다
+                        },
+                    ],
+                    { cancelable: false }
+                );
+                RootNavigation.reset('LoginSignUp', { id: 1 });
             })
             .catch((error) => {
                 console.log(error);
@@ -80,7 +143,13 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
     };
 
     return (
-        <View style={styles.container}>
+        <View
+            style={{
+                flex: 1,
+                alignItems: 'center',
+            }}
+        >
+            {/* 입력 */}
             <SimpleInput
                 placeholder="아이디"
                 value={username}
@@ -92,6 +161,8 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                 onChangeText={(t) => setPassword(t)}
                 secureTextEntry
             ></SimpleInput>
+
+            {/* 회원가입시에만 입력 */}
             <Animated.View style={[animatedStyles]}>
                 <SimpleInput
                     placeholder="비밀번호 확인"
@@ -104,26 +175,101 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                     value={nickname}
                     onChangeText={(t) => setNickname(t)}
                 ></SimpleInput>
+                <View style={[{ flexDirection: 'row' }]}>
+                    <Pressable onPress={() => setModalVisible((b) => !b)}>
+                        <SimpleInput
+                            placeholder="지역"
+                            value={region?.name}
+                            style={{ width: 100, height: 38, marginRight: 20 }}
+                            editable={false}
+                        ></SimpleInput>
+                    </Pressable>
+                    <SimpleInput
+                        placeholder="반"
+                        value={group ? group.toString() : ''}
+                        onChangeText={(t) => setGroup(parseInt(t))}
+                        style={{ width: 100, height: 38 }}
+                    ></SimpleInput>
+                </View>
             </Animated.View>
-            <Button1
-                text={'로그인'}
-                onPress={loginbutton}
-                disabled={!(username && password)}
-            ></Button1>
+
+            {/* 버튼 */}
+            {isLogin ? (
+                <Button1
+                    text={'로그인'}
+                    onPress={loginFunc}
+                    // disabled={!(username && password)}
+                ></Button1>
+            ) : (
+                <Button1
+                    text={'회원가입'}
+                    onPress={signupFunc}
+                    disabled={!(username && password)}
+                ></Button1>
+            )}
+
+            {/* 모달 */}
+            <Modal
+                visible={modalVisible}
+                animationType="fade"
+                transparent={true}
+                style={{ width: 200 }}
+            >
+                <Pressable
+                    style={{
+                        flex: 1,
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        backgroundColor: '#000000bb',
+                    }}
+                    onPress={() => setModalVisible((b) => !b)}
+                >
+                    <View
+                        style={{
+                            width: 220,
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            backgroundColor: 'white',
+                            borderColor: '#0BC5EA',
+                            borderWidth: 1,
+                        }}
+                    >
+                        {regions.map((item, idx) => (
+                            <Pressable
+                                key={idx}
+                                style={{
+                                    height: 40,
+                                    width: '100%',
+                                    borderBottomColor: '#0BC5EA',
+                                    borderBottomWidth: 1,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                                onPress={() => {
+                                    setRegion(item);
+                                    setModalVisible((b) => !b);
+                                }}
+                            >
+                                <Text>{item.name}</Text>
+                            </Pressable>
+                        ))}
+                        <View>
+                            <Pressable
+                                style={{
+                                    height: 40,
+                                    width: '100%',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                                onPress={() => setModalVisible((b) => !b)}
+                            >
+                                <Text>닫기</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </Pressable>
+            </Modal>
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        margin: 10,
-        alignItems: 'center',
-    },
-    input: {
-        width: 219,
-        height: 37,
-        borderBottomColor: '#63B3ED',
-        borderBottomWidth: 1,
-    },
-});
