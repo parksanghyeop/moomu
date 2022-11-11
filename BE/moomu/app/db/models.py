@@ -144,5 +144,5 @@ class PolyLine(Base):
     __tablename__ = "poly_line"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     bus_id = Column(Integer, ForeignKey("bus.id", ondelete="CASCADE"))
-    lat = Column(String(50), nullable=False)
-    lng = Column(String(50), nullable=False)
+    latitude = Column(String(50), nullable=False)
+    longitude = Column(String(50), nullable=False)

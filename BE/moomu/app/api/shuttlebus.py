@@ -151,3 +151,8 @@ def create_station_alarm(
     return shuttlebus_crud.create_station_alarm(
         db, commute_or_leave, station_id, station_name
     )
+
+
+@router.get("/station/polyline/{bus_id}", response_model=list[PolyLinePos])
+def get_poly_line(bus_id: int, db: Session = Depends(get_db)):
+    return poly_line_crud.get_polyLine(db, bus_id)
