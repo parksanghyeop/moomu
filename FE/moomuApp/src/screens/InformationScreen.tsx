@@ -26,6 +26,10 @@ type InformationScreenProps = StackScreenProps<
 const InformationScreen: React.FC<InformationScreenProps> = (props) => {
     let [informations, setInformations] = useState([]);
 
+    // const currentTime = new Date(+new Date() + 3240 * 1000)
+    //     .toISOString()
+    //     .replace('T', ' ');
+
     useEffect(() => {
         console.log(informations);
         instance
