@@ -3,8 +3,6 @@ from fastapi import (
     Depends,
     HTTPException,
     status,
-    WebSocket,
-    WebSocketDisconnect,
 )
 from sqlalchemy.orm import Session
 from app.db.crud import shuttlebus_crud, poly_line_crud
@@ -15,8 +13,6 @@ from app.dependencies import get_db
 from app.service.shuttlebus_service import bus_near_station
 from app.db.schemas.commute_or_leave import CommuteOrLeave
 from app.service.jwt_service import validate_token
-from redis import Redis
-import asyncio
 
 router = APIRouter(
     prefix="/shuttlebus",
@@ -155,47 +151,3 @@ def create_station_alarm(
     return shuttlebus_crud.create_station_alarm(
         db, commute_or_leave, station_id, station_name
     )
-
-
-@router.get("/station/polyline/{bus_id}", response_model=list[PolyLinePos])
-def get_poly_line(bus_id: int, db: Session = Depends(get_db)):
-    return poly_line_crud.get_polyLine(db, bus_id)
-
-
-async def receive_message(websocket: WebSocket):
-    await websocket.receive_text()
-
-
-async def broadcast_message(websocket: WebSocket, s: Redis.pubsub):
-    msg = s.get_message(timeout=3)
-    if msg is not None and type(msg["data"]) == bytes:
-        result = str(msg["data"], 'utf-8')
-    else:
-        result = '{"lat": null, "lng": null}'
-    print(result)
-    await websocket.send_text(result)
-
-
-@router.websocket("/shuttlebus/ws/{bus_name}")
-async def websocket_endpoint(websocket: WebSocket, bus_name: str):
-    await websocket.accept()
-    r = Redis(host="k7b202.p.ssafy.io", port=6379, db=0)
-    s = r.pubsub()
-    s.subscribe(bus_name)
-    try:
-        while True:
-            receive_message_task = asyncio.create_task(receive_message(websocket))
-            broadcast_message_task = asyncio.create_task(
-                broadcast_message(websocket, s)
-            )
-            done, pending = await asyncio.wait(
-                {receive_message_task, broadcast_message_task},
-                return_when=asyncio.FIRST_COMPLETED,
-            )
-            for task in pending:
-                task.cancel()
-            for task in done:
-                task.result()
-    except WebSocketDisconnect:
-        await websocket.close()
-        return
