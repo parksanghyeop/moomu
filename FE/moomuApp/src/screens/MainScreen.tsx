@@ -23,19 +23,13 @@ import jwtDecode from 'jwt-decode';
 import instance from '../api/axios';
 
 import { useFocusEffect } from '@react-navigation/core';
+import * as Linking from 'expo-linking';
+import { jwt } from '../types/types';
 
 type MainScreenProps = StackScreenProps<RootStackParamList, 'Main'>;
 
 let token: string;
 let decoded: jwt;
-
-interface jwt {
-    exp: number;
-    id: number;
-    nickname: string;
-    region: number;
-    role: number;
-}
 
 const MainScreen: React.FC<MainScreenProps> = (props) => {
     const [user, setUser] = useState<jwt>();
@@ -54,7 +48,7 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
                     leave: null,
                 };
 
-                console.log(response.data);
+                // console.log(response.data);
                 response.data.map((item: any) => {
                     if (item.commute_or_leave === 'COMMUTE') {
                         data.commute = item.bus_name;
@@ -66,10 +60,6 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
             });
         }, [])
     );
-
-    useEffect(() => {
-        console.log('그냥 useeffect');
-    }, []);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -140,9 +130,10 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
                 }}
             />
             <Button2
-                text={'FAQ'}
+                text={'문의하기'}
                 onPress={() => {
-                    RootNavigation.navigate('FAQ');
+                    // RootNavigation.navigate('FAQ');
+                    Linking.openURL('http://pf.kakao.com/_xkxeTXxj/chat');
                 }}
             />
             <Footer />

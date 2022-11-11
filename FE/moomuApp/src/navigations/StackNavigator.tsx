@@ -15,6 +15,7 @@ import InformationDetailScreen from '../screens/InformationDetailScreen';
 import InformationScreen from '../screens/InformationScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import SettingScreen from '../screens/SettingScreen';
+import FaqDetailScreen from '../screens/FaqDetailScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -46,6 +47,11 @@ const StackNavigator = () => {
             <Stack.Screen
                 name="FAQ"
                 component={FaqScreen}
+                options={{ title: '건의사항' }}
+            />
+            <Stack.Screen
+                name="FaqDetail"
+                component={FaqDetailScreen}
                 options={{ title: '건의사항' }}
             />
             <Stack.Screen

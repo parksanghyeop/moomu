@@ -3,19 +3,16 @@ from fastapi import (
     Depends,
     HTTPException,
     status,
-    WebSocket,
-    WebSocketDisconnect,
 )
 from sqlalchemy.orm import Session
-from app.db.crud import shuttlebus_crud
+from app.db.crud import shuttlebus_crud, poly_line_crud
 from app.db.schemas.bus import Bus, BusBase
 from app.db.schemas.station import Station, StationBase, StationPos
+from app.db.schemas.poly_line import PolyLineBase, PolyLinePos
 from app.dependencies import get_db
 from app.service.shuttlebus_service import bus_near_station
 from app.db.schemas.commute_or_leave import CommuteOrLeave
 from app.service.jwt_service import validate_token
-from redis import Redis
-import asyncio
 
 router = APIRouter(
     prefix="/shuttlebus",
@@ -110,6 +107,7 @@ def get_station(station_id: int, db: Session = Depends(get_db)):
 @router.post("/station/register")
 def create_station(
     station_list: list[StationBase],
+    poly_list: list[PolyLineBase],
     db: Session = Depends(get_db),
     payload: dict = Depends(validate_token),
 ):
@@ -119,6 +117,7 @@ def create_station(
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
         )
     shuttlebus_crud.create_station(db, station_list)
+    poly_line_crud.create_polyLine(db, poly_list)
     return {"message": "정류장 등록에 성공했습니다."}
 
 
@@ -126,6 +125,7 @@ def create_station(
 def update_station(
     bus_id: int,
     station_list: list[StationBase],
+    poly_list: list[PolyLineBase],
     db: Session = Depends(get_db),
     payload: dict = Depends(validate_token),
 ):
@@ -135,7 +135,9 @@ def update_station(
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
         )
     shuttlebus_crud.delete_station(db, bus_id)
+    poly_line_crud.delete_polyLine(db, bus_id)
     shuttlebus_crud.create_station(db, station_list)
+    poly_line_crud.create_polyLine(db, poly_list)
     return {"message": "정류장 정보 수정/삭제에 성공했습니다."}
 
 
@@ -151,40 +153,6 @@ def create_station_alarm(
     )
 
 
-async def receive_message(websocket: WebSocket):
-    await websocket.receive_text()
-
-
-async def broadcast_message(websocket: WebSocket, s: Redis.pubsub):
-    msg = s.get_message(timeout=3)
-    if msg is not None and type(msg["data"]) == bytes:
-        result = str(msg["data"], 'utf-8')
-    else:
-        result = '{"lat": null, "lng": null}'
-    print(result)
-    await websocket.send_text(result)
-
-
-@router.websocket("/shuttlebus/ws/{bus_name}")
-async def websocket_endpoint(websocket: WebSocket, bus_name: str):
-    await websocket.accept()
-    r = Redis(host="k7b202.p.ssafy.io", port=6379, db=0)
-    s = r.pubsub()
-    s.subscribe(bus_name)
-    try:
-        while True:
-            receive_message_task = asyncio.create_task(receive_message(websocket))
-            broadcast_message_task = asyncio.create_task(
-                broadcast_message(websocket, s)
-            )
-            done, pending = await asyncio.wait(
-                {receive_message_task, broadcast_message_task},
-                return_when=asyncio.FIRST_COMPLETED,
-            )
-            for task in pending:
-                task.cancel()
-            for task in done:
-                task.result()
-    except WebSocketDisconnect:
-        await websocket.close()
-        return
+@router.get("/station/polyline/{bus_id}", response_model=list[PolyLinePos])
+def get_poly_line(bus_id: int, db: Session = Depends(get_db)):
+    return poly_line_crud.get_polyLine(db, bus_id)

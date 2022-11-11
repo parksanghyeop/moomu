@@ -138,3 +138,11 @@ class FaQAnswer(Base):
 
     answer_user = relationship("User", back_populates="faq_answers")
     faq = relationship("FaQ", back_populates="faq_answer")
+
+
+class PolyLine(Base):
+    __tablename__ = "poly_line"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    bus_id = Column(Integer, ForeignKey("bus.id", ondelete="CASCADE"))
+    latitude = Column(String(50), nullable=False)
+    longitude = Column(String(50), nullable=False)
