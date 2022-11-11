@@ -3,13 +3,13 @@ from pydantic import BaseModel
 
 class PolyLineBase(BaseModel):
     bus_id: int
-    lat: str
-    lng: str
+    latitude: str
+    longitude: str
 
 
 class PolyLinePosBase(BaseModel):
-    lat: str
-    lng: str
+    latitude: str
+    longitude: str
 
 
 class PolyLine(PolyLineBase):
