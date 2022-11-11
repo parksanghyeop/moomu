@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import jwt from "jwt-decode";
 import { persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+// import storage from "redux-persist/lib/storage";
+import storageSession from "redux-persist/lib/storage/session";
 
 var isEmpty = function (val) {
   if (val === "" || val === undefined || val === null || (val !== null && typeof val === "object" && !Object.keys(val).length)) {
@@ -32,9 +33,9 @@ export const tokenSlice = createSlice({
 });
 
 const persistConfig = {
-  key: "root",
-  // localStorage에 저장합니다.
-  storage,
+  key: "token",
+  // ssesionStorage에 저장합니다.
+  storage: storageSession,
 };
 
 export const { logout, login } = tokenSlice.actions;

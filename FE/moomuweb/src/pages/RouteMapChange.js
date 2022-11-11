@@ -57,8 +57,8 @@ function RouteMap() {
   const getStaticMap2Src = function (aUrl, imgId) {
     var oReq = new XMLHttpRequest();
     oReq.open("GET", aUrl, true);
-    oReq.setRequestHeader("X-NCP-APIGW-API-KEY-ID", "yxdllgza3i");
-    oReq.setRequestHeader("X-NCP-APIGW-API-KEY", "avFkOp6qAIH3quEtCysdzfCfqSWkeyhqgYl8x8t9");
+    oReq.setRequestHeader("X-NCP-APIGW-API-KEY-ID", process.env.REACT_APP_API_KEY_ID);
+    oReq.setRequestHeader("X-NCP-APIGW-API-KEY", process.env.REACT_APP_API_KEY);
     // use multiple setRequestHeader calls to set multiple values
     oReq.responseType = "arraybuffer";
     oReq.onload = function (oEvent) {
@@ -144,9 +144,8 @@ function RouteMap() {
 
     let polylinePath = [];
     for (let i = 0; i < polyInfos.length; i++) {
-      polylinePath.push(new naver.maps.LatLng(polyInfos[i].lat, polyInfos[i].lng));
+      polylinePath.push(new naver.maps.LatLng(polyInfos[i].latitude, polyInfos[i].longitude));
     }
-    // console.log(polylinePath);
     new naver.maps.Polyline({
       path: polylinePath, //좌표배열
       strokeColor: "#3182CE", //선의 색 파랑
@@ -282,7 +281,7 @@ function RouteMap() {
           {btnText}
         </button>
       </Modal>
-      <p className="bodyTitle "> {busName} 노선 관리 </p>
+      <p className="bodyTitle text-ellipsis overflow-hidden"> {busName} 노선 관리 </p>
       <div className="mapContainer">
         <div className="routeContainer">
           <ul className="steps steps-vertical">
@@ -327,7 +326,7 @@ function RouteMap() {
         <div ref={mapElement} className="naverMap" />
       </div>
       <button
-        className="btn btn-primary saveBtn mt-3"
+        className="btn btn-primary saveBtn my-3"
         onClick={async function () {
           await dispatch(updateRoute(params));
           goList();

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./LogIn.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -6,8 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { useAuth } from "../context/Auth";
-import { login } from "../reducers/tokenSlice";
-// import { tokenSelector } from "../reducers/tokenSlice";
+import { login, logout } from "../reducers/tokenSlice";
 
 function LogiInPage() {
   const [ID, setID] = useState("");
@@ -16,6 +15,12 @@ function LogiInPage() {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token.token);
   const userRole = useSelector((state) => state.token.decoded.role);
+
+  useEffect(() => {
+    if (userRole) {
+      dispatch(logout());
+    }
+  }, []);
 
   //password type 변경용 state
   const [passwordType, setPasswordType] = useState({
@@ -67,14 +72,8 @@ function LogiInPage() {
                 username: ID,
                 password: PW,
               };
-              // let url = "https://cors-anywhere.herokuapp.com/http://k7b202.p.ssafy.io:8000/users/login";
               let url = "https://k7b202.p.ssafy.io/api/users/login";
 
-              // const options = {
-              //   method: "POST",
-              //   body: body,
-              //   url: url,
-              // };
               let config = {
                 headers: {
                   "Content-Type": "application/json",

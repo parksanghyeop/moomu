@@ -54,12 +54,8 @@ export const updateRoute = createAsyncThunk("Update Bus Route", async (busId, { 
   const options = {
     method: "get",
     headers: {
-      // "Access-Control-Allow-Origin": "*",
-      // "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
-      // "Access-Control-Allow-Credentials": "true",
-      // "x-requested-with": "*",
-      "X-NCP-APIGW-API-KEY-ID": "yxdllgza3i",
-      "X-NCP-APIGW-API-KEY": "avFkOp6qAIH3quEtCysdzfCfqSWkeyhqgYl8x8t9",
+      "X-NCP-APIGW-API-KEY-ID": process.env.REACT_APP_API_KEY_ID,
+      "X-NCP-APIGW-API-KEY": process.env.REACT_APP_API_KEY,
     },
   };
   let polyLine = [];
@@ -70,8 +66,8 @@ export const updateRoute = createAsyncThunk("Update Bus Route", async (busId, { 
     paths.map((path) => {
       polyLine.push({
         bus_id: busId.id,
-        lat: path[1],
-        lng: path[0],
+        latitude: path[1],
+        longitude: path[0],
       });
     });
   });
