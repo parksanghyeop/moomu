@@ -26,7 +26,7 @@ type InformationScreenProps = StackScreenProps<
 const InformationScreen: React.FC<InformationScreenProps> = (props) => {
     let [informations, setInformations] = useState([]);
 
-    // const currentTime = new Date(+new Date() + 3240 * 1000)
+    // const d = new Date(+new Date() + 3240 * 1000)
     //     .toISOString()
     //     .replace('T', ' ');
 
@@ -92,7 +92,9 @@ const InformationScreen: React.FC<InformationScreenProps> = (props) => {
                                         style={styles.listText1}
                                         numberOfLines={1}
                                     >
-                                        {information.created_date}
+                                        {information.created_date
+                                            .replace('T', '   ')
+                                            .substring(0, 18)}
                                     </Text>
                                 </TouchableOpacity>
                             </View>
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
     },
     listText1: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#000000',
         paddingVertical: 4,
     },
