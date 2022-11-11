@@ -5,9 +5,10 @@ from fastapi import (
     status,
 )
 from sqlalchemy.orm import Session
-from app.db.crud import shuttlebus_crud
+from app.db.crud import shuttlebus_crud, poly_line_crud
 from app.db.schemas.bus import Bus, BusBase
 from app.db.schemas.station import Station, StationBase, StationPos
+from app.db.schemas.poly_line import PolyLineBase, PolyLinePos
 from app.dependencies import get_db
 from app.service.shuttlebus_service import bus_near_station
 from app.db.schemas.commute_or_leave import CommuteOrLeave
@@ -106,6 +107,7 @@ def get_station(station_id: int, db: Session = Depends(get_db)):
 @router.post("/station/register")
 def create_station(
     station_list: list[StationBase],
+    poly_list: list[PolyLineBase],
     db: Session = Depends(get_db),
     payload: dict = Depends(validate_token),
 ):
@@ -115,6 +117,7 @@ def create_station(
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
         )
     shuttlebus_crud.create_station(db, station_list)
+    poly_line_crud.create_polyLine(db, poly_list)
     return {"message": "정류장 등록에 성공했습니다."}
 
 
@@ -122,6 +125,7 @@ def create_station(
 def update_station(
     bus_id: int,
     station_list: list[StationBase],
+    poly_list: list[PolyLineBase],
     db: Session = Depends(get_db),
     payload: dict = Depends(validate_token),
 ):
@@ -131,7 +135,9 @@ def update_station(
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
         )
     shuttlebus_crud.delete_station(db, bus_id)
+    poly_line_crud.delete_polyLine(db, bus_id)
     shuttlebus_crud.create_station(db, station_list)
+    poly_line_crud.create_polyLine(db, poly_list)
     return {"message": "정류장 정보 수정/삭제에 성공했습니다."}
 
 

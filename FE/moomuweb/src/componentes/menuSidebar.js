@@ -14,7 +14,7 @@ export default function MenuSidebar() {
   const token = useSelector((state) => state.token.isToken);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  let logOut = function () {
+  const logOut = function () {
     dispatch(logout());
     navigate("/");
   };
@@ -30,10 +30,19 @@ export default function MenuSidebar() {
             </Link>
           </li>
           <li>
-            <Link className="AppMenu-link">공지사항</Link>
+            <Link className="AppMenu-link" to="/notice">
+              공지사항
+            </Link>
           </li>
           <li>
-            <Link className="AppMenu-link">회원 조회</Link>
+            <Link className="AppMenu-link" to="/faq">
+              문의사항
+            </Link>
+          </li>
+          <li>
+            <Link className="AppMenu-link" to="/users">
+              회원 조회
+            </Link>
           </li>
           <li>
             <a onClick={() => logOut()} className="logOut-link">
