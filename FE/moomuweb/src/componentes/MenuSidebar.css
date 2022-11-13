@@ -1,0 +1,34 @@
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #63b3ed;
+  min-height: 100vh;
+  width: 30vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.AppMenu {
+  width: 30vw;
+  margin: 0;
+  padding: 0;
+  background-color: #63b3ed;
+}
+
+.AppMenu-link {
+  font-size: calc(10px + 4vmin);
+  color: white;
+  justify-content: center;
+}
+.logOut-link {
+  font-size: calc(10px + 2vmin);
+  color: white;
+  justify-content: center;
+}

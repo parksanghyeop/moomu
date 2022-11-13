@@ -23,10 +23,12 @@ def create_notice(db: Session, notice: NoticeCreate):
     db.refresh(db_notice)
 
     db_users = (
-        db.query(models.User).all()
+        db.query(models.User).filter(models.User.user_role == 0).all()
         if db_notice.region_id == 600
         else db.query(models.User)
-        .filter(models.User.region_id == db_notice.region_id)
+        .filter(
+            models.User.region_id == db_notice.region_id, models.User.user_role == 0
+        )
         .all()
     )
 

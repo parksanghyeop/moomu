@@ -18,7 +18,7 @@ router = APIRouter(
 
 
 @router.get("", response_model=list[Region])
-def read_regions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), payload: dict = Depends(validate_token)):
+def read_regions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     regions = region_crud.get_regions(db, skip=skip, limit=limit)
     return regions
 

@@ -12,6 +12,10 @@ def get_faqs(db: Session, page: int, limit: int):
     return db.query(models.FaQ).offset(page).limit(limit).all()
 
 
+def get_faqs_by_userid(db: Session, user_id: int):
+    return db.query(models.FaQ).filter(models.FaQ.user_id == user_id).all()
+
+
 def create_faq(db: Session, faq: FaQCreate):
     db_faq = models.FaQ(**faq.dict())
     db.add(db_faq)
@@ -19,7 +23,7 @@ def create_faq(db: Session, faq: FaQCreate):
     db.refresh(db_faq)
 
     # 관리자 계정에게 알림 전송
-    db_users = db.query(models.User).filter(models.User.user_role == 1).all()
+    db_users = db.query(models.User).filter(models.User.user_role != 0).all()
 
     alarm_crud.create_alarm_from_event(
         db=db,
@@ -34,8 +38,8 @@ def create_faq(db: Session, faq: FaQCreate):
 
 def update_faq(db: Session, faq_id: int, faq: FaQUpdate):
     db_faq = db.query(models.FaQ).filter(models.FaQ.id == faq_id).first()
-    db_faq.question = faq.question
-    db_faq.answer = faq.answer
+    db_faq.title = faq.title
+    db_faq.content = faq.content
     db.commit()
     db.refresh(db_faq)
     return db_faq

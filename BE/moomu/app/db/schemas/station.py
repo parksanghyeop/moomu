@@ -1,5 +1,4 @@
-from datetime import time
-from pydantic import BaseModel
+from pydantic import BaseModel, typing
 
 
 class StationBase(BaseModel):
@@ -8,20 +7,27 @@ class StationBase(BaseModel):
     lat: str
     lng: str
     order: int
-    arrived_time: time
-    commute_or_leave: bool
+    arrived_time: typing.Any
 
 
 class StationCreate(StationBase):
     pass
 
 
-class StationPos(BaseModel):
+class StationPosBase(BaseModel):
+    name: str
     lat: str
     lng: str
 
 
 class Station(StationBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class StationPos(StationPosBase):
     id: int
 
     class Config:

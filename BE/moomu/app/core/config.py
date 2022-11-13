@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     ACCESS_KEY: str
     REFRESH_KEY: str
 
+    URL: str
+    CLINET_ID: str
+    CLIENT_SECRET: str
+
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
         if isinstance(v, str) and not v.startswith("["):
