@@ -33,7 +33,14 @@ export default function MenuSidebar() {
               <a className="btn btn-ghost normal-case text-xl">MooMu</a>
             </div>
             <div className="flex-none">
-              <div className="btn btn-primary btn-sm">로그아웃</div>
+              <div
+                className="btn btn-primary btn-sm"
+                onClick={() => {
+                  logOut();
+                }}
+              >
+                로그아웃
+              </div>
             </div>
           </div>
           <ul className="menu menu-horizontal bg-base-100 rounded-box p-2">

@@ -68,14 +68,14 @@ function LogiInPage() {
     axios
       .post(url, body, config)
       .then((res) => {
-        // dispatch(login(res.data));
+        dispatch(login(res.data));
         asyncSessionStorage
           .setItem("accessToken", res.data.access_token)
           .then(() => {
             // console.log(sessionStorage.getItem("accessToken"));
             navigate("/main");
           });
-        // setUser({ userRole });
+        setUser({ userRole });
       })
       .catch((err) => {
         alert("아이디와 비밀번호를 확인해주세요.");
