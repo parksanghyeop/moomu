@@ -37,10 +37,10 @@ function DashBoard() {
         Authorization: `Bearer ${rawToken}`,
       },
     };
-    console.log(config);
+    // console.log(config);
     const response = axios(config);
-    console.log(response);
-    console.log(routeId);
+    // console.log(response);
+    // console.log(routeId);
     setReloaded(!isreloaded);
   };
   const newRoute = async function () {
@@ -57,9 +57,9 @@ function DashBoard() {
         commute_or_leave: selection,
       },
     };
-    console.log(config);
+    // console.log(config);
     const response = await axios(config);
-    console.log(response);
+    // console.log(response);
     await setReloaded(!isreloaded);
   };
   const sendBusName = async function () {
@@ -71,9 +71,9 @@ function DashBoard() {
         Authorization: `Bearer ${rawToken}`,
       },
     };
-    console.log(config);
+    // console.log(config);
     const response = await axios(config);
-    console.log(response);
+    // console.log(response);
     await setReloaded(!isreloaded);
   };
   useEffect(() => {
@@ -89,7 +89,7 @@ function DashBoard() {
     axios.get(url).then((res) => {
       setRoutes(res.data);
       setLoading(false);
-      console.log(res);
+      // console.log(res);
     });
   };
   const changeSelect = async function (e) {
@@ -124,7 +124,13 @@ function DashBoard() {
       <Modal open={changeName} close={closeModal2} header="노선 이름 변경">
         <label className="input-group input-group-lg">
           <span className="">이름</span>
-          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-full max-w-xs" value={busName} onChange={(e) => setBusName(e.target.value)} />
+          <input
+            type="text"
+            placeholder="Type here"
+            className="input input-bordered input-lg w-full max-w-xs"
+            value={busName}
+            onChange={(e) => setBusName(e.target.value)}
+          />
         </label>
         <footer>
           <button
@@ -151,7 +157,13 @@ function DashBoard() {
       <Modal open={modalOpen} close={closeModal} header="신규 노선 추가">
         <label className="input-group input-group-lg">
           <span className="">이름</span>
-          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-full max-w-xs" value={newBusName} onChange={(e) => setnewBusName(e.target.value)} />
+          <input
+            type="text"
+            placeholder="Type here"
+            className="input input-bordered input-lg w-full max-w-xs"
+            value={newBusName}
+            onChange={(e) => setnewBusName(e.target.value)}
+          />
         </label>
         <button
           className="btn btn-primary mt-3"
@@ -161,8 +173,8 @@ function DashBoard() {
             // addRoute();
             closeModal();
             const newBusId = routes;
-            console.log(newBusId);
-            console.log(routes);
+            // console.log(newBusId);
+            // console.log(routes);
           }}
         >
           추가
@@ -171,7 +183,10 @@ function DashBoard() {
       <div className="tablePage">
         <div className="flex justify-items-center items-center">
           <p className="bodyTitle "> 전체 노선 관리 </p>
-          <select className="select select-primary select-bordered w-md max-w-xs" onChange={changeSelect}>
+          <select
+            className="select select-primary select-bordered w-md max-w-xs"
+            onChange={changeSelect}
+          >
             {selectOptions.map((option) => (
               <option key={option.key} value={option.key}>
                 {option.value}
@@ -193,7 +208,10 @@ function DashBoard() {
               {routes.map((route) => {
                 return (
                   <tr key={route.id}>
-                    <td className="font-bold routeTitle link link-primary" onClick={() => changeRoute(route.id)}>
+                    <td
+                      className="font-bold routeTitle link link-primary"
+                      onClick={() => changeRoute(route.id)}
+                    >
                       {route.name}
                     </td>
                     <td>
@@ -210,7 +228,10 @@ function DashBoard() {
                     </td>
                     <td>
                       <button className="btn btn-ghost btn-lg deleteIcon">
-                        <FontAwesomeIcon icon={faTrashCan} onClick={() => deleteRoute(route.id)} />
+                        <FontAwesomeIcon
+                          icon={faTrashCan}
+                          onClick={() => deleteRoute(route.id)}
+                        />
                       </button>
                     </td>
                   </tr>
@@ -219,7 +240,10 @@ function DashBoard() {
             </tbody>
           </table>
         </div>
-        <button className="btn btn-primary btn-xs sm:btn-sm md:btn-md lg:btn-lg absolute bottom-0 mb-3" onClick={() => openModal()}>
+        <button
+          className="btn btn-primary btn-xs sm:btn-sm md:btn-md lg:btn-lg absolute bottom-0 mb-3"
+          onClick={() => openModal()}
+        >
           노선 추가
         </button>
       </div>

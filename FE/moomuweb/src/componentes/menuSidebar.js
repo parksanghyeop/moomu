@@ -11,19 +11,14 @@ import "./MenuSidebar.css";
 
 export default function MenuSidebar() {
   // const token = useSelector(tokenSelector());
-  const token = useSelector((state) => state.token.isToken);
+  const token = sessionStorage.getItem("accessToken");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const logOut = function () {
+    sessionStorage.removeItem("accessToken");
     dispatch(logout());
     navigate("/");
   };
-
-  useEffect(() => {
-    if (token) {
-      navigate("/main");
-    }
-  }, [token, navigate]);
 
   return (
     <>

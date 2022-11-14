@@ -16,6 +16,7 @@ function LogiInPage() {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token.token);
   const userRole = useSelector((state) => state.token.decoded.role);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userRole) {
@@ -23,25 +24,17 @@ function LogiInPage() {
     }
   }, []);
 
-  //password type 변경용 state
-  const [passwordType, setPasswordType] = useState({
-    type: "password",
-    visible: false,
-  });
-
-  //password type 변경하는 함수
-  const handlePasswordType = (e) => {
-    setPasswordType(() => {
-      if (!passwordType.visible) {
-        return { type: "text", visible: true };
-      }
-      return { type: "password", visible: false };
-    });
-  };
-
-  const navigate = useNavigate();
-  const goToMain = () => {
-    navigate("/main");
+  const asyncSessionStorage = {
+    setItem: function (key, value) {
+      return Promise.resolve().then(function () {
+        sessionStorage.setItem(key, value);
+      });
+    },
+    getItem: function (key) {
+      return Promise.resolve().then(function () {
+        return sessionStorage.getItem(key);
+      });
+    },
   };
 
   return (
@@ -64,7 +57,7 @@ function LogiInPage() {
           <span className="label-text">비밀번호</span>
         </label>
         <input
-          type={passwordType.type}
+          type="password"
           placeholder="Type here"
           className="input input-bordered input-md w-full max-w-xs"
           value={PW}
@@ -101,11 +94,14 @@ function LogiInPage() {
               },
             };
             axios.post(url, body, config).then((res) => {
-              dispatch(login(res.data));
-              setUser({ userRole });
-
-              console.log(token);
-              goToMain();
+              // dispatch(login(res.data));
+              asyncSessionStorage
+                .setItem("accessToken", res.data.access_token)
+                .then(() => {
+                  // console.log(sessionStorage.getItem("accessToken"));
+                  navigate("/main");
+                });
+              // setUser({ userRole });
             });
           }}
         >
