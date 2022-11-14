@@ -1,4 +1,6 @@
 from pydantic import BaseModel, typing
+from typing import Optional
+from app.db.schemas.station import Station
 
 
 class UserBase(BaseModel):
@@ -49,3 +51,18 @@ class UserBus(BaseModel):
     bus_name: str
     commute_or_leave: str
     station_name: str
+
+
+class UserStationBase(BaseModel):
+    nickname: str
+    class_group: int
+    region_id: int
+
+
+class UserStationFull(UserStationBase):
+    id: int
+    start_station: Optional[Station] = None
+    end_station: Optional[Station] = None
+
+    class Config:
+        orm_mode = True
