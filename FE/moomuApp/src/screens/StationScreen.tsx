@@ -32,7 +32,10 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
     );
     const [busName, setBusName] = useState<String>(
         props.route.params.name
-    )
+    );
+    const [busOrder, setBusOrder] = useState<number>(
+        props.route.params.order
+    );
 
     useEffect(() => {
         (async () => {
@@ -218,26 +221,28 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
         id,
         name,
         arrived_time,
+        order,
     }: {
         id: number;
         name: string;
         arrived_time: any;
+        order: number;
     }) => (
         <View style={styles.item}>
             <View>
-                <Text style={styles.title}>{name}</Text>
+                <Text style={order<=busOrder?styles.title_l:styles.title}>{name}</Text>
                 {arriveTime(arrived_time)}
                 {stationSelected(id)}
             </View>
 
             {select_or_selectd(id)}
 
-            <View style={[styles.circle]} />
+            <View style={[order<=busOrder?styles.circle_full:styles.circle]} />
         </View>
     );
 
     const renderItem = ({ item }: { item: station }) => (
-        <Item id={item.id} name={item.name} arrived_time={item.arrived_time} />
+        <Item id={item.id} name={item.name} arrived_time={item.arrived_time} order={item.order} />
     );
 
     return (
@@ -302,6 +307,14 @@ const styles = StyleSheet.create({
         lineHeight: 21,
         color: '#000000',
     },
+    title_l: {
+        fontFamily: 'Pretendard Variable',
+        fontStyle: 'normal',
+        fontWeight: '400',
+        fontSize: 18,
+        lineHeight: 21,
+        color: '#E0E0E0',
+    },
     time: {
         fontFamily: 'Pretendard Variable',
         fontStyle: 'normal',
@@ -327,6 +340,17 @@ const styles = StyleSheet.create({
         height: 24,
         borderRadius: 100 / 2,
         backgroundColor: '#fff',
+        borderWidth: 2,
+        borderColor: '#63B3ED',
+    },
+    circle_full: {
+        top: 10,
+        right: 14,
+        position: 'absolute',
+        width: 24,
+        height: 24,
+        borderRadius: 100 / 2,
+        backgroundColor: '#63B3ED',
         borderWidth: 2,
         borderColor: '#63B3ED',
     },

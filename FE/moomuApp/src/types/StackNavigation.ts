@@ -13,6 +13,7 @@ export type RootStackParamList = {
         bus_id: number;
         name: string;
         commute_or_leave: string;
+        order: number;
     };
     Main: undefined;
     BusSearch: undefined;
