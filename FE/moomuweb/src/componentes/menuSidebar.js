@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../reducers/tokenSlice";
@@ -21,7 +21,25 @@ export default function MenuSidebar() {
   };
   const location = useLocation();
 
-  console.log(location.pathname);
+  const main = useRef(null);
+  const notice = useRef(null);
+  const users = useRef(null);
+
+  useEffect(() => {
+    if (location.pathname === "/main") {
+      main.current.classList.add("active");
+      notice.current.classList.remove("active");
+      users.current.classList.remove("active");
+    } else if (location.pathname === "/notice") {
+      main.current.classList.remove("active");
+      notice.current.classList.add("active");
+      users.current.classList.remove("active");
+    } else if (location.pathname === "/users") {
+      main.current.classList.remove("active");
+      notice.current.classList.remove("active");
+      users.current.classList.add("active");
+    }
+  }, [location]);
 
   return (
     <>
@@ -44,18 +62,18 @@ export default function MenuSidebar() {
             </div>
           </div>
           <ul className="menu menu-horizontal bg-base-100 rounded-box p-2">
-            <li className="">
-              <Link className="AppMenu-link" to="/main">
+            <li className="main">
+              <Link className="AppMenu-link" ref={main} to="/main">
                 노선 관리
               </Link>
             </li>
-            <li>
-              <Link className="AppMenu-link" to="/notice">
+            <li className="notice">
+              <Link className="AppMenu-link" ref={notice} to="/notice">
                 공지사항
               </Link>
             </li>
-            <li>
-              <Link className="AppMenu-link" to="/users">
+            <li className="users">
+              <Link className="AppMenu-link" ref={users} to="/users">
                 회원 조회
               </Link>
             </li>

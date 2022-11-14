@@ -1,6 +1,7 @@
 .naverMap {
-  min-width: 49vw;
-  height: 60vh;
+  width: 100%;
+  height: 100%;
+  /* height: 60vh; */
   align-self: center;
 }
 .mapPage {
@@ -10,18 +11,28 @@
 }
 .mapContainer {
   display: flex;
+  justify-content: space-between;
+  height: 70vh;
 }
 .menu {
-  width: 100vw;
+  width: 100%;
 }
 .custom-steps {
   @apply steps;
   /* overflow-: scroll; */
 }
 .routeContainer {
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 70vh;
   min-width: 15vw;
+  margin-right: 10px;
+}
+.routeContainer {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+.routeContainer::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
 }
 
 .btn-up {
