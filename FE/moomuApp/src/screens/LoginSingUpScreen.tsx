@@ -56,7 +56,7 @@ const LoginSignUpScreen: React.FC<LoginSignUpScreenProps> = (props) => {
     );
 
     return (
-        <View style={styles.container}>
+        <View style={styles.        container}>
             <View style={[{ alignItems: 'center', marginTop: 100 }]}>
                 <Logo2 />
             </View>

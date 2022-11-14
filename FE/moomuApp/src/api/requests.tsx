@@ -2,7 +2,8 @@ const requests = {
     // 로그인
     login: 'users/login',
     logout: 'logout',
-
+    // 회원탈퇴
+    withdraw: 'users/profile/delete',
     // 회원가입
     register: 'users/register',
     // 사용자 셔틀버스 조회/수정/삭제
