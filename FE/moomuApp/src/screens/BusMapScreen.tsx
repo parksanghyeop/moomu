@@ -107,7 +107,7 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
             setIsLoding(true);
         })();
         
-        ws.current = new WebSocket(`ws://k7b202.p.ssafy.io:8000/shuttlebus/ws/` + busName )
+        ws.current = new WebSocket(`ws://k7b202.p.ssafy.io:9000/ws/` + busName )
         // ws.current = new WebSocket(`ws://10.0.2.2:8000/shuttlebus/ws/` + busName )
         console.log(ws.current)
         ws.current.onopen = () => {
