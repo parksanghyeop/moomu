@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../reducers/tokenSlice";
 // import { tokenSelector } from "../reducers/tokenSlice";
 
@@ -19,10 +19,13 @@ export default function MenuSidebar() {
     dispatch(logout());
     navigate("/");
   };
+  const location = useLocation();
+
+  console.log(location.pathname);
 
   return (
     <>
-      {token && (
+      {location.pathname != "/login" && (
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <ul className="menu bg-base-100 p-2 AppMenu">

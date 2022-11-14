@@ -37,6 +37,57 @@ function LogiInPage() {
     },
   };
 
+  const onClick = () => {
+    let body = {
+      body: [
+        {
+          // username: ID,
+          // password: PW,
+        },
+      ],
+      username: ID,
+      password: PW,
+    };
+    // let url = "https://cors-anywhere.herokuapp.com/http://k7b202.p.ssafy.io:8000/users/login";
+    let url = "https://k7b202.p.ssafy.io/api/users/login";
+
+    // const options = {
+    //   method: "POST",
+    //   body: body,
+    //   url: url,
+    // };
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+    };
+    axios
+      .post(url, body, config)
+      .then((res) => {
+        // dispatch(login(res.data));
+        asyncSessionStorage
+          .setItem("accessToken", res.data.access_token)
+          .then(() => {
+            // console.log(sessionStorage.getItem("accessToken"));
+            navigate("/main");
+          });
+        // setUser({ userRole });
+      })
+      .catch((err) => {
+        alert("아이디와 비밀번호를 확인해주세요.");
+      });
+  };
+
+  const onKeyEnter = (e) => {
+    if (e.key === "Enter") {
+      onClick();
+    }
+  };
+
   return (
     <div className="loginContainer">
       <div className="bodyTitle">
@@ -51,6 +102,7 @@ function LogiInPage() {
           placeholder="Type here"
           className="input input-bordered input-md w-full max-w-xs"
           value={ID}
+          onKeyDown={onKeyEnter}
           onChange={(e) => setID(e.target.value)}
         />
         <label className="label">
@@ -61,50 +113,10 @@ function LogiInPage() {
           placeholder="Type here"
           className="input input-bordered input-md w-full max-w-xs"
           value={PW}
+          onKeyDown={onKeyEnter}
           onChange={(e) => setPW(e.target.value)}
         />
-        <button
-          className="btn btn-primary btn-block mt-4"
-          onClick={() => {
-            let body = {
-              body: [
-                {
-                  // username: ID,
-                  // password: PW,
-                },
-              ],
-              username: ID,
-              password: PW,
-            };
-            // let url = "https://cors-anywhere.herokuapp.com/http://k7b202.p.ssafy.io:8000/users/login";
-            let url = "https://k7b202.p.ssafy.io/api/users/login";
-
-            // const options = {
-            //   method: "POST",
-            //   body: body,
-            //   url: url,
-            // };
-            let config = {
-              headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
-                "Access-Control-Allow-Credentials": "true",
-                "X-Requested-With": "XMLHttpRequest",
-              },
-            };
-            axios.post(url, body, config).then((res) => {
-              // dispatch(login(res.data));
-              asyncSessionStorage
-                .setItem("accessToken", res.data.access_token)
-                .then(() => {
-                  // console.log(sessionStorage.getItem("accessToken"));
-                  navigate("/main");
-                });
-              // setUser({ userRole });
-            });
-          }}
-        >
+        <button className="btn btn-primary btn-block mt-4" onClick={onClick}>
           관리자 로그인
         </button>
         <div className="text-center mt-4">
