@@ -68,14 +68,16 @@ function DashBoard() {
               return (
                 <tr key={user.id}>
                   <td className="font-bold routeTitle">{user.nickname}</td>
-                  <td>
-                    <button className="btn btn-ghost btn-lg changeIcon">
-                      <FontAwesomeIcon icon={faIdBadge} onClick={() => changeRoute(user.id)} />
-                    </button>
+                  <td className="changeIcon w-36 truncate ...">
+                    {/* <button className="btn btn-ghost btn-lg changeIcon"> */}
+                    {/* <FontAwesomeIcon icon={faIdBadge} onClick={() => changeRoute(user.id)} /> */}
+                    {user.start_station ? <span className="changeIcon w-36 truncate ..."> {user.start_station.name} </span> : <FontAwesomeIcon icon={faIdBadge} />}
+                    {/* </button> */}
                   </td>
                   <td>
                     <button className="btn btn-ghost btn-lg deleteIcon">
-                      <FontAwesomeIcon icon={faTrashCan} />
+                      {user.end_station ? <span className="text-lg truncate "> {user.end_station.name} </span> : <FontAwesomeIcon icon={faIdBadge} />}
+                      {/* <FontAwesomeIcon icon={faTrashCan} /> */}
                     </button>
                   </td>
                 </tr>

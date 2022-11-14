@@ -99,13 +99,19 @@ export const updateRoute = createAsyncThunk("Update Bus Route", async (busId, { 
     // },
   };
   console.log(config);
-  const response = await axios(config);
-  console.log(response);
+  console.log(state.station.originCopy === state.station.stations);
+  const isDataChange = state.station.originCopy === state.station.stations;
+  if (!isDataChange) {
+    const response = await axios(config);
+    console.log(response);
+  } else {
+    console.log("nothing to update");
+  }
 });
 
 export const staionSlice = createSlice({
   name: "staionSlice",
-  initialState: { routeName: "", stations: [], poly: [], isLoaded: false },
+  initialState: { routeName: "", stations: [], poly: [], isLoaded: false, originCopy: [] },
   reducers: {
     initRoute: (state) => {
       state.routeName = "";
@@ -115,6 +121,7 @@ export const staionSlice = createSlice({
       state.routeName = "";
       state.stations = [];
       state.poly = [];
+      state.originCopy = [];
       state.isLoaded = false;
     },
     staionUp: (state, action) => {
@@ -166,6 +173,7 @@ export const staionSlice = createSlice({
     [loadRoute.fulfilled]: (state, { payload }) => {
       // state.stations = [];
       state.stations = payload.data;
+      state.originCopy = payload.data;
       state.poly = payload.poly;
       state.routeName = payload.name;
       state.isLoaded = true;
