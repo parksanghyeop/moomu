@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../reducers/tokenSlice";
@@ -19,38 +19,46 @@ export default function MenuSidebar() {
     navigate("/");
   };
 
+  useEffect(() => {
+    if (token) {
+      navigate("/main");
+    }
+  }, [token, navigate]);
+
   return (
-    <header className="App-header">
-      <img src={logo} className="App-logo" alt="logo" />
+    <>
       {token && (
-        <ul className="menu bg-base-100 p-2 AppMenu">
-          <li>
-            <Link className="AppMenu-link" to="/main">
-              노선 관리
-            </Link>
-          </li>
-          <li>
-            <Link className="AppMenu-link" to="/notice">
-              공지사항
-            </Link>
-          </li>
-          <li>
-            <Link className="AppMenu-link" to="/faq">
-              문의사항
-            </Link>
-          </li>
-          <li>
-            <Link className="AppMenu-link" to="/users">
-              회원 조회
-            </Link>
-          </li>
-          <li>
-            <a onClick={() => logOut()} className="logOut-link">
-              대전캠퍼스/로그아웃
-            </a>
-          </li>
-        </ul>
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <ul className="menu bg-base-100 p-2 AppMenu">
+            <li>
+              <Link className="AppMenu-link" to="/main">
+                노선 관리
+              </Link>
+            </li>
+            <li>
+              <Link className="AppMenu-link" to="/notice">
+                공지사항
+              </Link>
+            </li>
+            <li>
+              <Link className="AppMenu-link" to="/faq">
+                문의사항
+              </Link>
+            </li>
+            <li>
+              <Link className="AppMenu-link" to="/users">
+                회원 조회
+              </Link>
+            </li>
+            <li>
+              <a onClick={() => logOut()} className="logOut-link">
+                대전캠퍼스/로그아웃
+              </a>
+            </li>
+          </ul>
+        </header>
       )}
-    </header>
+    </>
   );
 }

@@ -7,6 +7,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { useAuth } from "../context/Auth";
 import { login, logout } from "../reducers/tokenSlice";
+import logo from "../assets/moomu_logo.jpg";
 
 function LogiInPage() {
   const [ID, setID] = useState("");
@@ -44,57 +45,72 @@ function LogiInPage() {
   };
 
   return (
-    <div className="App">
-      <div className="bodyFrame">
-        <p className="bodyTitle "> LogIn </p>
-        <div className="form-control logInCtrl">
-          <label className="input-group input-group-lg">
-            <span className="bodyLabel">ID</span>
-            <input type="text" placeholder="Type here" className="input input-bordered input-lg w-full max-w-xs" value={ID} onChange={(e) => setID(e.target.value)} />
-          </label>
-          <label className="input-group input-group-lg">
-            <span className="bodyLabel">PASSWORD</span>
-            <input type={passwordType.type} placeholder="Type here" className="input input-bordered input-lg w-full max-w-xs" value={PW} onChange={(e) => setPW(e.target.value)} />
-            <span className="pwShow input input-bordered input-lg" onClick={handlePasswordType}>
-              {passwordType.visible ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
-            </span>
-          </label>
-          <button
-            className="btn btn-primary btn-xs sm:btn-sm md:btn-md lg:btn-lg logInBtn"
-            onClick={() => {
-              let body = {
-                body: [
-                  {
-                    // username: ID,
-                    // password: PW,
-                  },
-                ],
-                username: ID,
-                password: PW,
-              };
-              let url = "https://k7b202.p.ssafy.io/api/users/login";
-
-              let config = {
-                headers: {
-                  "Content-Type": "application/json",
-                  "Access-Control-Allow-Origin": "*",
-                  "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
-                  "Access-Control-Allow-Credentials": "true",
-                  "X-Requested-With": "XMLHttpRequest",
+    <div className="loginContainer">
+      <div className="bodyTitle">
+        <img className="logo" src={logo} width="180" />
+      </div>
+      <div className="formContainer">
+        <label className="label">
+          <span className="label-text">아이디</span>
+        </label>
+        <input
+          type="text"
+          placeholder="Type here"
+          className="input input-bordered input-md w-full max-w-xs"
+          value={ID}
+          onChange={(e) => setID(e.target.value)}
+        />
+        <label className="label">
+          <span className="label-text">비밀번호</span>
+        </label>
+        <input
+          type={passwordType.type}
+          placeholder="Type here"
+          className="input input-bordered input-md w-full max-w-xs"
+          value={PW}
+          onChange={(e) => setPW(e.target.value)}
+        />
+        <button
+          className="btn btn-primary btn-block mt-4"
+          onClick={() => {
+            let body = {
+              body: [
+                {
+                  // username: ID,
+                  // password: PW,
                 },
-              };
-              axios.post(url, body, config).then((res) => {
-                dispatch(login(res.data));
-                setUser({ userRole });
+              ],
+              username: ID,
+              password: PW,
+            };
+            // let url = "https://cors-anywhere.herokuapp.com/http://k7b202.p.ssafy.io:8000/users/login";
+            let url = "https://k7b202.p.ssafy.io/api/users/login";
 
-                console.log(token);
-                goToMain();
-              });
-            }}
-          >
-            LogIn
-          </button>
-        </div>
+            // const options = {
+            //   method: "POST",
+            //   body: body,
+            //   url: url,
+            // };
+            let config = {
+              headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
+                "Access-Control-Allow-Credentials": "true",
+                "X-Requested-With": "XMLHttpRequest",
+              },
+            };
+            axios.post(url, body, config).then((res) => {
+              dispatch(login(res.data));
+              setUser({ userRole });
+
+              console.log(token);
+              goToMain();
+            });
+          }}
+        >
+          관리자 로그인
+        </button>
       </div>
     </div>
   );

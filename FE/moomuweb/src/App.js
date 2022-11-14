@@ -41,7 +41,11 @@ function App() {
                   <Route path="/faq" element={<QuestionBoard />} />
                   <Route path="/faq/new" element={<AnswerQuestion />} />
                   <Route path="/faq/:id" element={<QuestionDeatil />} />
-                  <Route path="/map/:id" onLeave={reload()} element={<RouteMapChange />}></Route>
+                  <Route
+                    path="/map/:id"
+                    onLeave={reload()}
+                    element={<RouteMapChange />}
+                  ></Route>
                 </Route>
               </Routes>
             </BrowserRouter>
