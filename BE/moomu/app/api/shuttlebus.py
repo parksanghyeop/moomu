@@ -8,9 +8,9 @@ from sqlalchemy.orm import Session
 from app.db.crud import shuttlebus_crud, poly_line_crud
 from app.db.schemas.bus import Bus, BusBase
 from app.db.schemas.station import Station, StationBase, StationPos
-from app.db.schemas.poly_line import PolyLineBase, PolyLinePos
+from app.db.schemas.poly_line import PolyLinePos, PolyLinePosBase
 from app.dependencies import get_db
-from app.service.shuttlebus_service import bus_near_station
+from app.service.shuttlebus_service import bus_near_station, get_poly_line_list
 from app.db.schemas.commute_or_leave import CommuteOrLeave
 from app.service.jwt_service import validate_token
 
@@ -106,18 +106,20 @@ def get_station(station_id: int, db: Session = Depends(get_db)):
 
 @router.post("/station/register")
 def create_station(
+    bus_id: int,
     station_list: list[StationBase],
-    poly_list: list[PolyLineBase],
     db: Session = Depends(get_db),
     payload: dict = Depends(validate_token),
 ):
+    poly_list: list[PolyLinePosBase] = []
     user_role = payload.get("role")
     if user_role < 5:
         raise HTTPException(
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
         )
     shuttlebus_crud.create_station(db, station_list)
-    poly_line_crud.create_polyLine(db, poly_list)
+    poly_list = get_poly_line_list(station_list)
+    poly_line_crud.create_polyLine(db, poly_list, bus_id)
     return {"message": "정류장 등록에 성공했습니다."}
 
 
@@ -125,7 +127,6 @@ def create_station(
 def update_station(
     bus_id: int,
     station_list: list[StationBase],
-    poly_list: list[PolyLineBase],
     db: Session = Depends(get_db),
     payload: dict = Depends(validate_token),
 ):
@@ -134,10 +135,11 @@ def update_station(
         raise HTTPException(
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
         )
+    poly_list: list[PolyLinePosBase] = []
     shuttlebus_crud.delete_station(db, bus_id)
-    poly_line_crud.delete_polyLine(db, bus_id)
+    poly_list = get_poly_line_list(station_list)
+    poly_line_crud.create_polyLine(db, poly_list, bus_id)
     shuttlebus_crud.create_station(db, station_list)
-    poly_line_crud.create_polyLine(db, poly_list)
     return {"message": "정류장 정보 수정/삭제에 성공했습니다."}
 
 
