@@ -30,8 +30,8 @@ function App() {
             <BrowserRouter>
               <MenuSidebar />
               <Routes className="bodyFrame">
-                <Route path="/" element={<LogiInPage />} />
-                <Route element={<RequireAuth />}>
+                <Route path="/login" element={<LogiInPage />} />
+                <Route path="" element={<RequireAuth />}>
                   <Route path="/main" element={<DashBoard />} />
                   <Route path="/map" element={<RouteMap />} />
                   <Route path="/notice" element={<NoticeBoard />} />
