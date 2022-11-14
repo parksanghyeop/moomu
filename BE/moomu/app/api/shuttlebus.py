@@ -137,6 +137,7 @@ def update_station(
         )
     poly_list: list[PolyLinePosBase] = []
     shuttlebus_crud.delete_station(db, bus_id)
+    poly_line_crud.delete_polyLine(db, bus_id)
     poly_list = get_poly_line_list(station_list)
     poly_line_crud.create_polyLine(db, poly_list, bus_id)
     shuttlebus_crud.create_station(db, station_list)
