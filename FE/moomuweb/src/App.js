@@ -19,6 +19,7 @@ import AnswerQuestion from "./pages/QuestionAnswer";
 import QuestionDeatil from "./pages/QuestionDeatil";
 import UserBoard from "./pages/UserBoard";
 import MenuSidebar from "./componentes/menuSidebar";
+import ContactUs from "./pages/ContactUs";
 const persistor = persistStore(store);
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
             <BrowserRouter>
               <MenuSidebar />
               <Routes className="bodyFrame">
+                <Route path="/contact" element={<ContactUs />} />
                 <Route path="/login" element={<LogiInPage />} />
                 <Route path="" element={<RequireAuth />}>
                   <Route path="/main" element={<DashBoard />} />

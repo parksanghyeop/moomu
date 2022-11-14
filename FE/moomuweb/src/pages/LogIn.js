@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./LogIn.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
@@ -107,6 +107,11 @@ function LogiInPage() {
         >
           관리자 로그인
         </button>
+        <div className="text-center mt-4">
+          <Link to="/contact" className="link link-primary">
+            Contact Us
+          </Link>
+        </div>
       </div>
     </div>
   );
