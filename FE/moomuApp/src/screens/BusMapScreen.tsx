@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/StackNavigation';
 import MapView, { Marker, Polyline } from 'react-native-maps';
@@ -106,50 +106,60 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
 
             setIsLoding(true);
         })();
-        
-        ws.current = new WebSocket(`ws://k7b202.p.ssafy.io:8000/shuttlebus/ws/` + busName )
+        const date= new Date()
+        date.setHours(date.getHours() + 9)
+        const hour = date.getHours()
+        console.log(hour)
+        if((hour >= 7 && hour <= 9) || (hour>=18 && hour<=21)) {
+            ws.current = new WebSocket(`ws://k7b202.p.ssafy.io:9000/ws/` + busName )
+        }
+        else {
+            ws.current = null
+        }
         // ws.current = new WebSocket(`ws://10.0.2.2:8000/shuttlebus/ws/` + busName )
-        console.log(ws.current)
-        ws.current.onopen = () => {
-            // connection opened
-            console.log('connected')
-        };
+        if(ws.current != null) {
+            console.log(ws.current)
+            ws.current.onopen = () => {
+                // connection opened
+                console.log('connected')
+            };
 
-        ws.current.onmessage = (e: any) => {
-            let gps: Location = JSON.parse(e.data); 
-            // console.log(e);
-            console.log(gps)
-            if (gps.lat == null || gps.lng == null) {
+            ws.current.onmessage = (e: any) => {
+                let gps: Location = JSON.parse(e.data); 
+                // console.log(e);
+                console.log(gps)
+                if (gps.lat == null || gps.lng == null) {
+                    setVisible(false)
+                    setBusLat(0)
+                    setBusLng(0)
+                }
+                else {
+                    setVisible(true)
+                    setBusLat(gps.lat)
+                    setBusLng(gps.lng)
+                }
+
+                // console.log(gps.lat);
+            };
+
+            ws.current.onerror = (e: React.SyntheticEvent<HTMLInputElement>) => {
                 setVisible(false)
                 setBusLat(0)
                 setBusLng(0)
-            }
-            else {
-                setVisible(true)
-                setBusLat(gps.lat)
-                setBusLng(gps.lng)
-            }
+                // an error occurred
+                console.log(e);
+            };
 
-            // console.log(gps.lat);
-        };
+            ws.current.onclose = (e: React.SyntheticEvent<HTMLInputElement>) => {
+                // connection closed
+                console.log(e);
+            };
 
-        ws.current.onerror = (e: React.SyntheticEvent<HTMLInputElement>) => {
-            setVisible(false)
-            setBusLat(0)
-            setBusLng(0)
-            // an error occurred
-            console.log(e);
-        };
-
-        ws.current.onclose = (e: React.SyntheticEvent<HTMLInputElement>) => {
-            // connection closed
-            console.log(e);
-        };
-
-        return () => {
-            console.log("동작")
-            ws.current.close();
-        };
+            return () => {
+                console.log("동작")
+                ws.current.close();
+            };
+        }
     }, []);
 
     const goToMyLocation = async () => {
@@ -174,7 +184,9 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
                     }}
                     title={stationList[i].name}
                     description={stationList[i].arrived_time}
-                />
+                >
+                    <Image source={require('../../assets/images/bus-stop.png')} style={{height: 35, width:35 }} />
+                </Marker>
             );
         }
         return result;
@@ -182,7 +194,9 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
 
     const Gps = () => {
         if(bus_lat != null && bus_lng != null)
-            return (<Marker coordinate={{latitude: +bus_lat, longitude: +bus_lng}} title={"버스"} />)
+            return (<Marker coordinate={{latitude: +bus_lat, longitude: +bus_lng}} title={"버스"} >
+                        <Image source={require('../../assets/images/bus.png')} style={{height: 35, width:35 }} />
+                    </Marker>)
     }
     const mapView = (lat: number, lon: number) => {
         if (isLoding) {
