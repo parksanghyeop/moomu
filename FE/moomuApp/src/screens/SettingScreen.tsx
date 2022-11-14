@@ -30,12 +30,6 @@ const SettingScreen: React.FC<SettingScreenProps> = (props) => {
                 </View>
                 <View style={{ marginBottom: 60 }}>
                     <Button1
-                        text={'회원정보수정'}
-                        onPress={() => RootNavigation.goBack()}
-                    />
-                </View>
-                <View style={{ marginBottom: 60 }}>
-                    <Button1
                         text={'회원탈퇴'}
                         onPress={() => {
                             Alert.alert(
