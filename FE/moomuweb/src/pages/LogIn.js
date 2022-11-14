@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./LogIn.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -6,8 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { useAuth } from "../context/Auth";
-import { login } from "../reducers/tokenSlice";
-// import { tokenSelector } from "../reducers/tokenSlice";
+import { login, logout } from "../reducers/tokenSlice";
 import logo from "../assets/moomu_logo.jpg";
 
 function LogiInPage() {
@@ -17,6 +16,12 @@ function LogiInPage() {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token.token);
   const userRole = useSelector((state) => state.token.decoded.role);
+
+  useEffect(() => {
+    if (userRole) {
+      dispatch(logout());
+    }
+  }, []);
 
   //password type 변경용 state
   const [passwordType, setPasswordType] = useState({
