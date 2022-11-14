@@ -8,6 +8,10 @@ import requests
 
 
 r = redis.Redis(host="k7b202.p.ssafy.io", port=6379, db=0)
+headers = {
+    "X-NCP-APIGW-API-KEY-ID": settings.CLINET_ID,
+    "X-NCP-APIGW-API-KEY": settings.CLIENT_SECRET,
+}
 
 
 def bus_near_station(bus_name: str, station_list: list[Station]):
@@ -57,10 +61,6 @@ def bus_near_station(bus_name: str, station_list: list[Station]):
 
 
 def real_distance(lat_s: str, lng_s: str, lat_e: str, lng_e: str):
-    headers = {
-        "X-NCP-APIGW-API-KEY-ID": settings.CLINET_ID,
-        "X-NCP-APIGW-API-KEY": settings.CLIENT_SECRET,
-    }
     params = {
         "start": lng_s + "," + lat_s,
         "goal": lng_e + "," + lat_e,
@@ -68,3 +68,25 @@ def real_distance(lat_s: str, lng_s: str, lat_e: str, lng_e: str):
     response = requests.get(settings.URL, headers=headers, params=params)
     json_obj = response.json()
     return int(json_obj["route"]["traoptimal"][0]["summary"]["distance"])
+
+
+def get_poly_line_list(station_list: list[Station]):
+    start = str(station_list[0].lng) + "," + str(station_list[0].lat)
+    end = (
+        str(station_list[len(station_list) - 1].lng)
+        + ","
+        + str(station_list[len(station_list) - 1].lat)
+    )
+    waypoint = ""
+    print(start)
+    print(end)
+    print(waypoint)
+    for i in range(1, len(station_list) - 1):
+        pos_station = station_list[i]
+        waypoint = waypoint + str(pos_station.lng) + "," + str(pos_station.lat)
+        if i is not len(station_list) - 2:
+            waypoint = waypoint + "|"
+    params = {"start": start, "goal": end, "waypoints": waypoint}
+    response = requests.get(settings.URL, headers=headers, params=params)
+    json_obj = response.json()
+    return json_obj["route"]["traoptimal"][0]["path"]
