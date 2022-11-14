@@ -10,7 +10,7 @@ from app.db.schemas.bus import Bus, BusBase
 from app.db.schemas.station import Station, StationBase, StationPos
 from app.db.schemas.poly_line import PolyLinePos, PolyLinePosBase
 from app.dependencies import get_db
-from app.service.shuttlebus_service import bus_near_station, get_poly_line_list
+from app.service.shuttlebus_service import get_poly_line_list
 from app.db.schemas.commute_or_leave import CommuteOrLeave
 from app.service.jwt_service import validate_token
 
@@ -37,7 +37,6 @@ def get_bus(bus_id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND, detail="해당 버스 정보를 찾을 수 없습니다."
         )
     db_bus.stations = shuttlebus_crud.get_stations(db, bus_id=bus_id)
-    db_bus.cur = bus_near_station(db_bus.name, db_bus.stations)
     return db_bus
 
 
@@ -158,3 +157,14 @@ def create_station_alarm(
 @router.get("/station/polyline/{bus_id}", response_model=list[PolyLinePos])
 def get_poly_line(bus_id: int, db: Session = Depends(get_db)):
     return poly_line_crud.get_polyLine(db, bus_id)
+
+
+@router.put("/bus/edit/order")
+def set_bus_order(
+    bus_name: str,
+    order: int,
+    commute_or_leave: CommuteOrLeave,
+    db: Session = Depends(get_db),
+):
+    shuttlebus_crud.set_bus_order(db, commute_or_leave, bus_name, order)
+    return {"message": "버스 정류장 위치 수정 성공했습니다."}
