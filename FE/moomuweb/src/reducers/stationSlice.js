@@ -37,7 +37,7 @@ export const loadRoute = createAsyncThunk("get route", async (busId) => {
 
 export const updateRoute = createAsyncThunk("Update Bus Route", async (busId, { getState }) => {
   const state = await getState();
-  let points = [];
+  // let points = [];
   // for (let loc = 0; loc < state.station.stations.length; loc++) {
   //   const element = state.station.stations[loc].stationLatLng;
   //   points.push(element.x.toString() + "," + element.y.toString());

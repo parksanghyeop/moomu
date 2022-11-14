@@ -35,6 +35,9 @@
 .changeIcon {
   font-size: calc(10px + 2vmin) !important;
 }
+.stationInfo {
+  max-width: 20vw;
+}
 .deleteIcon {
   font-size: calc(10px + 2vmin) !important;
 }
