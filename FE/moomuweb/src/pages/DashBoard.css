@@ -1,4 +1,4 @@
-.table-title {
+/* .table-title {
   font-size: calc(10px + 2vmin);
 }
 .custom-table-container {
@@ -30,11 +30,31 @@
   align-items: center;
   display: flex;
   flex-direction: column;
-  /* width: 70vw; */
+  
 }
 .changeIcon {
   font-size: calc(10px + 2vmin) !important;
 }
 .deleteIcon {
   font-size: calc(10px + 2vmin) !important;
+} */
+
+.content-box {
+  border: 1px solid #e8ebed;
+  border-radius: 8px;
+  box-shadow: 0 1px .625rem 0 hsla(210, 7%, 22%, .06), 0 .125rem .25rem 0 hsla(210, 7%, 22%, .08);;
+  box-sizing: border-box;
+  padding: 10px 30px;
+  padding-bottom: 20px;
+}
+
+tr {
+  transition: all 0.2s ease;
+}
+
+.name {
+  border-radius: 8px;
+}
+.delete {
+  border-radius: 0 8px 8px 0;
 }

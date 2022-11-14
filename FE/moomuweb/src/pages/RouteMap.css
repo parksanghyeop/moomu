@@ -12,7 +12,7 @@
   display: flex;
 }
 .menu {
-  width: 20vw;
+  width: 100vw;
 }
 .custom-steps {
   @apply steps;
