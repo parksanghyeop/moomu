@@ -6,10 +6,12 @@
 }
 .App {
   /* text-align: center; */
-  display: flex;
+  /* display: flex; */
   height: 100vh;
   font-family: Pretendard;
-  width: 100vw;
+  width: 100%;
+  max-width: 1020px;
+  margin: 0 auto;
 }
 
 .App-link {

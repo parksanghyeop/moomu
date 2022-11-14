@@ -27,9 +27,17 @@ export default function MenuSidebar() {
     <>
       {location.pathname != "/login" && (
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <ul className="menu bg-base-100 p-2 AppMenu">
-            <li>
+          <div className="navbar bg-base-100">
+            <div className="flex-1">
+              {/* <img src={logo} className="w-12" alt="logo" /> */}
+              <a className="btn btn-ghost normal-case text-xl">MooMu</a>
+            </div>
+            <div className="flex-none">
+              <div className="btn btn-primary btn-sm">로그아웃</div>
+            </div>
+          </div>
+          <ul className="menu menu-horizontal bg-base-100 rounded-box p-2">
+            <li className="">
               <Link className="AppMenu-link" to="/main">
                 노선 관리
               </Link>
@@ -40,19 +48,9 @@ export default function MenuSidebar() {
               </Link>
             </li>
             <li>
-              <Link className="AppMenu-link" to="/faq">
-                문의사항
-              </Link>
-            </li>
-            <li>
               <Link className="AppMenu-link" to="/users">
                 회원 조회
               </Link>
-            </li>
-            <li>
-              <a onClick={() => logOut()} className="logOut-link">
-                대전캠퍼스/로그아웃
-              </a>
             </li>
           </ul>
         </header>

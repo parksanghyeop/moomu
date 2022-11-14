@@ -89,40 +89,42 @@ function LogiInPage() {
   };
 
   return (
-    <div className="loginContainer">
-      <div className="bodyTitle">
-        <img className="logo" src={logo} width="180" />
-      </div>
-      <div className="formContainer">
-        <label className="label">
-          <span className="label-text">아이디</span>
-        </label>
-        <input
-          type="text"
-          placeholder="Type here"
-          className="input input-bordered input-md w-full max-w-xs"
-          value={ID}
-          onKeyDown={onKeyEnter}
-          onChange={(e) => setID(e.target.value)}
-        />
-        <label className="label">
-          <span className="label-text">비밀번호</span>
-        </label>
-        <input
-          type="password"
-          placeholder="Type here"
-          className="input input-bordered input-md w-full max-w-xs"
-          value={PW}
-          onKeyDown={onKeyEnter}
-          onChange={(e) => setPW(e.target.value)}
-        />
-        <button className="btn btn-primary btn-block mt-4" onClick={onClick}>
-          관리자 로그인
-        </button>
-        <div className="text-center mt-4">
-          <Link to="/contact" className="link link-primary">
-            Contact Us
-          </Link>
+    <div className="flex w-full justify-center">
+      <div className="loginContainer">
+        <div className="bodyTitle">
+          <img className="logo" src={logo} width="180" />
+        </div>
+        <div className="formContainer">
+          <label className="label">
+            <span className="label-text">아이디</span>
+          </label>
+          <input
+            type="text"
+            placeholder="Type here"
+            className="input input-bordered input-md w-full max-w-xs"
+            value={ID}
+            onKeyDown={onKeyEnter}
+            onChange={(e) => setID(e.target.value)}
+          />
+          <label className="label">
+            <span className="label-text">비밀번호</span>
+          </label>
+          <input
+            type="password"
+            placeholder="Type here"
+            className="input input-bordered input-md w-full max-w-xs"
+            value={PW}
+            onKeyDown={onKeyEnter}
+            onChange={(e) => setPW(e.target.value)}
+          />
+          <button className="btn btn-primary btn-block mt-4" onClick={onClick}>
+            관리자 로그인
+          </button>
+          <div className="text-center mt-4">
+            <Link to="/contact" className="link link-primary">
+              Contact Us
+            </Link>
+          </div>
         </div>
       </div>
     </div>

@@ -6,8 +6,8 @@
   display: flex;
   justify-content: center;
 }
-.logo {
-  
+.App {
+  display: flex;
 }
 .bodyLabel {
   font-size: calc(10px + 1vmin);
