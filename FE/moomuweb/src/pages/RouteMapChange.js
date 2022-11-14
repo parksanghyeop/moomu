@@ -141,6 +141,7 @@ function RouteMap() {
     centerLng /= 2;
     const cneterLoc = new naver.maps.LatLng(centerLat, centerLng);
     naverMap.updateBy(cneterLoc, zoomLevel);
+    if (isEmpty(stationInfos)) naverMap.updateBy(location, zoomLevel);
 
     let polylinePath = [];
     for (let i = 0; i < polyInfos.length; i++) {

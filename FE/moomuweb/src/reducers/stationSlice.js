@@ -26,6 +26,7 @@ export const loadRoute = createAsyncThunk("get route", async (busId) => {
   }
   const polyUrl = `https://k7b202.p.ssafy.io/api/shuttlebus/station/polyline/${busId.id}`;
   const pget = await axios.get(polyUrl);
+  console.log(pget);
   const data = {
     data: dummy,
     poly: pget.data,
@@ -37,40 +38,40 @@ export const loadRoute = createAsyncThunk("get route", async (busId) => {
 export const updateRoute = createAsyncThunk("Update Bus Route", async (busId, { getState }) => {
   const state = await getState();
   let points = [];
-  for (let loc = 0; loc < state.station.stations.length; loc++) {
-    const element = state.station.stations[loc].stationLatLng;
-    points.push(element.x.toString() + "," + element.y.toString());
-  }
-  const start = points[0];
-  const goal = points.slice(-1);
-  var temp = [];
-  for (var i = 1; i < points.length - 1; i++) {
-    temp.push(points[i]);
-  }
-  const waypoints = temp.join("|");
-  const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
-  console.log(direction15Url);
+  // for (let loc = 0; loc < state.station.stations.length; loc++) {
+  //   const element = state.station.stations[loc].stationLatLng;
+  //   points.push(element.x.toString() + "," + element.y.toString());
+  // }
+  // const start = points[0];
+  // const goal = points.slice(-1);
+  // var temp = [];
+  // for (var i = 1; i < points.length - 1; i++) {
+  //   temp.push(points[i]);
+  // }
+  // const waypoints = temp.join("|");
+  // const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
+  // console.log(direction15Url);
 
-  const options = {
-    method: "get",
-    headers: {
-      "X-NCP-APIGW-API-KEY-ID": process.env.REACT_APP_API_KEY_ID,
-      "X-NCP-APIGW-API-KEY": process.env.REACT_APP_API_KEY,
-    },
-  };
-  let polyLine = [];
-  await axios(direction15Url, options).then((response) => {
-    console.log(response.data);
-    let paths = response.data.route.trafast[0].path;
-    console.log(polyLine);
-    paths.map((path) => {
-      polyLine.push({
-        bus_id: busId.id,
-        latitude: path[1],
-        longitude: path[0],
-      });
-    });
-  });
+  // const options = {
+  //   method: "get",
+  //   headers: {
+  //     "X-NCP-APIGW-API-KEY-ID": process.env.REACT_APP_API_KEY_ID,
+  //     "X-NCP-APIGW-API-KEY": process.env.REACT_APP_API_KEY,
+  //   },
+  // };
+  // let polyLine = [];
+  // await axios(direction15Url, options).then((response) => {
+  //   console.log(response.data);
+  //   let paths = response.data.route.trafast[0].path;
+  //   console.log(polyLine);
+  //   paths.map((path) => {
+  //     polyLine.push({
+  //       bus_id: busId.id,
+  //       latitude: path[1],
+  //       longitude: path[0],
+  //     });
+  //   });
+  // });
   const updateUrl = `https://k7b202.p.ssafy.io/api/shuttlebus/station/edit/${busId.id}`;
   let bodyData = [];
   for (let i in state.station.stations) {
@@ -91,10 +92,11 @@ export const updateRoute = createAsyncThunk("Update Bus Route", async (busId, { 
       accept: "application/json",
       Authorization: `Bearer ${state.token.rawToken.access_token}`,
     },
-    data: {
-      station_list: bodyData,
-      poly_list: polyLine,
-    },
+    data: [...bodyData],
+    // {
+    //   station_list: bodyData,
+    //   poly_list: polyLine,
+    // },
   };
   console.log(config);
   const response = await axios(config);
