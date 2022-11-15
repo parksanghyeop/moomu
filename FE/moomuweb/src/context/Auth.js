@@ -3,7 +3,6 @@ import { useLocation, Navigate, Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { logout } from "../reducers/tokenSlice";
-import axios from "axios";
 
 const AuthContext = createContext(null);
 
@@ -31,19 +30,4 @@ export const RequireAuth = () => {
   }
 
   return <Outlet />;
-};
-
-export const useAxios = async (config) => {
-  const dispatch = useDispatch();
-  try {
-    const response = await axios(config);
-    console.log(response);
-    return response;
-  } catch (error) {
-    if (error.response.status === 451) {
-      alert("토큰이 만료되었습니다");
-      dispatch(logout());
-    }
-    return error;
-  }
 };
