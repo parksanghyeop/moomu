@@ -5,6 +5,7 @@ import * as RootNavigation from '../../RootNavigation';
 const instance = axios.create({
     baseURL: 'https://k7b202.p.ssafy.io/api/',
     // baseURL: "http://localhost:8000/",
+    headers: { 'Content-Type': `application/json` },
 });
 
 instance.interceptors.request.use(
