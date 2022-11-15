@@ -20,6 +20,8 @@ import jwtDecode from 'jwt-decode';
 import * as RootNavigation from '../../RootNavigation';
 import { FontAwesome } from '@expo/vector-icons';
 import { jwt, Bus } from '../types/types';
+import Button1 from '../components/button1';
+import Button2 from '../components/button2';
 
 type BusScreenProps = StackScreenProps<RootStackParamList, 'Bus'>;
 
@@ -128,7 +130,7 @@ const BusScreen: React.FC<BusScreenProps> = (props) => {
                             name: temp[i].name,
                             commute_or_leave: temp[i].commute_or_leave,
                             stationName: temp[i].name,
-                            order: temp[i].order
+                            order: temp[i].order,
                         })
                     }
                     style={styles.busCard}
@@ -236,8 +238,11 @@ const BusScreen: React.FC<BusScreenProps> = (props) => {
                     {ButtonList('LEAVE')}
                 </Animated.View>
             </View>
-
-            <Footer />
+            <Button1
+                style={{ width: 160 }}
+                text={'메인으로'}
+                onPress={() => RootNavigation.goBack()}
+            ></Button1>
         </SafeAreaView>
     );
 };

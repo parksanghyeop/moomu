@@ -48,7 +48,7 @@ const StackNavigator = () => {
             <Stack.Screen
                 name="Bus"
                 component={BusScreen}
-                options={{ title: '노선조회' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="FAQ"
@@ -63,7 +63,7 @@ const StackNavigator = () => {
             <Stack.Screen
                 name="Information"
                 component={InformationScreen}
-                options={{ title: '공지사항' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="Main"
@@ -78,9 +78,7 @@ const StackNavigator = () => {
             <Stack.Screen
                 name="Station"
                 component={StationScreen}
-                options={({ route }) => ({
-                    title: route.params.stationName,
-                })}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="Notification"
@@ -95,6 +93,7 @@ const StackNavigator = () => {
             <Stack.Screen
                 name="InformationDetail"
                 component={InformationDetailScreen}
+                options={{ headerShown: false }}
             />
         </Stack.Navigator>
     );
