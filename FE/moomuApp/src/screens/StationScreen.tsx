@@ -259,7 +259,7 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
                         RootNavigation.navigate('BusMap', {
                             stationList: stationList,
                             commute_or_leave: co_or_le,
-                            name: busName
+                            name: busName,
                         });
                     }}
                 />
