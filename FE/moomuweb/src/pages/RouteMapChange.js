@@ -235,9 +235,20 @@ function RouteMap() {
 
   // a little function to help us with reordering the result
   const reorder = (list, startIndex, endIndex) => {
-    const result = Array.from(list);
+    let result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
+
+    result = result.map((item, index) => {
+      if (item.order === index) {
+        return item;
+      } else {
+        return {
+          ...item,
+          order: index,
+        };
+      }
+    });
 
     return result;
   };
@@ -279,7 +290,6 @@ function RouteMap() {
     setStationList(
       reorder(stationList, result.source.index, result.destination.index)
     );
-    console.log(stationList);
     // dispatch(setStation);
   };
 

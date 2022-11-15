@@ -1,5 +1,8 @@
+import axios from "axios";
 import { createContext, useContext, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { logout } from "../reducers/tokenSlice";
 
 const asyncSessionStorage = {
   setItem: function (key, value) {
@@ -50,7 +53,7 @@ export const useAxios = async (config) => {
   } catch (error) {
     if (error.response.status === 451) {
       alert("토큰이 만료되었습니다");
-      dispatch(logout());
+      // dispatch(logout());
     }
     return error;
   }
