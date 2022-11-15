@@ -1,5 +1,8 @@
+import axios from "axios";
 import { createContext, useContext, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { logout } from "../reducers/tokenSlice";
 
 const asyncSessionStorage = {
   setItem: function (key, value) {
@@ -29,13 +32,18 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const RequireAuth = (props) => {
+  const location = useLocation();
   const navigate = useNavigate();
   asyncSessionStorage.getItem("accessToken").then((token) => {
     // console.log("인증시 토큰정보", token);
     if (token === null || token === undefined) {
       navigate("/login");
     } else {
-      return <Outlet />;
+      if (location.pathname === "/") {
+        navigate("/main");
+      } else {
+        return <Outlet />;
+      }
     }
   });
   return <Outlet />;
@@ -50,7 +58,7 @@ export const useAxios = async (config) => {
   } catch (error) {
     if (error.response.status === 451) {
       alert("토큰이 만료되었습니다");
-      dispatch(logout());
+      // dispatch(logout());
     }
     return error;
   }
