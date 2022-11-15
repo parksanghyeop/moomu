@@ -2,7 +2,12 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 var isEmpty = function (val) {
-  if (val === "" || val === undefined || val === null || (val !== null && typeof val === "object" && !Object.keys(val).length)) {
+  if (
+    val === "" ||
+    val === undefined ||
+    val === null ||
+    (val !== null && typeof val === "object" && !Object.keys(val).length)
+  ) {
     return true;
   } else {
     return false;
@@ -12,7 +17,13 @@ const { naver } = window;
 
 export const loadRoute = createAsyncThunk("get route", async (busId) => {
   const location = new naver.maps.LatLng(36.354683, 127.298177);
-  const initLoc = { id: 0, stationLatLng: location, stationName: "ssafy", stationId: 0, order: 0 };
+  const initLoc = {
+    id: 0,
+    stationLatLng: location,
+    stationName: "ssafy",
+    stationId: 0,
+    order: 0,
+  };
   let dummy = [];
   const busUrl = `https://k7b202.p.ssafy.io/api/shuttlebus/bus/${busId.id}`;
   const dget = await axios.get(busUrl);
@@ -20,7 +31,14 @@ export const loadRoute = createAsyncThunk("get route", async (busId) => {
   for (var loc in dget.data.stations) {
     const data = dget.data.stations[loc];
     const mapLoc = new naver.maps.LatLng(data.lat, data.lng);
-    const newItem = { id: loc, stationLatLng: mapLoc, stationName: data.name, stationId: data.id, order: data.order, arrived_time: data.arrived_time };
+    const newItem = {
+      id: loc,
+      stationLatLng: mapLoc,
+      stationName: data.name,
+      stationId: data.id,
+      order: data.order,
+      arrived_time: data.arrived_time,
+    };
     // dummy.push(data);
     dummy.push(newItem);
   }
@@ -34,72 +52,75 @@ export const loadRoute = createAsyncThunk("get route", async (busId) => {
   return data;
 });
 
-export const updateRoute = createAsyncThunk("Update Bus Route", async (busId, { getState }) => {
-  const state = await getState();
-  let points = [];
-  for (let loc = 0; loc < state.station.stations.length; loc++) {
-    const element = state.station.stations[loc].stationLatLng;
-    points.push(element.x.toString() + "," + element.y.toString());
-  }
-  const start = points[0];
-  const goal = points.slice(-1);
-  var temp = [];
-  for (var i = 1; i < points.length - 1; i++) {
-    temp.push(points[i]);
-  }
-  const waypoints = temp.join("|");
-  const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
-  console.log(direction15Url);
+export const updateRoute = createAsyncThunk(
+  "Update Bus Route",
+  async (busId, { getState }) => {
+    const state = await getState();
+    let points = [];
+    for (let loc = 0; loc < state.station.stations.length; loc++) {
+      const element = state.station.stations[loc].stationLatLng;
+      points.push(element.x.toString() + "," + element.y.toString());
+    }
+    const start = points[0];
+    const goal = points.slice(-1);
+    var temp = [];
+    for (var i = 1; i < points.length - 1; i++) {
+      temp.push(points[i]);
+    }
+    const waypoints = temp.join("|");
+    const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
+    console.log(direction15Url);
 
-  const options = {
-    method: "get",
-    headers: {
-      "X-NCP-APIGW-API-KEY-ID": process.env.REACT_APP_API_KEY_ID,
-      "X-NCP-APIGW-API-KEY": process.env.REACT_APP_API_KEY,
-    },
-  };
-  let polyLine = [];
-  await axios(direction15Url, options).then((response) => {
-    console.log(response.data);
-    let paths = response.data.route.trafast[0].path;
-    console.log(polyLine);
-    paths.map((path) => {
-      polyLine.push({
-        bus_id: busId.id,
-        latitude: path[1],
-        longitude: path[0],
+    const options = {
+      method: "get",
+      headers: {
+        "X-NCP-APIGW-API-KEY-ID": process.env.REACT_APP_API_KEY_ID,
+        "X-NCP-APIGW-API-KEY": process.env.REACT_APP_API_KEY,
+      },
+    };
+    let polyLine = [];
+    await axios(direction15Url, options).then((response) => {
+      console.log(response.data);
+      let paths = response.data.route.trafast[0].path;
+      console.log(polyLine);
+      paths.map((path) => {
+        polyLine.push({
+          bus_id: busId.id,
+          latitude: path[1],
+          longitude: path[0],
+        });
       });
     });
-  });
-  const updateUrl = `https://k7b202.p.ssafy.io/api/shuttlebus/station/edit/${busId.id}`;
-  let bodyData = [];
-  for (let i in state.station.stations) {
-    const data = state.station.stations[i];
-    bodyData.push({
-      bus_id: busId.id,
-      name: data.stationName,
-      lat: data.stationLatLng._lat,
-      lng: data.stationLatLng._lng,
-      order: data.order,
-      arrived_time: data.arrived_time,
-    });
+    const updateUrl = `https://k7b202.p.ssafy.io/api/shuttlebus/station/edit/${busId.id}`;
+    let bodyData = [];
+    for (let i in state.station.stations) {
+      const data = state.station.stations[i];
+      bodyData.push({
+        bus_id: busId.id,
+        name: data.stationName,
+        lat: data.stationLatLng._lat,
+        lng: data.stationLatLng._lng,
+        order: data.order,
+        arrived_time: data.arrived_time,
+      });
+    }
+    var config = {
+      method: "put",
+      url: updateUrl,
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${state.token.rawToken.access_token}`,
+      },
+      data: {
+        station_list: bodyData,
+        poly_list: polyLine,
+      },
+    };
+    console.log(config);
+    const response = await axios(config);
+    console.log(response);
   }
-  var config = {
-    method: "put",
-    url: updateUrl,
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${state.token.rawToken.access_token}`,
-    },
-    data: {
-      station_list: bodyData,
-      poly_list: polyLine,
-    },
-  };
-  console.log(config);
-  const response = await axios(config);
-  console.log(response);
-});
+);
 
 export const staionSlice = createSlice({
   name: "staionSlice",
@@ -149,7 +170,13 @@ export const staionSlice = createSlice({
       const data = action.payload;
       console.log(data);
       const mapLoc = new naver.maps.LatLng(data.lat, data.lng);
-      const item = { id: state.stations.length, stationLatLng: mapLoc, stationName: data.name, order: state.stations.length, arrived_time: data.arrived_time };
+      const item = {
+        id: state.stations.length,
+        stationLatLng: mapLoc,
+        stationName: data.name,
+        order: state.stations.length,
+        arrived_time: data.arrived_time,
+      };
       state.stations.push(item);
       console.log("This station is added", item);
     },
@@ -158,6 +185,9 @@ export const staionSlice = createSlice({
       console.log(data);
       state.stations[data.target].stationName = data[0].title;
       state.stations[data.target].arrived_time = data[0].arrived_time;
+    },
+    setStation: (state, action) => {
+      state.stations = action.payload;
     },
   },
   extraReducers: {
@@ -174,6 +204,15 @@ export const staionSlice = createSlice({
   },
 });
 
-export const { initRoute, reload, stationDown, staionUp, deleteStation, addStation, updateStation } = staionSlice.actions;
+export const {
+  initRoute,
+  reload,
+  stationDown,
+  staionUp,
+  deleteStation,
+  addStation,
+  updateStation,
+  setStation,
+} = staionSlice.actions;
 // export const tokenSelector = (state) => state.token.token;
 export default staionSlice.reducer;
