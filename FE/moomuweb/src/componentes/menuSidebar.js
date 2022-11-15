@@ -68,7 +68,7 @@ export default function MenuSidebar() {
 
   return (
     <>
-      {location.pathname != "/login" && (
+      {location.pathname != "/login" && location.pathname != "/contact" && (
         <header className="App-header">
           <div className="navbar bg-base-100">
             <div className="flex-1">

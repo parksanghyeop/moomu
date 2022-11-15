@@ -17,14 +17,14 @@ const ContactUs = () => {
       </div>
       <div className="mt-8">
         <a href="http://pf.kakao.com/_xkxeTXxj/chat">
-          <button className="btn btn-sm btn-primary btn-block">
+          <button className="btn btn-sm btn-primary btn-wide">
             카카오 채널로 문의하기
           </button>
         </a>
       </div>
       <div>
         <div
-          className="mt-4 btn btn-sm btn-block btn-primary btn-outline"
+          className="mt-4 btn btn-sm btn-wide btn-primary btn-outline"
           onClick={() => navigate("/login")}
         >
           <span className="">로그인</span>
