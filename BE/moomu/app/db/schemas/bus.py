@@ -8,7 +8,6 @@ class BusBase(BaseModel):
     region_id: int
     name: str
     commute_or_leave: CommuteOrLeave
-    order: int
 
 
 class BusCreate(BusBase):
@@ -17,6 +16,7 @@ class BusCreate(BusBase):
 
 class Bus(BusBase):
     id: int
+    order: int
     stations: list[Station] = []
 
     class Config:
