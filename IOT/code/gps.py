@@ -51,9 +51,8 @@ async def get_lat_lng():
             gpiostr = ""
         gpiostr = gpiostr + decode_bytes
         if decode_bytes == "\r":
-            # if True:
-            #     gpiostr = "$GPGGA,083409.000,3621.2809,N,12717.8905"
             if gpiostr.startswith("$GPGGA"):
+                # gpiostr = "$GPGGA,083409.000,3621.2809,N,12717.8905"
                 gpiostr_string = gpiostr.split(",")
                 lat = gpiostr_string[2]
                 lng = gpiostr_string[4]
@@ -160,6 +159,7 @@ async def repeat():
         await check_station_dist()
         await asyncio.sleep(0.5)
         if k == len(station_list):
+            set_bus_order(bus_name, commute_or_leave, order=-1)
             break
 
 
