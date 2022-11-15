@@ -20,6 +20,7 @@ def get_buses(db: Session, region_id: int, commute_or_leave: CommuteOrLeave):
         .options(Load(Bus).lazyload("*"))
         .filter(Bus.region_id == region_id)
         .filter(Bus.commute_or_leave == commute_or_leave)
+        .order_by(Bus.name)
         .all()
     )
 
