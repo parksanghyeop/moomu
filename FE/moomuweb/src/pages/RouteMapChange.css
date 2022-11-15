@@ -16,7 +16,6 @@
 }
 .custom-steps {
   @apply steps;
-  /* overflow-: scroll; */
 }
 .routeContainer {
   overflow-y: scroll;

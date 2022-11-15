@@ -1,15 +1,29 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import axios from "axios";
-// import https from "https";
 import "./RouteMap.css";
 import Modal from "../componentes/modal";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { loadRoute, stationDown, staionUp, deleteStation, addStation, updateStation, updateRoute, reload } from "../reducers/stationSlice";
+import {
+  loadRoute,
+  stationDown,
+  staionUp,
+  deleteStation,
+  addStation,
+  updateStation,
+  updateRoute,
+  reload,
+} from "../reducers/stationSlice";
 import { useParams, useNavigation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretUp, faSortUp, faCaretDown, faSortDown, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCaretUp,
+  faSortUp,
+  faCaretDown,
+  faSortDown,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 
 function RouteMap() {
   const [routesDriving, setRoutesDriving] = useState({});
@@ -28,6 +42,7 @@ function RouteMap() {
   const dataFetchedRef = useRef(false);
   const isLoaded = useSelector((state) => state.station.isLoaded);
   const stationInfos = useSelector((state) => state.station.stations);
+  const polyInfos = useSelector((state) => state.station.poly);
   const busName = useSelector((state) => state.station.routeName);
   const params = useParams();
   const [modalOpen, setModalOpen] = useState(false);
@@ -48,7 +63,12 @@ function RouteMap() {
     setModalOpen2(false);
   };
   const isEmpty = function (val) {
-    if (val === "" || val === undefined || val === null || (val !== null && typeof val === "object" && !Object.keys(val).length)) {
+    if (
+      val === "" ||
+      val === undefined ||
+      val === null ||
+      (val !== null && typeof val === "object" && !Object.keys(val).length)
+    ) {
       return true;
     } else {
       return false;
@@ -57,8 +77,11 @@ function RouteMap() {
   const getStaticMap2Src = function (aUrl, imgId) {
     var oReq = new XMLHttpRequest();
     oReq.open("GET", aUrl, true);
-    oReq.setRequestHeader("X-NCP-APIGW-API-KEY-ID", "yxdllgza3i");
-    oReq.setRequestHeader("X-NCP-APIGW-API-KEY", "avFkOp6qAIH3quEtCysdzfCfqSWkeyhqgYl8x8t9");
+    oReq.setRequestHeader(
+      "X-NCP-APIGW-API-KEY-ID",
+      process.env.REACT_APP_API_KEY_ID
+    );
+    oReq.setRequestHeader("X-NCP-APIGW-API-KEY", process.env.REACT_APP_API_KEY);
     // use multiple setRequestHeader calls to set multiple values
     oReq.responseType = "arraybuffer";
     oReq.onload = function (oEvent) {
@@ -67,7 +90,8 @@ function RouteMap() {
         var u8 = new Uint8Array(arrayBuffer);
         var b64encoded = btoa(String.fromCharCode.apply(null, u8));
         var mimetype = "image/png"; // or whatever your image mime type is
-        document.getElementById(imgId).src = "data:" + mimetype + ";base64," + b64encoded;
+        document.getElementById(imgId).src =
+          "data:" + mimetype + ";base64," + b64encoded;
       }
     };
     oReq.send(null);
@@ -116,7 +140,6 @@ function RouteMap() {
       },
     };
     const naverMap = new naver.maps.Map(mapElement.current, mapOptions);
-    let points = [];
     let centerLat = 0;
     let centerLng = 0;
     let zoomLevel = 12;
@@ -133,7 +156,6 @@ function RouteMap() {
       tmpMarkers.push(newMarker);
       setMarkers(tmpMarkers);
       // console.log(markers, newMarker);
-      points.push(convetLatLngCorr(stationInfos[loc].stationLatLng));
       if (loc == 0 || loc == stationInfos.length - 1) {
         centerLat += stationInfos[loc].stationLatLng._lat;
         centerLng += stationInfos[loc].stationLatLng._lng;
@@ -142,77 +164,21 @@ function RouteMap() {
     centerLat /= 2;
     centerLng /= 2;
     const cneterLoc = new naver.maps.LatLng(centerLat, centerLng);
+    naverMap.updateBy(cneterLoc, zoomLevel);
 
-    // console.log("////////////////////////////////");
-    // console.log(points);
-    // console.log(points[0].toString());
-    const start = points[0];
-    const goal = points.slice(-1);
-    var temp = [];
-    for (var i = 1; i < points.length - 1; i++) {
-      temp.push(points[i]);
+    let polylinePath = [];
+    for (let i = 0; i < polyInfos.length; i++) {
+      polylinePath.push(
+        new naver.maps.LatLng(polyInfos[i].latitude, polyInfos[i].longitude)
+      );
     }
-    const waypoints = temp.join("|");
-    const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
-    console.log(direction15Url);
-    // naver.maps.Service.geocode(
-    //   {
-    //     query: "대전광역시 유성구 덕명동 146",
-    //   },
-    //   function (status, response) {
-    //     if (status !== naver.maps.Service.Status.OK) {
-    //       return alert("Something wrong!");
-    //     }
-
-    //     var result = response.v2, // 검색 결과의 컨테이너
-    //       items = result.addresses; // 검색 결과의 배열
-    //     // console.log(result, items); //
-    //     // do Something
-    //   }
-    // );
-    // let tmpURL = "navermap" + direction15Url;
-    // console.log(tmpURL);
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
-    const options = {
-      method: "get",
-      headers: {
-        // "Access-Control-Allow-Origin": "*",
-        // "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,OPTIONS",
-        // "Access-Control-Allow-Credentials": "true",
-        // "x-requested-with": "*",
-        "X-NCP-APIGW-API-KEY-ID": "yxdllgza3i",
-        "X-NCP-APIGW-API-KEY": "avFkOp6qAIH3quEtCysdzfCfqSWkeyhqgYl8x8t9",
-      },
-      // httpsAgent: new https.Agent({
-      //   rejectUnauthorized: false, //허가되지 않은 인증을 reject하지 않겠다!
-      // }),
-    };
-    // naverMap 길찾기 요청, 경로 그리기
-    if (isLoaded)
-      axios(direction15Url, options).then((response) => {
-        console.log(response.data);
-        let paths = response.data.route.trafast[0].path;
-        setRoutesDriving(response.data.route.trafast[0].path);
-        let polylinePath = [];
-        const distance = response.data.route.trafast[0].summary.distance;
-        // if (distance >= 20000) zoomLevel -= 1;
-        if (distance >= 30000) zoomLevel -= 1;
-        if (distance >= 40000) zoomLevel -= 1;
-        console.log(distance, zoomLevel);
-        naverMap.updateBy(cneterLoc, zoomLevel);
-        paths.map((path) => {
-          polylinePath.push(new naver.maps.LatLng(path[1], path[0]));
-        });
-        new naver.maps.Polyline({
-          path: polylinePath, //좌표배열
-          strokeColor: "#3182CE", //선의 색 파랑
-          strokeOpacity: 0.8, //선의 투명도
-          strokeWeight: 6, //선의 두께
-          map: naverMap, //만들어 놓은 지도
-        });
-      });
-
+    new naver.maps.Polyline({
+      path: polylinePath, //좌표배열
+      strokeColor: "#3182CE", //선의 색 파랑
+      strokeOpacity: 0.8, //선의 투명도
+      strokeWeight: 6, //선의 두께
+      map: naverMap, //만들어 놓은 지도
+    });
     // 클릭 event listener
     naverMap.addListener("click", (e) => mapClick(e));
     setNaverMap(naverMap);
@@ -251,17 +217,29 @@ function RouteMap() {
   };
 
   return (
-    <div className="mapPage">
+    <div className="mapPage mt-8">
       <Modal open={modalOpen2} close={closeModal2} header={modalHeader}>
         {/* // Modal.js <main> {props.children} </main>에 내용이 입력된다. 리액트 함수형 모달 */}
         {/* {newCord} */}
         <label className="input-group input-group-lg justify-center	">
           <span className="">이름</span>
-          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-3/4 max-w-xs text-center" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
+          <input
+            type="text"
+            placeholder="Type here"
+            className="input input-bordered input-lg w-3/4 max-w-xs text-center"
+            value={newStationName}
+            onChange={(e) => setNewstationName(e.target.value)}
+          />
         </label>
         <label className="input-group input-group-lg justify-center	">
           <span className="">도착 시간</span>
-          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
+          <input
+            type="text"
+            placeholder="Type here"
+            className="input input-bordered input-lg w-2/5 max-w-xs"
+            value={arrived_time}
+            onChange={(e) => setArrivedTime(e.target.value)}
+          />
         </label>
         <img id="cordMapImgTag2" alt="" />
         <button
@@ -301,7 +279,13 @@ function RouteMap() {
             </label>
             <label className="input-group input-group-lg justify-center	">
               <span className="">도착 시간</span>
-              <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
+              <input
+                type="text"
+                placeholder="Type here"
+                className="input input-bordered input-lg w-2/5 max-w-xs"
+                value={arrived_time}
+                onChange={(e) => setArrivedTime(e.target.value)}
+              />
             </label>
           </div>
         )}
@@ -341,7 +325,7 @@ function RouteMap() {
           {btnText}
         </button>
       </Modal>
-      <p className="bodyTitle "> {busName} 노선 관리 </p>
+      {/* <p className="bodyTitle text-ellipsis overflow-hidden"> {busName} 노선 관리 </p> */}
       <div className="mapContainer">
         <div className="routeContainer">
           <ul className="steps steps-vertical">
@@ -383,10 +367,10 @@ function RouteMap() {
             })}
           </ul>
         </div>
-        <div ref={mapElement} className="naverMap" />
+        <div ref={mapElement} className="naverMap content-box" />
       </div>
       <button
-        className="btn btn-primary saveBtn mt-3"
+        className="btn btn-primary btn-block mt-3"
         onClick={async function () {
           await dispatch(updateRoute(params));
           goList();

@@ -19,6 +19,7 @@ import AnswerQuestion from "./pages/QuestionAnswer";
 import QuestionDeatil from "./pages/QuestionDeatil";
 import UserBoard from "./pages/UserBoard";
 import MenuSidebar from "./componentes/menuSidebar";
+import ContactUs from "./pages/ContactUs";
 const persistor = persistStore(store);
 
 function App() {
@@ -30,8 +31,9 @@ function App() {
             <BrowserRouter>
               <MenuSidebar />
               <Routes className="bodyFrame">
-                <Route path="/" element={<LogiInPage />} />
-                <Route element={<RequireAuth />}>
+                <Route path="/contact" element={<ContactUs />} />
+                <Route path="/login" element={<LogiInPage />} />
+                <Route path="" element={<RequireAuth />}>
                   <Route path="/main" element={<DashBoard />} />
                   <Route path="/map" element={<RouteMap />} />
                   <Route path="/notice" element={<NoticeBoard />} />
@@ -41,7 +43,11 @@ function App() {
                   <Route path="/faq" element={<QuestionBoard />} />
                   <Route path="/faq/new" element={<AnswerQuestion />} />
                   <Route path="/faq/:id" element={<QuestionDeatil />} />
-                  <Route path="/map/:id" onLeave={reload()} element={<RouteMapChange />}></Route>
+                  <Route
+                    path="/map/:id"
+                    onLeave={reload()}
+                    element={<RouteMapChange />}
+                  ></Route>
                 </Route>
               </Routes>
             </BrowserRouter>
