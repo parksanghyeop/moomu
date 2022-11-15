@@ -20,7 +20,7 @@ export interface Bus {
     commute_or_leave: string;
     id: number;
     stations: station[];
-    cur: any[];
+    order: number;
 }
 
 export interface jwt {

@@ -1,8 +1,18 @@
 import { createContext, useContext, useState } from "react";
-import { useLocation, Navigate, Outlet } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 
-import { logout } from "../reducers/tokenSlice";
+const asyncSessionStorage = {
+  setItem: function (key, value) {
+    return Promise.resolve().then(function () {
+      sessionStorage.setItem(key, value);
+    });
+  },
+  getItem: function (key) {
+    return Promise.resolve().then(function () {
+      return sessionStorage.getItem(key);
+    });
+  },
+};
 
 const AuthContext = createContext(null);
 
@@ -14,20 +24,15 @@ export const AuthProvider = ({ children }) => {
   return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>;
 };
 
-export const RequireAuth = () => {
-  const { user } = useSelector((state) => state.token.decoded.role);
-  const location = useLocation();
-  const dispatch = useDispatch();
-
-  const logOut = function () {
-    dispatch(logout());
-  };
-
-  if (user <= 0) {
-    alert("권한 없음");
-    logOut();
-    return <Navigate to={{ pathname: "/", state: { from: location } }} replace />;
-  }
-
+export const RequireAuth = (props) => {
+  const navigate = useNavigate();
+  asyncSessionStorage.getItem("accessToken").then((token) => {
+    // console.log("인증시 토큰정보", token);
+    if (token === null || token === undefined) {
+      navigate("/login");
+    } else {
+      return <Outlet />;
+    }
+  });
   return <Outlet />;
 };

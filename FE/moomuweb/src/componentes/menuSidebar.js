@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../reducers/tokenSlice";
 // import { tokenSelector } from "../reducers/tokenSlice";
 
@@ -13,12 +13,13 @@ import { useAxios } from "../context/CustomAxios";
 export default function MenuSidebar() {
   // const token = useSelector(tokenSelector());
   const [regions, setRegions] = useState({});
-  const token = useSelector((state) => state.token.isToken);
+  const token = sessionStorage.getItem("accessToken");
   const region = useSelector((state) => state.token.decoded.region);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const customAxios = useAxios();
   const logOut = function () {
+    sessionStorage.removeItem("accessToken");
     dispatch(logout());
     navigate("/");
   };
@@ -43,39 +44,67 @@ export default function MenuSidebar() {
     };
     getRegions();
   }, []);
+  const location = useLocation();
+
+  const main = useRef(null);
+  const notice = useRef(null);
+  const users = useRef(null);
+
+  useEffect(() => {
+    if (location.pathname === "/main") {
+      main.current.classList.add("active");
+      notice.current.classList.remove("active");
+      users.current.classList.remove("active");
+    } else if (location.pathname === "/notice") {
+      main.current.classList.remove("active");
+      notice.current.classList.add("active");
+      users.current.classList.remove("active");
+    } else if (location.pathname === "/users") {
+      main.current.classList.remove("active");
+      notice.current.classList.remove("active");
+      users.current.classList.add("active");
+    }
+  }, [location]);
 
   return (
-    <header className="App-header">
-      <img src={logo} className="App-logo" alt="logo" />
-      {token && (
-        <ul className="menu bg-base-100 p-2 AppMenu">
-          <li>
-            <Link className="AppMenu-link" to="/main">
-              노선 관리
-            </Link>
-          </li>
-          <li>
-            <Link className="AppMenu-link" to="/notice">
-              공지사항
-            </Link>
-          </li>
-          <li>
-            <Link className="AppMenu-link" to="/faq">
-              문의사항
-            </Link>
-          </li>
-          <li>
-            <Link className="AppMenu-link" to="/users">
-              회원 조회
-            </Link>
-          </li>
-          <li>
-            <a onClick={() => logOut()} className="logOut-link">
-              {regions[region]} 캠퍼스/로그아웃
-            </a>
-          </li>
-        </ul>
+    <>
+      {location.pathname != "/login" && (
+        <header className="App-header">
+          <div className="navbar bg-base-100">
+            <div className="flex-1">
+              {/* <img src={logo} className="w-12" alt="logo" /> */}
+              <a className="btn btn-ghost normal-case text-xl">MooMu</a>
+            </div>
+            <div className="flex-none">
+              <div
+                className="btn btn-primary btn-sm"
+                onClick={() => {
+                  logOut();
+                }}
+              >
+                로그아웃
+              </div>
+            </div>
+          </div>
+          <ul className="menu menu-horizontal bg-base-100 rounded-box p-2">
+            <li className="main">
+              <Link className="AppMenu-link" ref={main} to="/main">
+                노선 관리
+              </Link>
+            </li>
+            <li className="notice">
+              <Link className="AppMenu-link" ref={notice} to="/notice">
+                공지사항
+              </Link>
+            </li>
+            <li className="users">
+              <Link className="AppMenu-link" ref={users} to="/users">
+                회원 조회
+              </Link>
+            </li>
+          </ul>
+        </header>
       )}
-    </header>
+    </>
   );
 }

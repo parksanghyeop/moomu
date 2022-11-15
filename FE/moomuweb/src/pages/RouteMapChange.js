@@ -5,10 +5,25 @@ import "./RouteMap.css";
 import Modal from "../componentes/modal";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { loadRoute, stationDown, staionUp, deleteStation, addStation, updateStation, updateRoute, reload } from "../reducers/stationSlice";
+import {
+  loadRoute,
+  stationDown,
+  staionUp,
+  deleteStation,
+  addStation,
+  updateStation,
+  updateRoute,
+  reload,
+} from "../reducers/stationSlice";
 import { useParams, useNavigation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretUp, faSortUp, faCaretDown, faSortDown, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCaretUp,
+  faSortUp,
+  faCaretDown,
+  faSortDown,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 
 function RouteMap() {
   const [routesDriving, setRoutesDriving] = useState({});
@@ -48,7 +63,12 @@ function RouteMap() {
     setModalOpen2(false);
   };
   const isEmpty = function (val) {
-    if (val === "" || val === undefined || val === null || (val !== null && typeof val === "object" && !Object.keys(val).length)) {
+    if (
+      val === "" ||
+      val === undefined ||
+      val === null ||
+      (val !== null && typeof val === "object" && !Object.keys(val).length)
+    ) {
       return true;
     } else {
       return false;
@@ -57,7 +77,10 @@ function RouteMap() {
   const getStaticMap2Src = function (aUrl, imgId) {
     var oReq = new XMLHttpRequest();
     oReq.open("GET", aUrl, true);
-    oReq.setRequestHeader("X-NCP-APIGW-API-KEY-ID", process.env.REACT_APP_API_KEY_ID);
+    oReq.setRequestHeader(
+      "X-NCP-APIGW-API-KEY-ID",
+      process.env.REACT_APP_API_KEY_ID
+    );
     oReq.setRequestHeader("X-NCP-APIGW-API-KEY", process.env.REACT_APP_API_KEY);
     // use multiple setRequestHeader calls to set multiple values
     oReq.responseType = "arraybuffer";
@@ -67,7 +90,8 @@ function RouteMap() {
         var u8 = new Uint8Array(arrayBuffer);
         var b64encoded = btoa(String.fromCharCode.apply(null, u8));
         var mimetype = "image/png"; // or whatever your image mime type is
-        document.getElementById(imgId).src = "data:" + mimetype + ";base64," + b64encoded;
+        document.getElementById(imgId).src =
+          "data:" + mimetype + ";base64," + b64encoded;
       }
     };
     oReq.send(null);
@@ -145,7 +169,9 @@ function RouteMap() {
 
     let polylinePath = [];
     for (let i = 0; i < polyInfos.length; i++) {
-      polylinePath.push(new naver.maps.LatLng(polyInfos[i].latitude, polyInfos[i].longitude));
+      polylinePath.push(
+        new naver.maps.LatLng(polyInfos[i].latitude, polyInfos[i].longitude)
+      );
     }
     new naver.maps.Polyline({
       path: polylinePath, //좌표배열
@@ -192,17 +218,29 @@ function RouteMap() {
   };
 
   return (
-    <div className="mapPage">
+    <div className="mapPage mt-8">
       <Modal open={modalOpen2} close={closeModal2} header={modalHeader}>
         {/* // Modal.js <main> {props.children} </main>에 내용이 입력된다. 리액트 함수형 모달 */}
         {/* {newCord} */}
         <label className="input-group input-group-lg justify-center	">
           <span className="">이름</span>
-          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-3/4 max-w-xs text-center" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
+          <input
+            type="text"
+            placeholder="Type here"
+            className="input input-bordered input-lg w-3/4 max-w-xs text-center"
+            value={newStationName}
+            onChange={(e) => setNewstationName(e.target.value)}
+          />
         </label>
         <label className="input-group input-group-lg justify-center	">
           <span className="">도착 시간</span>
-          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
+          <input
+            type="text"
+            placeholder="Type here"
+            className="input input-bordered input-lg w-2/5 max-w-xs"
+            value={arrived_time}
+            onChange={(e) => setArrivedTime(e.target.value)}
+          />
         </label>
         <img id="cordMapImgTag2" alt="" />
         <button
@@ -242,7 +280,13 @@ function RouteMap() {
             </label>
             <label className="input-group input-group-lg justify-center	">
               <span className="">도착 시간</span>
-              <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
+              <input
+                type="text"
+                placeholder="Type here"
+                className="input input-bordered input-lg w-2/5 max-w-xs"
+                value={arrived_time}
+                onChange={(e) => setArrivedTime(e.target.value)}
+              />
             </label>
           </div>
         )}
@@ -282,7 +326,7 @@ function RouteMap() {
           {btnText}
         </button>
       </Modal>
-      <p className="bodyTitle text-ellipsis overflow-hidden"> {busName} 노선 관리 </p>
+      {/* <p className="bodyTitle text-ellipsis overflow-hidden"> {busName} 노선 관리 </p> */}
       <div className="mapContainer">
         <div className="routeContainer">
           <ul className="steps steps-vertical">
@@ -324,10 +368,10 @@ function RouteMap() {
             })}
           </ul>
         </div>
-        <div ref={mapElement} className="naverMap" />
+        <div ref={mapElement} className="naverMap content-box" />
       </div>
       <button
-        className="btn btn-primary saveBtn my-3"
+        className="btn btn-primary btn-block mt-3"
         onClick={async function () {
           await dispatch(updateRoute(params));
           goList();

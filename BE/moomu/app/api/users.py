@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.db.crud import user_crud
-from app.db.schemas.user import UserUpdate, UserStation
+from app.db.schemas.user import UserUpdate, UserStation, UserStationFull
 from app.db.schemas import UserCreate, User, UserLogin, ExpoToken, UserBus
 from app.dependencies import get_db
 import bcrypt
@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 
-@router.get("/admin", response_model=list[User])
+@router.get("/admin", response_model=list[UserStationFull])
 def get_all_user(
     db: Session = Depends(get_db), payload: dict = Depends(validate_token)
 ):
@@ -27,7 +27,9 @@ def get_all_user(
         raise HTTPException(
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
         )
-    db_users = user_crud.get_users(db)
+    region = payload.get("region")
+    print(region)
+    db_users = user_crud.get_users(db, region)
     if db_users is None:
         raise HTTPException(status_code=404, detail="Users not found")
     return db_users
@@ -160,11 +162,12 @@ def get_user_station(
 
 @router.put("/station/edit", response_model=User)
 def edit_user_station(
-    station_id: int,
+    station_id: str,
     commute_or_leave: CommuteOrLeave,
     db: Session = Depends(get_db),
     payload: dict = Depends(validate_token),
 ):
+    station_id = None if station_id == '' else int(station_id)
     user_id = payload.get("id")
     db_user = user_crud.update_user_station(db, user_id, station_id, commute_or_leave)
     if db_user is None:
