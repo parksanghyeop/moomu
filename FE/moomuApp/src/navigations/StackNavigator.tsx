@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     createStackNavigator,
     StackNavigationProp,
@@ -16,6 +16,7 @@ import InformationScreen from '../screens/InformationScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import SettingScreen from '../screens/SettingScreen';
 import FaqDetailScreen from '../screens/FaqDetailScreen';
+import SplashScreen from '../screens/Splashscreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -27,8 +28,13 @@ const StackNavigator = () => {
                 headerShadowVisible: false,
                 headerBackTitleVisible: false,
             }}
-            initialRouteName="Start"
+            initialRouteName="Splash"
         >
+            <Stack.Screen
+                name="Splash"
+                component={SplashScreen}
+                options={{ headerShown: false }}
+            />
             <Stack.Screen
                 name="Start"
                 component={StartScreen}
@@ -72,7 +78,9 @@ const StackNavigator = () => {
             <Stack.Screen
                 name="Station"
                 component={StationScreen}
-                options={({ route }) => ({ title: route.params.stationName })}
+                options={({ route }) => ({
+                    title: route.params.stationName,
+                })}
             />
             <Stack.Screen
                 name="Notification"

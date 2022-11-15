@@ -20,8 +20,8 @@ function DashBoard() {
   const [busName, setBusName] = useState("Moomu");
   const [changeBusId, setChangeBusId] = useState(0);
 
-  // const region_id = useSelector((state) => state.token.decoded.region);
-  const region_id = 200;
+  const region_id = useSelector((state) => state.token.decoded.region);
+  // const region_id = 200;
   const rawToken = useSelector((state) => state.token.rawToken.access_token);
   // let url = `http://k7b202.p.ssafy.io:8000/shuttlebus/bus?region_id=${region_id}`;
   // let url = "https://k7b202.p.ssafy.io/api/shuttlebus/bus?region_id=200&commute_or_leave=COMMUTE";

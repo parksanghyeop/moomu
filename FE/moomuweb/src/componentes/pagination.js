@@ -56,6 +56,7 @@ export default function Pagination({ page, total, limit, setPage }) {
             onClick={() => {
               setPage(page + 1);
             }}
+            disabled={page === total}
           >
             »
           </button>
