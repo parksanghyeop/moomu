@@ -32,13 +32,18 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const RequireAuth = (props) => {
+  const location = useLocation();
   const navigate = useNavigate();
   asyncSessionStorage.getItem("accessToken").then((token) => {
     // console.log("인증시 토큰정보", token);
     if (token === null || token === undefined) {
       navigate("/login");
     } else {
-      return <Outlet />;
+      if (location.pathname === "/") {
+        navigate("/main");
+      } else {
+        return <Outlet />;
+      }
     }
   });
   return <Outlet />;
