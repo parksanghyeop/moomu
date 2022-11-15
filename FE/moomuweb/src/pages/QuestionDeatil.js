@@ -53,12 +53,16 @@ export default function NewPost() {
       <div className="hero-content text-center">
         <div className="">
           <h1 className="text-5xl font-bold mx-10">{title}</h1>
-          <p className="py-6">{content}</p>
+          <p className="py-6" style={{ overflowWrap: "anywhere" }}>
+            {content}
+          </p>
           {answers.map((answer) => {
             return (
               <div>
                 <div className="divider w-8/9 my-3"></div>
-                <p key={answer.id}>{answer.content}</p>
+                <p key={answer.id} style={{ overflowWrap: "anywhere" }}>
+                  {answer.content}
+                </p>
               </div>
             );
           })}

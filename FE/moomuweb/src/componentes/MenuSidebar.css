@@ -1,4 +1,4 @@
-.App-logo {
+/* .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
@@ -31,4 +31,23 @@
   font-size: calc(10px + 2vmin);
   color: white;
   justify-content: center;
+} */
+
+.App {
+  display: block;
+}
+
+.App-header {
+  /* background-color: #63b3ed; */
+  width: 100%;
+  /* color: white; */
+}
+
+.navbar {
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.active {
+  color: white;
 }

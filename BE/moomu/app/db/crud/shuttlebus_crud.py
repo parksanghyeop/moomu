@@ -109,3 +109,15 @@ def create_station_alarm(
         content=coltype + "버스가 잠시 후 " + station_name + "에 도착합니다. 준비해주세요.",
         db_users=db_users,
     )
+
+
+def set_bus_order(db: Session, commute_or_leave: CommuteOrLeave, bus_name: str, order: int):
+    db.query(Bus).filter(Bus.commute_or_leave == commute_or_leave).filter(
+        Bus.name.like(f"{bus_name}%")
+    ).update({"order": order})
+    db.commit()
+
+
+def init_bus(db: Session):
+    db.query(Bus).update({"order": -1})
+    db.commit()

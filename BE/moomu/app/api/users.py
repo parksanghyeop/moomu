@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.db.crud import user_crud
-from app.db.schemas.user import UserUpdate, UserStation
+from app.db.schemas.user import UserUpdate, UserStation, UserStationFull
 from app.db.schemas import UserCreate, User, UserLogin, ExpoToken, UserBus
 from app.dependencies import get_db
 import bcrypt
@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 
-@router.get("/admin", response_model=list[User])
+@router.get("/admin", response_model=list[UserStationFull])
 def get_all_user(
     db: Session = Depends(get_db), payload: dict = Depends(validate_token)
 ):
@@ -27,7 +27,9 @@ def get_all_user(
         raise HTTPException(
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="권한이 없습니다."
         )
-    db_users = user_crud.get_users(db)
+    region = payload.get("region")
+    print(region)
+    db_users = user_crud.get_users(db, region)
     if db_users is None:
         raise HTTPException(status_code=404, detail="Users not found")
     return db_users
