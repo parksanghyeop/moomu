@@ -17,10 +17,11 @@ def get_user_by_username(db: Session, username: str):
     return db.query(models.User).filter(models.User.username == username).first()
 
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
+def get_users(db: Session, region: int, skip: int = 0, limit: int = 100):
     return (
         db.query(models.User)
         .filter(models.User.user_role == 0)
+        .filter(models.User.region_id == region)
         .offset(skip)
         .limit(limit)
         .all()
@@ -82,7 +83,7 @@ def get_exists_user_at_station(
 
 
 def update_user_station(
-    db: Session, user_id: int, station_id: int, commute_or_leave: CommuteOrLeave
+    db: Session, user_id: int, station_id: int | None, commute_or_leave: CommuteOrLeave
 ):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if commute_or_leave == CommuteOrLeave.COMMUTE:

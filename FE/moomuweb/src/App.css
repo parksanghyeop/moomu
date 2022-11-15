@@ -5,10 +5,13 @@
   font-style: normal;
 }
 .App {
-  text-align: center;
-  display: flex;
+  /* text-align: center; */
+  /* display: flex; */
   height: 100vh;
   font-family: Pretendard;
+  width: 100%;
+  max-width: 1020px;
+  margin: 0 auto;
 }
 
 .App-link {

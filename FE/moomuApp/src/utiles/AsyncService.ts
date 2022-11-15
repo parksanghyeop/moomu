@@ -29,6 +29,14 @@ export const removeData = async (key: string) => {
   }
 };
 
+export const deleteData = async (key: string) => {
+  try {
+    await AsyncStorage.clear();
+  } catch (e: any) {
+    console.error(e.message);
+  }
+};
+
 export const containsKey = async (key: string) => {
   try {
     const keys = await AsyncStorage.getAllKeys();
