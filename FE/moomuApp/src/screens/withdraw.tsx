@@ -18,11 +18,10 @@ const Withdraw = () => {
             RootNavigation.navigate('/');
             AsyncStorage.deleteData('token');
             AsyncStorage.deleteData('expoToken');
-
         })
         .catch((err) => {
             // console.log(err);
-            alert('회원 탈퇴에 실패했습니다.')
+            alert('회원 탈퇴에 실패했습니다.');
         });
 };
 
