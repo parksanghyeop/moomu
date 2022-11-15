@@ -24,11 +24,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  return (
-    <AuthContext.Provider value={{ user, setUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>;
 };
 
 export const RequireAuth = (props) => {
@@ -47,19 +43,4 @@ export const RequireAuth = (props) => {
     }
   });
   return <Outlet />;
-};
-
-export const useAxios = async (config) => {
-  const dispatch = useDispatch();
-  try {
-    const response = await axios(config);
-    console.log(response);
-    return response;
-  } catch (error) {
-    if (error.response.status === 451) {
-      alert("토큰이 만료되었습니다");
-      // dispatch(logout());
-    }
-    return error;
-  }
 };

@@ -55,6 +55,7 @@ function DashBoard() {
         region_id: region_id,
         name: newBusName,
         commute_or_leave: selection,
+        order: "0",
       },
     };
     // console.log(config);
@@ -109,12 +110,6 @@ function DashBoard() {
     setchangeName(false);
   };
   const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
-
-  // const options = {
-  //   method: "POST",
-  //   body: body,
-  //   url: url,
-  // };
 
   if (isLoading) {
     return <LoadingComponent />;

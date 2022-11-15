@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../reducers/tokenSlice";
@@ -8,17 +8,42 @@ import { logout } from "../reducers/tokenSlice";
 
 import logo from "../moomu_logo.jpg";
 import "./MenuSidebar.css";
+import { useAxios } from "../context/CustomAxios";
 
 export default function MenuSidebar() {
   // const token = useSelector(tokenSelector());
+  const [regions, setRegions] = useState({});
   const token = sessionStorage.getItem("accessToken");
+  const region = useSelector((state) => state.token.decoded.region);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const customAxios = useAxios();
   const logOut = function () {
     sessionStorage.removeItem("accessToken");
     dispatch(logout());
     navigate("/");
   };
+  const response2State = (repd) => {
+    let data = {};
+    for (let ii = 0; ii < repd.length; ii++) {
+      const element = repd[ii];
+      data[element.id] = element.name;
+    }
+    return data;
+  };
+  useEffect(() => {
+    const getRegions = async () => {
+      const config = {
+        method: "get",
+        url: "https://k7b202.p.ssafy.io/api/regions?skip=0&limit=100",
+      };
+      const response = await customAxios(config);
+      const stateData = response2State(response.data);
+      setRegions(stateData);
+      return stateData;
+    };
+    getRegions();
+  }, []);
   const location = useLocation();
 
   const main = useRef(null);
