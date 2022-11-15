@@ -4,9 +4,10 @@ import time
 import traceback
 import pygame
 import asyncio
+import urllib.request
 from api.commuteOrLeave import CommuteOrLeave
 from haversine import haversine
-from api.api import get_station_list, send_station_alarm
+from api.api import get_station_list, send_station_alarm, set_bus_order
 
 
 global lat_q, lng_q
@@ -128,6 +129,14 @@ async def check_station_dist():
     global k, file_name
     station = station_list[k]
     station_pos = (float(station["lat"]), float(station["lng"]))
+    station_next_pos = None
+    if k <= len(station_list)-2 :
+        station_next = station_list[k+1]
+        station_next_pos = (float(station_next["lat"]), float(station_next["lng"]))
+    if station_next_pos is not None and haversine(station_pos, station_next_pos, "m") < 1000:
+        sense_dist = 300
+    else:
+        sense_dist = 500
     print(station_pos)
     station_id = int(station["id"])
     station_name = station["name"]
@@ -135,7 +144,8 @@ async def check_station_dist():
         return
     bus_pos = (lat_avg, lng_avg)
     print(haversine(station_pos, bus_pos, "m"))
-    if haversine(station_pos, bus_pos, "m") < 500:
+    if haversine(station_pos, bus_pos, "m") < sense_dist:
+        set_bus_order(bus_name, commute_or_leave, order=k)
         k = k + 1
         if send_station_alarm(station_id, station_name, commute_or_leave) > 0:
             exist = "T"
@@ -160,7 +170,21 @@ def music(file_name: str):
     pygame.mixer.music.play()
 
 
+def connect(host='http://google.com'):
+    try:
+        urllib.request.urlopen(host)
+        return True
+    except:
+        return False
+
+
 async def main():
+    while True:
+        connected = connect()
+        time.sleep(1)
+        if connected is True:
+            print("internet connect!!")
+            break
     await asyncio.gather(redis_connect(), SER_connect(), get_station())
     await asyncio.gather(send_msg(), repeat())
 
