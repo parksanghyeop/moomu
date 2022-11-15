@@ -120,7 +120,7 @@ function DashBoard() {
     return <LoadingComponent />;
   }
   return (
-    <div>
+    <div className="mt-4 p-4">
       <Modal open={changeName} close={closeModal2} header="노선 이름 변경">
         <label className="input-group input-group-lg">
           <span className="">이름</span>
@@ -181,53 +181,51 @@ function DashBoard() {
         </button>
       </Modal>
       <div className="tablePage">
-        <div className="flex justify-items-center items-center">
-          <p className="bodyTitle "> 전체 노선 관리 </p>
-          <select
-            className="select select-primary select-bordered w-md max-w-xs"
-            onChange={changeSelect}
-          >
-            {selectOptions.map((option) => (
-              <option key={option.key} value={option.key}>
-                {option.value}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="overflow-x-auto w-full custom-table-container">
+        <div className="content-box overflow-x-auto w-full custom-table-container">
+          <div className="flex justify-start mb-4 mt-4">
+            <button
+              className="btn btn-sm btn-primary mr-4"
+              onClick={() => openModal()}
+            >
+              노선 추가
+            </button>
+            <select
+              className="select select-sm w-md max-w-xs"
+              onChange={changeSelect}
+            >
+              {selectOptions.map((option) => (
+                <option key={option.key} value={option.key}>
+                  {option.value}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <table className="custom-table w-full">
-            {/* <!-- head --> */}
-            <thead>
-              <tr className="text-primary font-bold table-title sticky top-0 ">
-                <th className="w-60 ">노선명</th>
-                <th className="w-36 ">노선 변경</th>
-                <th className="w-36 ">노선 삭제</th>
-              </tr>
-            </thead>
             <tbody className="">
               {routes.map((route) => {
                 return (
-                  <tr key={route.id}>
+                  <tr className="cursor-pointer " key={route.id}>
                     <td
-                      className="font-bold routeTitle link link-primary"
+                      className="w-full p-4 name hover:bg-base-200"
                       onClick={() => changeRoute(route.id)}
                     >
                       {route.name}
                     </td>
                     <td>
-                      <button className="btn btn-ghost btn-lg changeIcon">
-                        <FontAwesomeIcon
-                          icon={faRoute}
-                          onClick={async function () {
-                            await setChangeBusId(route.id);
-                            await setBusName(route.name);
-                            setchangeName(true);
-                          }}
-                        />
+                      <button
+                        className="btn btn-ghost btn-md changeIcon hover:bg-base-200"
+                        onClick={async function () {
+                          await setChangeBusId(route.id);
+                          await setBusName(route.name);
+                          setchangeName(true);
+                        }}
+                      >
+                        <i className="fa-solid fa-edit"></i>
                       </button>
                     </td>
-                    <td>
-                      <button className="btn btn-ghost btn-lg deleteIcon">
+                    <td className="delete">
+                      <button className="btn btn-ghost btn-md deleteIcon hover:bg-base-200">
                         <FontAwesomeIcon
                           icon={faTrashCan}
                           onClick={() => deleteRoute(route.id)}
@@ -240,12 +238,6 @@ function DashBoard() {
             </tbody>
           </table>
         </div>
-        <button
-          className="btn btn-primary btn-xs sm:btn-sm md:btn-md lg:btn-lg absolute bottom-0 mb-3"
-          onClick={() => openModal()}
-        >
-          노선 추가
-        </button>
       </div>
     </div>
   );

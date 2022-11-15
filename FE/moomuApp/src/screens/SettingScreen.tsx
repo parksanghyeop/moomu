@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Alert } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/StackNavigation';
 import { Logo3 } from '../components/logo';
 import Button1 from '../components/button1';
 import Footer from '../components/footer';
 import * as RootNavigation from '../../RootNavigation';
+import axios from '../api/axios';
+import Withdraw from './withdraw';
 
 type SettingScreenProps = StackScreenProps<RootStackParamList, 'Setting'>;
 
@@ -25,6 +27,31 @@ const SettingScreen: React.FC<SettingScreenProps> = (props) => {
                 <Logo3 content="setting" />
                 <View style={styles.titleContainer}>
                     <Text style={styles.titleText}>개인정보 관리</Text>
+                </View>
+                <View style={{ marginBottom: 60 }}>
+                    <Button1
+                        text={'회원탈퇴'}
+                        onPress={() => {
+                            Alert.alert(
+                                '회원탈퇴',
+                                '정말로 탈퇴 하시겠습니까?',
+                                [
+                                    {
+                                        text: '예',
+                                        onPress: () => Withdraw(),
+                                        // console.log("확인"),
+                                    },
+                                    {
+                                        text: '아니오',
+                                        onPress: () =>
+                                            RootNavigation.navigate('Setting'),
+                                        style: 'cancel',
+                                    },
+                                ],
+                                { cancelable: false }
+                            );
+                        }}
+                    />
                 </View>
                 <View style={{ marginBottom: 60 }}>
                     <Button1
@@ -84,6 +111,12 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#63B3ED',
         paddingVertical: 4,
+    },
+    input: {
+        width: 219,
+        height: 37,
+        borderBottomColor: '#63B3ED',
+        borderBottomWidth: 1,
     },
 });
 
