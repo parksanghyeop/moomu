@@ -128,6 +128,7 @@ const BusScreen: React.FC<BusScreenProps> = (props) => {
                             name: temp[i].name,
                             commute_or_leave: temp[i].commute_or_leave,
                             stationName: temp[i].name,
+                            order: temp[i].order
                         })
                     }
                     style={styles.busCard}
