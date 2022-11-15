@@ -1,34 +1,38 @@
 {
-  "expo": {
-    "name": "moomuApp",
-    "slug": "moomuApp",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "moomu"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
-    },
-    "web": {
-      "favicon": "./assets/images/Logo.png"
+    "expo": {
+        "name": "moomuApp",
+        "slug": "moomuApp",
+        "version": "1.0.1",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "userInterfaceStyle": "light",
+        "splash": {
+            "image": "./assets/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "updates": {
+            "fallbackToCacheTimeout": 0
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "supportsTablet": false,
+            "bundleIdentifier": "com.ssafy.moomuApp",
+            "infoPlist": {
+                "NSLocationWhenInUseUsageDescription": "이 앱은 버스와 당신의 위치 거리를 계산하기 위해 위치 정보를 사용합니다."
+            }
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#FFFFFF"
+            },
+            "googleMaps": {
+                "apiKey": "AIzaSyCtffaTgJ44FDHISElp0rzuQwuHsp5Z4xM"
+            }
+        },
+        "web": {
+            "favicon": "./assets/images/Logo.png"
+        }
     }
-  }
 }
