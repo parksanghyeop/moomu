@@ -51,8 +51,8 @@ async def get_lat_lng():
             gpiostr = ""
         gpiostr = gpiostr + decode_bytes
         if decode_bytes == "\r":
+            gpiostr = "$GPGGA,083409.000,3621.2809,N,12717.8905"
             if gpiostr.startswith("$GPGGA"):
-                # gpiostr = "$GPGGA,083409.000,3621.2809,N,12717.8905"
                 gpiostr_string = gpiostr.split(",")
                 lat = gpiostr_string[2]
                 lng = gpiostr_string[4]
@@ -129,10 +129,13 @@ async def check_station_dist():
     station = station_list[k]
     station_pos = (float(station["lat"]), float(station["lng"]))
     station_next_pos = None
-    if k <= len(station_list)-2 :
-        station_next = station_list[k+1]
+    if k <= len(station_list) - 2:
+        station_next = station_list[k + 1]
         station_next_pos = (float(station_next["lat"]), float(station_next["lng"]))
-    if station_next_pos is not None and haversine(station_pos, station_next_pos, "m") < 1000:
+    if (
+        station_next_pos is not None
+        and haversine(station_pos, station_next_pos, "m") < 1000
+    ):
         sense_dist = 300
     else:
         sense_dist = 500
@@ -170,7 +173,7 @@ def music(file_name: str):
     pygame.mixer.music.play()
 
 
-def connect(host='http://google.com'):
+def connect(host="http://google.com"):
     try:
         urllib.request.urlopen(host)
         return True
@@ -179,8 +182,8 @@ def connect(host='http://google.com'):
 
 
 async def main():
-    f = open("logs\log.txt", 'a')
-    now = time.strftime('%Y-%m-%d %H:%M:%S')
+    f = open("logs\log.txt", "a")
+    now = time.strftime("%Y-%m-%d %H:%M:%S")
     f.write(now + " : " + "run\n")
     f.close()
     while True:
