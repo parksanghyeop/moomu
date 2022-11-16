@@ -51,7 +51,7 @@ async def get_lat_lng():
             gpiostr = ""
         gpiostr = gpiostr + decode_bytes
         if decode_bytes == "\r":
-            gpiostr = "$GPGGA,083409.000,3621.2809,N,12717.8905"
+            # gpiostr = "$GPGGA,083409.000,3621.2809,N,12717.8905"
             if gpiostr.startswith("$GPGGA"):
                 gpiostr_string = gpiostr.split(",")
                 lat = gpiostr_string[2]
@@ -186,14 +186,20 @@ async def main():
     now = time.strftime("%Y-%m-%d %H:%M:%S")
     f.write(now + " : " + "run\n")
     f.close()
-    while True:
-        connected = connect()
-        time.sleep(1)
-        if connected is True:
-            print("internet connect!!")
-            break
-    await asyncio.gather(redis_connect(), SER_connect(), get_station())
-    await asyncio.gather(send_msg(), repeat())
+    try:
+        while True:
+            connected = connect()
+            time.sleep(1)
+            if connected is True:
+                print("internet connect!!")
+                break
+        await asyncio.gather(redis_connect(), SER_connect(), get_station())
+        await asyncio.gather(send_msg(), repeat())
+    except Exception as e:
+        f = open("/home/pi/Desktop/Moomu/IOT/code/logs/log.txt", "a")
+        now = time.strftime("%Y-%m-%d %H:%M:%S")
+        f.write(now + " : " + str(e))
+        f.close()
 
 
 if __name__ == "__main__":
