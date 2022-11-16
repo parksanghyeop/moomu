@@ -18,11 +18,9 @@ export function reset(name: any, params?: any) {
     if (navigationRef.isReady()) {
         navigationRef.reset({
             routes: [
-                { name: name },
                 {
-                    params: {
-                        id: params.id,
-                    },
+                    name: name,
+                    params: params,
                 },
             ],
         });

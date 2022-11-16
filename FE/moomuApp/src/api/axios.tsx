@@ -28,6 +28,9 @@ instance.interceptors.response.use(
     async (error) => {
         if (error.response && error.response.status) {
             switch (error.response.status) {
+                case 401:
+                    RootNavigation.reset('LoginSignUp', { id: 1 });
+                    break;
                 case 451:
                     await AsyncStorage.removeData('token');
                     RootNavigation.reset('LoginSignUp', { id: 1 });
