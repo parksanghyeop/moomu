@@ -35,6 +35,14 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
     const [user, setUser] = useState<jwt>();
     const [buses, setBuses] = useState<any>();
 
+    const region: any = {
+        100: '서울',
+        200: '대전',
+        300: '구미',
+        400: '부울경',
+        500: '광주',
+    };
+
     useFocusEffect(
         React.useCallback(() => {
             AsyncStorage.getData('token')
@@ -114,7 +122,9 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
             <View style={styles.infoContainer}>
                 <View style={styles.infoContentContainer}>
                     <Text style={styles.infoTitle}>소속</Text>
-                    <Text style={styles.infoText}>대전 2반</Text>
+                    <Text style={styles.infoText}>
+                        {region[`${user?.region}`]}
+                    </Text>
                 </View>
                 <View style={styles.infoContentContainer}>
                     <Text style={styles.infoTitle}>승차 노선</Text>

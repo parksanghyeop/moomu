@@ -57,12 +57,13 @@ const InformationScreen: React.FC<InformationScreenProps> = (props) => {
             >
                 <Logo3 content="information" />
                 <View style={styles.titleContainer}>
-                    <Text style={styles.titleText}>대전캠퍼스</Text>
+                    <Text style={styles.titleText}>공지사항</Text>
                 </View>
                 <ScrollView style={{ width: '100%' }}>
                     {informations.map((information: any, index: any) => {
                         return (
                             <View
+                                key={information.id}
                                 style={{
                                     flexDirection: 'row',
                                     alignItems: 'center',
@@ -81,14 +82,12 @@ const InformationScreen: React.FC<InformationScreenProps> = (props) => {
                                     style={{ width: '85%' }}
                                 >
                                     <Text
-                                        key={index}
                                         style={styles.listText}
                                         numberOfLines={1}
                                     >
                                         {information.title}
                                     </Text>
                                     <Text
-                                        key={index}
                                         style={styles.listText1}
                                         numberOfLines={1}
                                     >

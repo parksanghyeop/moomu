@@ -9,6 +9,7 @@ import BusScreen from '../screens/BusScreen';
 import BusMapScreen from '../screens/BusMapScreen';
 import StationScreen from '../screens/StationScreen';
 import MainScreen from '../screens/MainScreen';
+import ModifyScreen from '../screens/ModifyScreen';
 import { RootStackParamList } from '../types/StackNavigation';
 import FaqScreen from '../screens/FaqScreen';
 import InformationDetailScreen from '../screens/InformationDetailScreen';
@@ -94,6 +95,11 @@ const StackNavigator = () => {
                 name="InformationDetail"
                 component={InformationDetailScreen}
                 options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="Modify"
+                component={ModifyScreen}
+                options={{ title: '개인정보 수정' }}
             />
         </Stack.Navigator>
     );

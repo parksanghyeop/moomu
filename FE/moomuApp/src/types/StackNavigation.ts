@@ -17,6 +17,7 @@ export type RootStackParamList = {
         stationName: string;
     };
     Main: undefined;
+    Modify: undefined;
     BusSearch: undefined;
     Information: undefined;
     FAQ: undefined;
