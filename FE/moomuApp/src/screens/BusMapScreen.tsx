@@ -245,16 +245,16 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
                 activeOpacity={0.8}
                 style={{
                     position: 'absolute',
-                    right: 16,
-                    bottom: 16,
+                    right: 24,
+                    bottom: 48,
                     backgroundColor: 'white',
-                    width: 40,
-                    height: 40,
+                    width: 48,
+                    height: 48,
                     borderRadius: 4,
                 }}
                 onPress={goToMyLocation}
             >
-                <Mylocationsvg width={24} height={24} style={{ margin: 8 }} />
+                <Mylocationsvg width={32} height={32} style={{ margin: 8 }} />
             </TouchableOpacity>
             {/* <View style={[{ position: 'absolute', right: 0, bottom: 0 }]}>
                 <Button1
