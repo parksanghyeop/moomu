@@ -270,12 +270,30 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
         <View style={styles.container}>
             <SafeAreaView style={styles.container2}>
                 <Text style={styles.name}>{props.route.params.name}</Text>
-                <Refreshsvg
-                    style={[{ width: 27, height: 24, margin: 5 }]}
+                <TouchableOpacity
+                    activeOpacity={0.5}
+                    style={[
+                        {
+                            width: 40,
+                            height: 35,
+                            marginTop: 5,
+                            marginLeft: 30,
+                        },
+                    ]}
                     onPress={refresh}
-                />
-                <Mapsvg
-                    style={[{ width: 27, height: 24, margin: 5 }]}
+                >
+                    <Refreshsvg width={27} height={24} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    activeOpacity={0.5}
+                    style={[
+                        {
+                            width: 40,
+                            height: 35,
+                            marginTop: 5,
+                            marginLeft: 30,
+                        },
+                    ]}
                     onPress={() => {
                         RootNavigation.navigate('BusMap', {
                             stationList: stationList,
@@ -283,7 +301,9 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
                             name: busName,
                         });
                     }}
-                />
+                >
+                    <Mapsvg width={27} height={24} />
+                </TouchableOpacity>
             </SafeAreaView>
 
             <View
