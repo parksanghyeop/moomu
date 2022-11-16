@@ -17,7 +17,7 @@ k = 0
 i = 0
 bus_name = "1호차"
 
-
+# redis 연결
 async def redis_connect():
     try:
         global r
@@ -25,7 +25,7 @@ async def redis_connect():
     except Exception:
         print(traceback.format_exc())
 
-
+# gps 모듈 연결함수
 async def SER_connect():
     while True:
         try:
@@ -37,7 +37,7 @@ async def SER_connect():
         except:
             continue
 
-
+# gps모듈에서 좌표 획득 함수
 async def get_lat_lng():
     global gpiostr, lat_decode, lng_decode
     gpiostr = ""
@@ -68,7 +68,7 @@ async def get_lat_lng():
                 print((lat_decode, lng_decode))
                 break
 
-
+# gps좌표 오차 줄이기 위한 평균 구하는 함수
 async def get_avg():
     global lat_avg, lng_avg, i
     if lat_decode is None or lng_decode is None:
@@ -92,7 +92,7 @@ async def get_avg():
     print("==========lat,lng_avg===========")
     print((lat_avg, lng_avg))
 
-
+# redis message publish 함수
 async def pub_msg():
     if lat_avg is None or lng_avg is None:
         return
@@ -100,7 +100,7 @@ async def pub_msg():
     print(msg)
     r.publish(channel=bus_name, message=msg)
 
-
+# 좌표를 획득후 채널에 방송을 반복하는 함수
 async def send_msg():
     global i
     while True:
@@ -112,7 +112,7 @@ async def send_msg():
         if i == 5:
             i = 0
 
-
+# 정류장 리스트 조회 함수
 async def get_station():
     global bus_name, station_list, commute_or_leave
     now = time.localtime().tm_hour
@@ -123,13 +123,14 @@ async def get_station():
     station_list = get_station_list(bus_name, commute_or_leave)
     print(station_list)
 
-
+# 정류장 접근 여부 체크 함수
 async def check_station_dist():
-    global k, file_name
+    global k, file_name, station_list_len
     station = station_list[k]
+    station_list_len = len(station_list)
     station_pos = (float(station["lat"]), float(station["lng"]))
     station_next_pos = None
-    if k <= len(station_list) - 2:
+    if k <= station_list_len - 2:
         station_next = station_list[k + 1]
         station_next_pos = (float(station_next["lat"]), float(station_next["lng"]))
     if (
@@ -148,31 +149,32 @@ async def check_station_dist():
     print(haversine(station_pos, bus_pos, "m"))
     if haversine(station_pos, bus_pos, "m") < sense_dist:
         set_bus_order(bus_name, commute_or_leave, order=k)
+        if (commute_or_leave == CommuteOrLeave.COMMUTE and k < (station_list_len - 1)) or (commute_or_leave == CommuteOrLeave.LEAVE and k > 0):
+            if send_station_alarm(station_id, station_name, commute_or_leave) > 0:
+                exist = "T"
+            else:
+                exist = "F"
+            file_name = "/home/pi/Desktop/Moomu/IOT/code/mp3/" + commute_or_leave + "_" + exist + ".wav"
+            music(file_name)
         k = k + 1
-        if send_station_alarm(station_id, station_name, commute_or_leave) > 0:
-            exist = "T"
-        else:
-            exist = "F"
-        file_name = "/home/pi/Desktop/Moomu/IOT/code/mp3/" + commute_or_leave + "_" + exist + ".wav"
-        music(file_name)
 
-
+# 정류장 접근 여부 반복 함수
 async def repeat():
     while True:
         await check_station_dist()
         await asyncio.sleep(0.5)
-        if k == len(station_list):
+        if k == station_list_len:
             set_bus_order(bus_name, commute_or_leave, order=-1)
             break
 
-
+# 음악 재생 함수
 def music(file_name: str):
     pygame.mixer.init()
     pygame.mixer.music.set_volume(1.0)
     pygame.mixer.music.load(file_name)
     pygame.mixer.music.play()
 
-
+# wifi 연결 체크
 def connect(host="http://google.com"):
     try:
         urllib.request.urlopen(host)
