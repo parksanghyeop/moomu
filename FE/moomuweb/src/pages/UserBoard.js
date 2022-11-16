@@ -56,8 +56,8 @@ function UserBoard() {
           <thead>
             <tr className="text-primary font-bold table-title sticky top-0">
               <th className="w-60 ">사용자</th>
-              <th className="w-36 ">변경</th>
-              <th className="w-36 ">삭제</th>
+              <th className="w-36 ">승차 정류장</th>
+              <th className="w-36 ">하차 정류장</th>
             </tr>
           </thead>
           <tbody className="" style={{ overflowY: "scroll" }}>
