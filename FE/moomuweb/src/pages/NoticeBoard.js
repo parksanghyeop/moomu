@@ -66,63 +66,65 @@ function DashBoard() {
     return <LoadingComponent />;
   }
   return (
-    <div className="tablePage">
-      {/* <p className="bodyTitle "> 공지사항 </p> */}
-      <div className="overflow-x-auto w-full">
-        <table className="custom-table w-full">
-          {/* <!-- head --> */}
-          <thead>
-            <tr className="text-primary font-bold table-title sticky top-0">
-              <th className="w-max">제목</th>
-              {/* <th className="w-36 ">노선 변경</th> */}
-              <th className="w-2/12 ">삭제</th>
-            </tr>
-          </thead>
-          <tbody className="">
-            {notices.map((notice) => {
-              return (
-                <tr key={notice.id}>
-                  <td className="font-bold routeTitle">
-                    <a className="link link-hover link-primary" onClick={() => noticeDetail(notice.id)}>
-                      {notice.title}
-                    </a>
-                  </td>
-                  {/* <td>
-                    <button className="btn btn-ghost btn-lg changeIcon">
-                      <FontAwesomeIcon icon={faRoute} onClick={() => answerNotice(notice.id)} />
-                    </button>
-                  </td> */}
-                  <td>
-                    <button className="btn btn-ghost btn-lg deleteIcon">
-                      <FontAwesomeIcon icon={faTrashCan} onClick={() => deleteNotice(notice.id)} />
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+    <div className="p-4 mt-4">
+      <div className="tablePage content-box h-">
+        <div className="flex justify-end mb-4">
+          <button
+            className="btn btn-primary btn-sm mt-4"
+            onClick={() => {
+              createNotice();
+            }}
+          >
+            새 공지 작성
+          </button>
+        </div>
+        <div className="overflow-x-auto w-full">
+          <table className="custom-table w-full">
+            {/* <!-- head --> */}
+            {/* <thead>
+              <tr className="text-primary font-bold table-title sticky top-0">
+                <th className="w-max">제목</th>
+                
+                <th className="w-2/12 ">삭제</th>
+              </tr>
+            </thead> */}
+            <tbody className="">
+              {notices.map((notice) => {
+                return (
+                  <tr key={notice.id}>
+                    <td
+                      className="routeTitle cursor-pointer hover:bg-gray-200 noticeRow w-full"
+                      onClick={() => noticeDetail(notice.id)}
+                    >
+                      <a>{notice.title}</a>
+                    </td>
+                    <td>
+                      <button className="btn btn-ghost btn-md deleteIcon">
+                        <FontAwesomeIcon
+                          icon={faTrashCan}
+                          onClick={() => deleteNotice(notice.id)}
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <footer className="flex justify-center mb-1">
+          <Pagenation
+            total={maxPage}
+            limit={pageLimit}
+            page={currentPage}
+            setPage={(num) => {
+              setCurrentPage(num);
+              console.log(currentPage);
+            }}
+            classNames="justify-self-center	"
+          />
+        </footer>
       </div>
-      <footer className="flex mb-1">
-        <Pagenation
-          total={maxPage}
-          limit={pageLimit}
-          page={currentPage}
-          setPage={(num) => {
-            setCurrentPage(num);
-            console.log(currentPage);
-          }}
-          classNames="justify-self-center	"
-        />
-        <button
-          className="btn btn-primary justify-self-end ml-16"
-          onClick={() => {
-            createNotice();
-          }}
-        >
-          작성
-        </button>
-      </footer>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-.noticeForm {
+/* .noticeForm {
   display: flex;
   align-items: center;
   width: 70vw;
@@ -11,4 +11,17 @@
 .noticeForm .form-area .input {
   font-size: calc(10px + 2vmin);
   font-weight: 700;
+} */
+
+.noticeRow {
+  border-radius: 0.5rem;
+  padding-left: 1rem;
+}
+
+.deleteIcon {
+  font-size: 14px;
+}
+
+.tablePage {
+  /* min-height: 650px; */
 }
