@@ -13,9 +13,9 @@ const SplashScreen = (props) => {
             AsyncService.containsKey('token')
                 .then((value) => {
                     if (value) {
-                        RootNavigation.navigate('Main');
+                        RootNavigation.reset('Main');
                     } else {
-                        RootNavigation.navigate('Start');
+                        RootNavigation.reset('Start');
                     }
                 })
                 .catch((error) => {
