@@ -23,7 +23,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 type StationScreenProps = StackScreenProps<RootStackParamList, 'Station'>;
 
 const StationScreen: React.FC<StationScreenProps> = (props) => {
-    const [stationList, setStationList] = useState<station[]>();
+    const [stationList, setStationList] = useState<station[]>([] as station[]);
     const [useselect, setUseSelect] = useState<boolean>(false);
     const [mystation, setMystation] = useState<myStation>({} as myStation);
     const [mytemp, setMytemp] = useState<myStation>({} as myStation);
@@ -193,7 +193,7 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
         }
     };
 
-    const select_or_selectd = (id: number) => {
+    const select_or_selectd = (id: number, order: number) => {
         if (useselect) {
             if (id == mytemp.start_station_id || id == mytemp.end_station_id) {
                 return (
@@ -205,14 +205,20 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
                     </Text>
                 );
             } else {
-                return (
-                    <Text
-                        style={[styles.title, styles.select]}
-                        onPress={() => myStationOnpress(id)}
-                    >
-                        선택
-                    </Text>
-                );
+                if (co_or_le == 'COMMUTE' && order == stationList.length - 1) {
+                    return;
+                } else if (co_or_le == 'LEAVE' && order == 0) {
+                    return;
+                } else {
+                    return (
+                        <Text
+                            style={[styles.title, styles.select]}
+                            onPress={() => myStationOnpress(id)}
+                        >
+                            선택
+                        </Text>
+                    );
+                }
             }
         }
     };
@@ -243,7 +249,7 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
                 </View>
             </View>
 
-            {select_or_selectd(id)}
+            {select_or_selectd(id, order)}
 
             <View
                 style={[order <= busOrder ? styles.circle_full : styles.circle]}
