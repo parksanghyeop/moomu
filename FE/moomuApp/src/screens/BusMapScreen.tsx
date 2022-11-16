@@ -12,19 +12,16 @@ import { station } from '../types/types';
 type BusMapScreenProps = StackScreenProps<RootStackParamList, 'BusMap'>;
 
 interface line {
-    latitude: any,
-    longitude: any
+    latitude: any;
+    longitude: any;
 }
-
 
 const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
     const [stationList, setStationList] = useState<any>(
         props.route.params.stationList
     );
     const [location, setLocation] = useState();
-    const [busName, setBusName] = useState<String>(
-        props.route.params.name
-    );
+    const [busName, setBusName] = useState<String>(props.route.params.name);
     const [co_or_le, setco_or_le] = useState<String>(
         props.route.params.commute_or_leave
     );
@@ -81,72 +78,79 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
         })();
         axios
             .get(requests.polyline + '/' + stationList[0].bus_id)
-                .then((response) => {
-                    // console.log(response.data);
-                    let polylist = [];
-                    for(let i = 0; i < response.data.length; i++) {
-                        let pos : line = {
-                            latitude : +response.data[i].latitude,
-                            longitude : +response.data[i].longitude
-                        }
-                        polylist.push(pos);
-                    }
-                    setLine(polylist);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        const date= new Date()
-        date.setHours(date.getHours() + 9)
-        const hour = date.getHours()
-        if(((co_or_le == "COMMUTE") && (hour >= 7 && hour <= 9)) || ((co_or_le == "LEAVE") && (hour>=18 && hour<=21))) {
-            let busNameParse = busName.split('호차')[0]
-            busNameParse = busNameParse + '호차'
-            ws.current = new WebSocket(`ws://k7b202.p.ssafy.io:9000/ws/` + busNameParse )
+            .then((response) => {
+                // console.log(response.data);
+                let polylist = [];
+                for (let i = 0; i < response.data.length; i++) {
+                    let pos: line = {
+                        latitude: +response.data[i].latitude,
+                        longitude: +response.data[i].longitude,
+                    };
+                    polylist.push(pos);
+                }
+                setLine(polylist);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        const date = new Date();
+        date.setHours(date.getHours() + 9);
+        const hour = date.getHours();
+        if (
+            (co_or_le == 'COMMUTE' && hour >= 7 && hour <= 9) ||
+            (co_or_le == 'LEAVE' && hour >= 18 && hour <= 21)
+        ) {
+            let busNameParse = busName.split('호차')[0];
+            busNameParse = busNameParse + '호차';
+            ws.current = new WebSocket(
+                `ws://k7b202.p.ssafy.io:9000/ws/` + busNameParse
+            );
+        } else {
+            ws.current = null;
         }
-        else {
-            ws.current = null
-        }
-        if(ws.current != null) {
-            console.log(ws.current)
+        if (ws.current != null) {
+            console.log(ws.current);
             ws.current.onopen = () => {
                 // connection opened
-                console.log('connected')
+                console.log('connected');
             };
 
             ws.current.onmessage = (e: any) => {
-                let gps: Location = JSON.parse(e.data); 
+                let gps: Location = JSON.parse(e.data);
                 // console.log(e);
                 // console.log(gps)
                 if (gps.lat == null || gps.lng == null) {
-                    setVisible(false)
-                    setBusLat(0)
-                    setBusLng(0)
-                }
-                else {
-                    setVisible(true)
-                    setBusLat(gps.lat)
-                    setBusLng(gps.lng)
+                    setVisible(false);
+                    setBusLat(0);
+                    setBusLng(0);
+                } else {
+                    setVisible(true);
+                    setBusLat(gps.lat);
+                    setBusLng(gps.lng);
                 }
 
                 // console.log(gps.lat);
             };
 
-            ws.current.onerror = (e: React.SyntheticEvent<HTMLInputElement>) => {
-                setVisible(false)
-                setBusLat(0)
-                setBusLng(0)
+            ws.current.onerror = (
+                e: React.SyntheticEvent<HTMLInputElement>
+            ) => {
+                setVisible(false);
+                setBusLat(0);
+                setBusLng(0);
                 // an error occurred
                 console.log(e);
             };
 
-            ws.current.onclose = (e: React.SyntheticEvent<HTMLInputElement>) => {
+            ws.current.onclose = (
+                e: React.SyntheticEvent<HTMLInputElement>
+            ) => {
                 // connection closed
                 console.log(e);
             };
 
             return () => {
-                console.log("동작")
+                console.log('동작');
                 ws.current.close();
             };
         }
@@ -175,7 +179,10 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
                     title={stationList[i].name}
                     description={stationList[i].arrived_time}
                 >
-                    <Image source={require('../../assets/images/bus-stop.png')} style={{height: 50, width:35 }} />
+                    <Image
+                        source={require('../../assets/images/bus-stop.png')}
+                        style={{ height: 50, width: 35 }}
+                    />
                 </Marker>
             );
         }
@@ -183,11 +190,19 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
     };
 
     const Gps = () => {
-        if(bus_lat != null && bus_lng != null)
-            return (<Marker coordinate={{latitude: +bus_lat, longitude: +bus_lng}} title={"버스"} >
-                        <Image source={require('../../assets/images/bus.png')} style={{height: 35, width:35, resizeMode:'stretch'}} />
-                    </Marker>)
-    }
+        if (bus_lat != null && bus_lng != null)
+            return (
+                <Marker
+                    coordinate={{ latitude: +bus_lat, longitude: +bus_lng }}
+                    title={'버스'}
+                >
+                    <Image
+                        source={require('../../assets/images/bus.png')}
+                        style={{ height: 35, width: 35, resizeMode: 'stretch' }}
+                    />
+                </Marker>
+            );
+    };
     const mapView = (lat: number, lon: number) => {
         if (isLoding) {
             return (
@@ -218,7 +233,7 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
     return (
         <View style={styles.container}>
             {mapView(avglat, avglon)}
-            <View style={[{ position: 'absolute', left: 0 }]}>
+            <View style={[{ position: 'absolute', right: 0, bottom: 0 }]}>
                 <Button1 text={'내 위치'} onPress={goToMyLocation} />
             </View>
         </View>
