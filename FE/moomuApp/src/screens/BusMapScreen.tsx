@@ -233,7 +233,7 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
     return (
         <View style={styles.container}>
             {mapView(avglat, avglon)}
-            <View style={[{ position: 'absolute', left: 0 }]}>
+            <View style={[{ position: 'absolute', right: 0, bottom: 0 }]}>
                 <Button1 text={'내 위치'} onPress={goToMyLocation} />
             </View>
         </View>
