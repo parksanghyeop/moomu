@@ -67,7 +67,7 @@ function DashBoard() {
   }
   return (
     <div className="tablePage">
-      <p className="bodyTitle "> 공지사항 </p>
+      {/* <p className="bodyTitle "> 공지사항 </p> */}
       <div className="overflow-x-auto w-full">
         <table className="custom-table w-full">
           {/* <!-- head --> */}
