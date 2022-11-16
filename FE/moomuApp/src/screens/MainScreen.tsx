@@ -155,7 +155,7 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
                     Linking.openURL('http://pf.kakao.com/_xkxeTXxj/chat');
                 }}
             />
-            <Footer />
+            {/* <Footer /> */}
         </SafeAreaView>
     );
 };
