@@ -153,7 +153,7 @@ async def check_station_dist():
             exist = "T"
         else:
             exist = "F"
-        file_name = "/home/pi/Desktop/Moomu/IOT/code/mp3" + commute_or_leave + "_" + exist + ".wav"
+        file_name = "/home/pi/Desktop/Moomu/IOT/code/mp3/" + commute_or_leave + "_" + exist + ".wav"
         music(file_name)
 
 
