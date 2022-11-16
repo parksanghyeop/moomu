@@ -6,27 +6,11 @@ import Modal from "../componentes/modal";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import stationSlice, {
-  loadRoute,
-  stationDown,
-  staionUp,
-  deleteStation,
-  addStation,
-  updateStation,
-  updateRoute,
-  reload,
-  setStation,
-} from "../reducers/stationSlice";
+import stationSlice, { loadRoute, stationDown, staionUp, deleteStation, addStation, updateStation, updateRoute, reload, setStation } from "../reducers/stationSlice";
 import { useParams, useNavigation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCaretUp,
-  faSortUp,
-  faCaretDown,
-  faSortDown,
-  faTrash,
-  faClose,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCaretUp, faSortUp, faCaretDown, faSortDown, faTrash, faClose } from "@fortawesome/free-solid-svg-icons";
+import bus_stop from "../assets/bus_stop_small.png";
 
 function RouteMap() {
   const [routesDriving, setRoutesDriving] = useState({});
@@ -55,6 +39,12 @@ function RouteMap() {
 
   const [stationList, setStationList] = useState([]);
 
+  const stopLogo = {
+    url: bus_stop,
+    scaledSize: new naver.maps.Size(24, 37),
+    // origin: new naver.maps.Point(0, 0),
+    // anchor: new naver.maps.Point(12, 37),
+  };
   const openModal = () => {
     setModalOpen(true);
   };
@@ -68,12 +58,7 @@ function RouteMap() {
     setModalOpen2(false);
   };
   const isEmpty = function (val) {
-    if (
-      val === "" ||
-      val === undefined ||
-      val === null ||
-      (val !== null && typeof val === "object" && !Object.keys(val).length)
-    ) {
+    if (val === "" || val === undefined || val === null || (val !== null && typeof val === "object" && !Object.keys(val).length)) {
       return true;
     } else {
       return false;
@@ -82,10 +67,7 @@ function RouteMap() {
   const getStaticMap2Src = function (aUrl, imgId) {
     var oReq = new XMLHttpRequest();
     oReq.open("GET", aUrl, true);
-    oReq.setRequestHeader(
-      "X-NCP-APIGW-API-KEY-ID",
-      process.env.REACT_APP_API_KEY_ID
-    );
+    oReq.setRequestHeader("X-NCP-APIGW-API-KEY-ID", process.env.REACT_APP_API_KEY_ID);
     oReq.setRequestHeader("X-NCP-APIGW-API-KEY", process.env.REACT_APP_API_KEY);
     // use multiple setRequestHeader calls to set multiple values
     oReq.responseType = "arraybuffer";
@@ -95,8 +77,7 @@ function RouteMap() {
         var u8 = new Uint8Array(arrayBuffer);
         var b64encoded = btoa(String.fromCharCode.apply(null, u8));
         var mimetype = "image/png"; // or whatever your image mime type is
-        document.getElementById(imgId).src =
-          "data:" + mimetype + ";base64," + b64encoded;
+        document.getElementById(imgId).src = "data:" + mimetype + ";base64," + b64encoded;
       }
     };
     oReq.send(null);
@@ -159,6 +140,7 @@ function RouteMap() {
         map: naverMap,
         title: stationList[loc].stationName,
         arrived_time: stationList[loc].arrived_time,
+        icon: stopLogo,
       });
       naver.maps.Event.addListener(newMarker, "click", markerClick(loc));
       let tmpMarkers = markers;
@@ -178,9 +160,7 @@ function RouteMap() {
 
     let polylinePath = [];
     for (let i = 0; i < polyInfos.length; i++) {
-      polylinePath.push(
-        new naver.maps.LatLng(polyInfos[i].latitude, polyInfos[i].longitude)
-      );
+      polylinePath.push(new naver.maps.LatLng(polyInfos[i].latitude, polyInfos[i].longitude));
     }
     new naver.maps.Polyline({
       path: polylinePath, //좌표배열
@@ -267,8 +247,7 @@ function RouteMap() {
     // change background colour if dragging
     background: isDragging ? "#63b3ed" : "white",
     color: isDragging ? "white" : "black",
-    boxShadow:
-      "0 1px .625rem 0 hsla(210, 7%, 22%, .06), 0 .125rem .25rem 0 hsla(210, 7%, 22%, .08)",
+    boxShadow: "0 1px .625rem 0 hsla(210, 7%, 22%, .06), 0 .125rem .25rem 0 hsla(210, 7%, 22%, .08)",
     border: "1px solid #e8ebed",
     borderRadius: "0.5rem",
     // height: "10vh",
@@ -287,9 +266,7 @@ function RouteMap() {
       return;
     }
     setPlaceholderProps({});
-    setStationList(
-      reorder(stationList, result.source.index, result.destination.index)
-    );
+    setStationList(reorder(stationList, result.source.index, result.destination.index));
     // dispatch(setStation);
   };
 
@@ -310,21 +287,17 @@ function RouteMap() {
 
     const clientY =
       parseFloat(window.getComputedStyle(draggedDOM.parentNode).paddingTop) +
-      [...draggedDOM.parentNode.children]
-        .slice(0, destinationIndex)
-        .reduce((total, curr) => {
-          const style = curr.currentStyle || window.getComputedStyle(curr);
-          const marginBottom = parseFloat(style.marginBottom);
-          return total + curr.clientHeight + marginBottom;
-        }, 0);
+      [...draggedDOM.parentNode.children].slice(0, destinationIndex).reduce((total, curr) => {
+        const style = curr.currentStyle || window.getComputedStyle(curr);
+        const marginBottom = parseFloat(style.marginBottom);
+        return total + curr.clientHeight + marginBottom;
+      }, 0);
 
     setPlaceholderProps({
       clientHeight,
       clientWidth,
       clientY,
-      clientX: parseFloat(
-        window.getComputedStyle(draggedDOM.parentNode).paddingLeft
-      ),
+      clientX: parseFloat(window.getComputedStyle(draggedDOM.parentNode).paddingLeft),
     });
   };
 
@@ -335,23 +308,11 @@ function RouteMap() {
         {/* {newCord} */}
         <label className="input-group input-group-lg justify-center	">
           <span className="">이름</span>
-          <input
-            type="text"
-            placeholder="Type here"
-            className="input input-bordered input-lg w-3/4 max-w-xs text-center"
-            value={newStationName}
-            onChange={(e) => setNewstationName(e.target.value)}
-          />
+          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-3/4 max-w-xs text-center" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
         </label>
         <label className="input-group input-group-lg justify-center	">
           <span className="">도착 시간</span>
-          <input
-            type="text"
-            placeholder="Type here"
-            className="input input-bordered input-lg w-2/5 max-w-xs"
-            value={arrived_time}
-            onChange={(e) => setArrivedTime(e.target.value)}
-          />
+          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
         </label>
         <img id="cordMapImgTag2" alt="" />
         <button
@@ -391,13 +352,7 @@ function RouteMap() {
             </label>
             <label className="input-group input-group-lg justify-center	">
               <span className="">도착 시간</span>
-              <input
-                type="text"
-                placeholder="Type here"
-                className="input input-bordered input-lg w-2/5 max-w-xs"
-                value={arrived_time}
-                onChange={(e) => setArrivedTime(e.target.value)}
-              />
+              <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
             </label>
           </div>
         )}
@@ -416,6 +371,7 @@ function RouteMap() {
               const newMarker = new naver.maps.Marker({
                 position: mapLoc,
                 map: map,
+                icon: stopLogo,
                 title: newStationName,
                 arrived_time: arrived_time,
               });
@@ -452,20 +408,13 @@ function RouteMap() {
                     >
                       {stationList.map((station, index) => {
                         return (
-                          <Draggable
-                            key={station.id}
-                            draggableId={station.id}
-                            index={index}
-                          >
+                          <Draggable key={station.id} draggableId={station.id} index={index}>
                             {(provided, snapshot) => (
                               <div
                                 ref={provided.innerRef} // 드래그가 시작되면 이 DOM에 ref가 달린다.
                                 {...provided.draggableProps} // 드래그 핸들러를 달기 위한 props
                                 {...provided.dragHandleProps} // 드래그 핸들러를 달기 위한 props
-                                style={getItemStyle(
-                                  snapshot.isDragging,
-                                  provided.draggableProps.style
-                                )}
+                                style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                               >
                                 <li key={station.id}>
                                   <div
@@ -477,9 +426,7 @@ function RouteMap() {
                                     }}
                                   >
                                     <div className="flex item-center">
-                                      <span className="mr-4">
-                                        {parseInt(station.id) + 1}
-                                      </span>
+                                      <span className="mr-4">{parseInt(station.id) + 1}</span>
                                       <span
                                         className="stationName"
                                         style={{
@@ -495,14 +442,8 @@ function RouteMap() {
                                       <i
                                         className="fa-regular fa-close text-sm"
                                         onClick={() => {
-                                          const cordUrl = staticMapUrl(
-                                            station.stationLatLng,
-                                            15
-                                          );
-                                          getStaticMap2Src(
-                                            cordUrl,
-                                            "cordMapImgTag"
-                                          );
+                                          const cordUrl = staticMapUrl(station.stationLatLng, 15);
+                                          getStaticMap2Src(cordUrl, "cordMapImgTag");
                                           setModalHeader("정류장 삭제");
                                           setbtnText("삭제");
                                           setbtnDet(false);
@@ -537,10 +478,7 @@ function RouteMap() {
               </ul>
             </DragDropContext>
           </div>
-          <label
-            htmlFor="my-modal"
-            className="btn btn-primary btn-outline btn-sm mt-3 mr-2"
-          >
+          <label htmlFor="my-modal" className="btn btn-primary btn-outline btn-sm mt-3 mr-2">
             <i className="fa-solid fa-plus"></i>&nbsp; 새 정류장 추가
           </label>
 
@@ -549,9 +487,7 @@ function RouteMap() {
           <div className="modal">
             <div className="modal-box">
               <h3 className="font-bold text-lg">새 정류장 추가</h3>
-              <p className="py-4">
-                지도에서 추가할 정류장의 위치를 클릭해주세요.
-              </p>
+              <p className="py-4">지도에서 추가할 정류장의 위치를 클릭해주세요.</p>
               <div className="modal-action">
                 <label htmlFor="my-modal" className="btn btn-primary">
                   확인
