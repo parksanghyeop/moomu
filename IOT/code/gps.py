@@ -46,7 +46,7 @@ async def get_lat_lng():
             bytes = SER.read()
         except:
             continue
-        decode_bytes = str(bytes, "utf-8")
+        decode_bytes = bytes.decode('utf-8')
         if decode_bytes == "$":
             gpiostr = ""
         gpiostr = gpiostr + decode_bytes
