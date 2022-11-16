@@ -37,27 +37,36 @@ const MainScreen: React.FC<MainScreenProps> = (props) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            AsyncStorage.getData('token').then((response) => {
-                token = response;
-                decoded = jwtDecode(token);
-                setUser(decoded);
-            });
-            instance.get('/users/bus').then((response) => {
-                let data = {
-                    commute: null,
-                    leave: null,
-                };
-
-                // console.log(response.data);
-                response.data.map((item: any) => {
-                    if (item.commute_or_leave === 'COMMUTE') {
-                        data.commute = item.bus_name;
-                    } else {
-                        data.leave = item.bus_name;
-                    }
+            AsyncStorage.getData('token')
+                .then((response) => {
+                    token = response;
+                    decoded = jwtDecode(token);
+                    setUser(decoded);
+                })
+                .catch((error) => {
+                    console.log(error);
                 });
-                setBuses(data);
-            });
+            instance
+                .get('/users/bus')
+                .then((response) => {
+                    let data = {
+                        commute: null,
+                        leave: null,
+                    };
+
+                    // console.log(response.data);
+                    response.data.map((item: any) => {
+                        if (item.commute_or_leave === 'COMMUTE') {
+                            data.commute = item.bus_name;
+                        } else {
+                            data.leave = item.bus_name;
+                        }
+                    });
+                    setBuses(data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         }, [])
     );
 
