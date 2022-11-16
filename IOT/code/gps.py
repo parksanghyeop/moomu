@@ -179,6 +179,10 @@ def connect(host='http://google.com'):
 
 
 async def main():
+    f = open("logs\log.txt", 'a')
+    now = time.strftime('%Y-%m-%d %H:%M:%S')
+    f.write(now + " : " + "run\n")
+    f.close()
     while True:
         connected = connect()
         time.sleep(1)
