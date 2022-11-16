@@ -102,7 +102,6 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
                 console.log(error);
             });
         const date = new Date();
-        date.setHours(date.getHours() + 9);
         const hour = date.getHours();
         if (
             (co_or_le == 'COMMUTE' && hour >= 7 && hour <= 9) ||
