@@ -113,12 +113,8 @@ def create_station_alarm(
 
 
 def set_bus_order(db: Session, commute_or_leave: CommuteOrLeave, bus_name: str, order: int):
-    db.query(Bus).filter(Bus.commute_or_leave == commute_or_leave).filter(
+    db_bus = db.query(Bus).filter(Bus.commute_or_leave == commute_or_leave).filter(
         Bus.name.like(f"{bus_name}%")
-    ).update({"order": order})
-    db.commit()
-
-
-def init_bus(db: Session):
-    db.query(Bus).update({"order": -1})
+    ).first()
+    db_bus.order = order
     db.commit()

@@ -16,6 +16,7 @@ export const useAxios = () => {
       if (error.response.status === 451) {
         alert("토큰이 만료되었습니다");
         dispatch(logout());
+        sessionStorage.setItem("accessToken", null);
         return error;
       } else {
         alert(error.response);
