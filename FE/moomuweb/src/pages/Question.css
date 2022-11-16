@@ -9,6 +9,6 @@
   width: 90%;
 }
 .noticeForm .form-area .input {
-  font-size: calc(10px + 2vmin);
-  font-weight: 700;
+  /* font-size: calc(10px + 2vmin); */
+  /* font-weight: 700; */
 }
