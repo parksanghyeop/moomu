@@ -500,7 +500,7 @@ function RouteMap() {
             onClick={async function () {
               await dispatch(setStation(stationList));
               await dispatch(updateRoute(params));
-              // goList();
+              goList();
             }}
           >
             <i className="fa-solid fa-floppy-disk"></i>&nbsp; 변경 사항 저장
