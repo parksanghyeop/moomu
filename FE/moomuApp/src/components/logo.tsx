@@ -3,6 +3,7 @@ import { StyleSheet, Image, View, Text, ImageBackground } from 'react-native';
 import LogoFaqContent from './logoContents/LogoFaqContent';
 import LogoInformationContent from './logoContents/LogoInformationContent';
 import LogoMainContent from './logoContents/logoMainContent';
+import LogoModifyContent from './logoContents/LogoModifyContent';
 import LogoNotificationContent from './logoContents/LogoNotificationContent';
 import LogoSettingContent from './logoContents/LogoSettingContent';
 
@@ -24,6 +25,7 @@ export const Logo3 = (props: any) => {
         faq: <LogoFaqContent />,
         notification: <LogoNotificationContent />,
         setting: <LogoSettingContent />,
+        modify: <LogoModifyContent />,
     };
 
     return (
