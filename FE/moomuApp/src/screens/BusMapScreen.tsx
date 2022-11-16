@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    Dimensions,
+    Image,
+    TouchableOpacity,
+} from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/StackNavigation';
 import MapView, { Marker, Polyline } from 'react-native-maps';
@@ -8,6 +15,7 @@ import Button1 from '../components/button1';
 import axios from '../api/axios';
 import requests from '../api/requests';
 import { station } from '../types/types';
+import Mylocationsvg from '../../assets/icons/mylocation.svg';
 
 type BusMapScreenProps = StackScreenProps<RootStackParamList, 'BusMap'>;
 
@@ -209,7 +217,7 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
                 <MapView
                     style={styles.map}
                     ref={mapRef}
-                    showsUserLocation={true}
+                    showsUserLocation={false}
                     provider={'google'}
                     initialRegion={{
                         latitude: lat,
@@ -233,9 +241,28 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
     return (
         <View style={styles.container}>
             {mapView(avglat, avglon)}
-            <View style={[{ position: 'absolute', right: 0, bottom: 0 }]}>
-                <Button1 text={'내 위치'} onPress={goToMyLocation} />
-            </View>
+            <TouchableOpacity
+                activeOpacity={0.8}
+                style={{
+                    position: 'absolute',
+                    right: 16,
+                    bottom: 16,
+                    backgroundColor: 'white',
+                    width: 40,
+                    height: 40,
+                    borderRadius: 4,
+                }}
+                onPress={goToMyLocation}
+            >
+                <Mylocationsvg width={24} height={24} style={{ margin: 8 }} />
+            </TouchableOpacity>
+            {/* <View style={[{ position: 'absolute', right: 0, bottom: 0 }]}>
+                <Button1
+                    text={'내 위치'}
+                    onPress={goToMyLocation}
+                    style={{ borderRadius: 30 }}
+                />
+            </View> */}
         </View>
     );
 };
