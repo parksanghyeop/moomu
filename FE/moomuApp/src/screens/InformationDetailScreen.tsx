@@ -36,9 +36,7 @@ const InformationDetailScreen: React.FC<InformationDetailScreenProps> = (
                     </Text>
                 </View>
                 <Text>{props.route.params.information.content}</Text>
-                <Text>
-                    {props.route.params.information.created_dated}
-                </Text>
+                <Text>{props.route.params.information.created_dated}</Text>
                 <View style={{ marginBottom: 60 }}>
                     <Button1
                         text={'목록'}

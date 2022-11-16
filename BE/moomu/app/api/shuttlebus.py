@@ -160,7 +160,7 @@ def get_poly_line(bus_id: int, db: Session = Depends(get_db)):
     return poly_line_crud.get_polyLine(db, bus_id)
 
 
-@router.put("/bus/edit/order")
+@router.put("/bus/order/edit")
 def set_bus_order(
     bus_name: str,
     order: int,

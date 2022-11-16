@@ -74,6 +74,7 @@ export default function MenuSidebar() {
             <div className="flex-1">
               {/* <img src={logo} className="w-12" alt="logo" /> */}
               <a className="btn btn-ghost normal-case text-xl">MooMu</a>
+              <a className="logOut-link">{regions[region]} 캠퍼스</a>
             </div>
             <div className="flex-none">
               <div

@@ -145,6 +145,7 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                 })
                 .catch((error) => {
                     console.log(error);
+                    Alert.alert('', '아이디 혹은 패스워드가 잘못되었습니다.');
                 });
         } else {
             Alert.alert('', '아이디와 패스워드를 입력해주세요.');
@@ -186,40 +187,43 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
 
     // 회원 등록 버튼 onPress
     const signupFunc = () => {
-        axios
-            .post(
-                requests.register,
-                {
-                    username: username,
-                    password: password,
-                    nickname: nickname,
-                    region_id: region?.id,
-                    class_group: group,
-                },
-                {
-                    headers: { 'Content-Type': `application/json` },
-                }
-            )
-            .then((response) => {
-                // console.log('회원가입성공');
-                Alert.alert(
-                    // 말그대로 Alert를 띄운다
-                    '회원 등록 완료', // 첫번째 text: 타이틀 제목
-                    nickname + '님 감사합니다.', // 두번째 text: 그 밑에 작은 제목
-                    [
-                        // 버튼 배열
-                        {
-                            text: '확인', // 버튼 제목
-                            onPress: () => console.log('확인'), //onPress 이벤트시 콘솔창에 로그를 찍는다
-                        },
-                    ],
-                    { cancelable: false }
-                );
-                RootNavigation.reset('LoginSignUp', { id: 1 });
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        if (username && password && nickname && region && group) {
+            axios
+                .post(
+                    requests.register,
+                    {
+                        username: username,
+                        password: password,
+                        nickname: nickname,
+                        region_id: region?.id,
+                        class_group: group,
+                    },
+                    {
+                        headers: { 'Content-Type': `application/json` },
+                    }
+                )
+                .then((response) => {
+                    console.log('[회원가입] 회원가입 성공.');
+                    Alert.alert(
+                        '회원 등록 완료', // 첫번째 text: 타이틀 제목
+                        nickname + '님 감사합니다.', // 두번째 text: 그 밑에 작은 제목
+                        [
+                            // 버튼 배열
+                            {
+                                text: '확인', // 버튼 제목
+                                onPress: () => console.log('확인'), //onPress 이벤트시 콘솔창에 로그를 찍는다
+                            },
+                        ],
+                        { cancelable: false }
+                    );
+                    RootNavigation.reset('LoginSignUp', { id: 1 });
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } else {
+            Alert.alert('', '입력되지 않은 정보가 있습니다.');
+        }
     };
 
     return (
@@ -230,17 +234,20 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                 alignItems: 'center',
                 marginTop: 8,
             }}
-            enabled>
+            enabled
+        >
             {/* 입력 */}
             <SimpleInput
                 placeholder="아이디"
                 value={username}
-                onChangeText={(t) => setUsername(t)}></SimpleInput>
+                onChangeText={(t) => setUsername(t)}
+            ></SimpleInput>
             <SimpleInput
                 placeholder="비밀번호"
                 value={password}
                 onChangeText={(t) => setPassword(t)}
-                secureTextEntry></SimpleInput>
+                secureTextEntry
+            ></SimpleInput>
 
             {/* 회원가입시에만 입력 */}
             <Animated.View style={[animatedStyles]}>
@@ -248,25 +255,29 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                     placeholder="비밀번호 확인"
                     value={pwcheck}
                     onChangeText={(t) => setPWCheck(t)}
-                    secureTextEntry></SimpleInput>
+                    secureTextEntry
+                ></SimpleInput>
                 <SimpleInput
                     placeholder="이름"
                     value={nickname}
-                    onChangeText={(t) => setNickname(t)}></SimpleInput>
+                    onChangeText={(t) => setNickname(t)}
+                ></SimpleInput>
                 <View style={[{ flexDirection: 'row' }]}>
                     <Pressable onPress={() => setModalVisible((b) => !b)}>
                         <SimpleInput
                             placeholder="지역"
                             value={region?.name}
                             style={{ width: 100, height: 38, marginRight: 20 }}
-                            editable={false}></SimpleInput>
+                            editable={false}
+                        ></SimpleInput>
                     </Pressable>
                     <SimpleInput
                         placeholder="반"
                         keyboardType="number-pad"
                         value={group ? group.toString() : ''}
                         onChangeText={(t) => setGroup(parseInt(t))}
-                        style={{ width: 100, height: 38 }}></SimpleInput>
+                        style={{ width: 100, height: 38 }}
+                    ></SimpleInput>
                 </View>
             </Animated.View>
 
@@ -281,7 +292,8 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                 <Button1
                     text={'회원가입'}
                     onPress={signupFunc}
-                    disabled={!(username && password)}></Button1>
+                    //disabled={!(username && password)}
+                ></Button1>
             )}
 
             {/* 모달 */}
@@ -289,7 +301,8 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                 visible={modalVisible}
                 animationType="fade"
                 transparent={true}
-                style={{ width: 200 }}>
+                style={{ width: 200 }}
+            >
                 <Pressable
                     style={{
                         flex: 1,
@@ -298,7 +311,8 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                         alignItems: 'center',
                         backgroundColor: '#000000bb',
                     }}
-                    onPress={() => setModalVisible((b) => !b)}>
+                    onPress={() => setModalVisible((b) => !b)}
+                >
                     <View
                         style={{
                             width: 220,
@@ -307,7 +321,8 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                             backgroundColor: 'white',
                             borderColor: '#0BC5EA',
                             borderWidth: 1,
-                        }}>
+                        }}
+                    >
                         {regions.map((item, idx) => (
                             <Pressable
                                 key={idx}
@@ -322,7 +337,8 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                                 onPress={() => {
                                     setRegion(item);
                                     setModalVisible((b) => !b);
-                                }}>
+                                }}
+                            >
                                 <Text>{item.name}</Text>
                             </Pressable>
                         ))}
@@ -334,7 +350,8 @@ export const UserInputForm = (props: { isLogin: boolean }) => {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                 }}
-                                onPress={() => setModalVisible((b) => !b)}>
+                                onPress={() => setModalVisible((b) => !b)}
+                            >
                                 <Text>닫기</Text>
                             </Pressable>
                         </View>
