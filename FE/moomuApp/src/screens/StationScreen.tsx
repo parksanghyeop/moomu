@@ -136,6 +136,7 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
         await axios
             .get(requests.shuttlebus_notion + props.route.params.bus_id)
             .then((response) => {
+                setBusOrder(response.data.order);
                 setStationList(response.data.stations);
                 // console.log(stationList);
             })
