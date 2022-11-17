@@ -2,6 +2,8 @@ const requests = {
     // 로그인
     login: 'users/login',
     logout: 'logout',
+    //회원정보수정
+    modify: 'users/profile/edit',
     // 회원탈퇴
     withdraw: 'users/profile/delete',
     // 회원가입

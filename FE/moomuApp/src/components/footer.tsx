@@ -10,7 +10,7 @@ const Footer = () => {
 const styles = StyleSheet.create({
     text: {
         position: 'absolute',
-        width: 195,
+        width: 260,
         height: 14,
         // left: 99,
         // top: 796,

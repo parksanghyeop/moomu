@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Dimensions, Alert } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/StackNavigation';
 import { Logo3 } from '../components/logo';
-import Button1 from '../components/button1';
+import Button2 from '../components/button2';
 import Footer from '../components/footer';
 import * as RootNavigation from '../../RootNavigation';
 import axios from '../api/axios';
@@ -28,8 +28,14 @@ const SettingScreen: React.FC<SettingScreenProps> = (props) => {
                 <View style={styles.titleContainer}>
                     <Text style={styles.titleText}>개인정보 관리</Text>
                 </View>
-                <View style={{ marginBottom: 60 }}>
-                    <Button1
+                <View style={{ marginBottom: 30 }}>
+                    <Button2
+                        text={'개인정보수정'}
+                        onPress={() => RootNavigation.navigate('Modify')}
+                    />
+                </View>
+                <View style={{ marginBottom: 30 }}>
+                    <Button2
                         text={'회원탈퇴'}
                         onPress={() => {
                             Alert.alert(
@@ -53,8 +59,8 @@ const SettingScreen: React.FC<SettingScreenProps> = (props) => {
                         }}
                     />
                 </View>
-                <View style={{ marginBottom: 60 }}>
-                    <Button1
+                <View style={{ marginBottom: 30 }}>
+                    <Button2
                         text={'메인화면'}
                         onPress={() => RootNavigation.goBack()}
                     />

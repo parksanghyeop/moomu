@@ -157,62 +157,64 @@ const BusScreen: React.FC<BusScreenProps> = (props) => {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="#ecf0f1" />
-            {commuteLeaveState ? (
-                <View style={styles.header}>
-                    <Pressable style={{ width: '50%' }}>
-                        <Text style={[styles.headerText, styles.active]}>
-                            승차 노선
-                        </Text>
-                    </Pressable>
-                    <Pressable style={{ width: '50%' }}>
-                        <Text
-                            style={[styles.headerText]}
-                            onPress={() => {
-                                setCommutLeavState(!commuteLeaveState);
-                                slideStart();
-                                slideContentStart();
-                            }}
-                        >
-                            하차 노선
-                        </Text>
-                    </Pressable>
-                </View>
-            ) : (
-                <View style={styles.header}>
-                    <Pressable style={{ width: '50%' }}>
-                        <Text
-                            style={[styles.headerText]}
-                            onPress={() => {
-                                setCommutLeavState(!commuteLeaveState);
-                                slideEnd();
-                                slideContentEnd();
-                            }}
-                        >
-                            승차 노선
-                        </Text>
-                    </Pressable>
-                    <Pressable style={{ width: '50%' }}>
-                        <Text style={[styles.headerText, styles.active]}>
-                            하차 노선
-                        </Text>
-                    </Pressable>
-                </View>
-            )}
-            <Animated.View
-                style={[
-                    {
-                        position: 'absolute',
-                        top: 60,
-                        height: 2,
-                        width: '50%',
-                        left: 0,
-                    },
-                    line,
-                    {
-                        left: slideAnimation,
-                    },
-                ]}
-            />
+            <View style={{ position: 'relative' }}>
+                {commuteLeaveState ? (
+                    <View style={styles.header}>
+                        <Pressable style={{ width: '50%' }}>
+                            <Text style={[styles.headerText, styles.active]}>
+                                승차 노선
+                            </Text>
+                        </Pressable>
+                        <Pressable style={{ width: '50%' }}>
+                            <Text
+                                style={[styles.headerText]}
+                                onPress={() => {
+                                    setCommutLeavState(!commuteLeaveState);
+                                    slideStart();
+                                    slideContentStart();
+                                }}
+                            >
+                                하차 노선
+                            </Text>
+                        </Pressable>
+                    </View>
+                ) : (
+                    <View style={styles.header}>
+                        <Pressable style={{ width: '50%' }}>
+                            <Text
+                                style={[styles.headerText]}
+                                onPress={() => {
+                                    setCommutLeavState(!commuteLeaveState);
+                                    slideEnd();
+                                    slideContentEnd();
+                                }}
+                            >
+                                승차 노선
+                            </Text>
+                        </Pressable>
+                        <Pressable style={{ width: '50%' }}>
+                            <Text style={[styles.headerText, styles.active]}>
+                                하차 노선
+                            </Text>
+                        </Pressable>
+                    </View>
+                )}
+                <Animated.View
+                    style={[
+                        {
+                            position: 'absolute',
+                            top: 60,
+                            height: 2,
+                            width: '50%',
+                            left: 0,
+                        },
+                        line,
+                        {
+                            left: slideAnimation,
+                        },
+                    ]}
+                />
+            </View>
             {/* 버스 목록 */}
             <View
                 style={{ flexDirection: 'row', width: '100%', marginTop: 20 }}
@@ -253,6 +255,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
+        paddingTop: 16,
         // justifyContent: 'center',
     },
     container2: {
