@@ -122,8 +122,10 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
 
     const commute_or_leave = useselect ? (
         <Button1 text={'선택 확정'} onPress={confirmPress} />
-    ) : (
+    ) : co_or_le == 'COMMUTE' ? (
         <Button1 text={'승차지점변경'} onPress={() => setUseSelect(true)} />
+    ) : (
+        <Button1 text={'하차지점변경'} onPress={() => setUseSelect(true)} />
     );
 
     const back_or_cancle = useselect ? (
