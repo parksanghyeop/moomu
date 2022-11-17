@@ -10,7 +10,6 @@ import { PersistGate } from "redux-persist/integration/react";
 import LogiInPage from "./pages/LogIn";
 import DashBoard from "./pages/DashBoard";
 import RouteMap from "./pages/RouteMap";
-import RouteMapChange from "./pages/RouteMapChange";
 import NoticeBoard from "./pages/NoticeBoard";
 import NoticeWriting from "./pages/NoticeWriting";
 import NoticeDeatil from "./pages/NoticeDeatil";
@@ -35,7 +34,6 @@ function App() {
                 <Route path="/login" element={<LogiInPage />} />
                 <Route path="" element={<RequireAuth />}>
                   <Route path="/main" element={<DashBoard />} />
-                  <Route path="/map" element={<RouteMap />} />
                   <Route path="/notice" element={<NoticeBoard />} />
                   <Route path="/notice/new" element={<NoticeWriting />} />
                   <Route path="/notice/:id" element={<NoticeDeatil />} />
@@ -43,11 +41,7 @@ function App() {
                   <Route path="/faq" element={<QuestionBoard />} />
                   <Route path="/faq/new" element={<AnswerQuestion />} />
                   <Route path="/faq/:id" element={<QuestionDeatil />} />
-                  <Route
-                    path="/map/:id"
-                    onLeave={reload()}
-                    element={<RouteMapChange />}
-                  ></Route>
+                  <Route path="/map/:id" onLeave={reload()} element={<RouteMap />}></Route>
                 </Route>
               </Routes>
             </BrowserRouter>

@@ -5,20 +5,22 @@ import "./RouteMap.css";
 import Modal from "../componentes/modal";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { initRoute, stationDown, staionUp, deleteStation, addStation, updateRoute, reload, updateStation } from "../reducers/stationSlice";
-import { useParams, useNavigation } from "react-router-dom";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import stationSlice, { loadRoute, stationDown, staionUp, deleteStation, addStation, updateStation, updateRoute, reload, setStation } from "../reducers/stationSlice";
+import { useParams, useNavigation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretUp, faSortUp, faCaretDown, faSortDown, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCaretUp, faSortUp, faCaretDown, faSortDown, faTrash, faClose } from "@fortawesome/free-solid-svg-icons";
+import bus_stop from "../assets/bus_stop_small.png";
 
 function RouteMap() {
   const [routesDriving, setRoutesDriving] = useState({});
   const [routeEmpty, setRouteEmpty] = useState(false);
   const [modalHeader, setModalHeader] = useState("header");
   const [btnText, setbtnText] = useState("btn");
-  const [btnDet, setbtnDet] = useState(true);
   const [delStation, setDelstation] = useState(null);
   const [newStation, setNewstation] = useState({});
   const [newStationName, setNewstationName] = useState("");
+  const [arrived_time, setArrivedTime] = useState("08:30");
   const [map, setNaverMap] = useState({});
   const [markers, setMarkers] = useState([]);
   const dispatch = useDispatch();
@@ -26,13 +28,21 @@ function RouteMap() {
   const dataFetchedRef = useRef(false);
   const isLoaded = useSelector((state) => state.station.isLoaded);
   const stationInfos = useSelector((state) => state.station.stations);
+  const polyInfos = useSelector((state) => state.station.poly);
   const busName = useSelector((state) => state.station.routeName);
-  const params = { id: 55 };
+  const params = useParams();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpen2, setModalOpen2] = useState(false);
+  const [modalOpen3, setModalOpen3] = useState(false);
   const [targetMarker, setTarget] = useState(-1);
   const { naver } = window;
 
+  const [stationList, setStationList] = useState([]);
+
+  const stopLogo = {
+    url: bus_stop,
+    scaledSize: new naver.maps.Size(24, 37),
+  };
   const openModal = () => {
     setModalOpen(true);
   };
@@ -45,6 +55,12 @@ function RouteMap() {
   const closeModal2 = () => {
     setModalOpen2(false);
   };
+  const openModal3 = () => {
+    setModalOpen3(true);
+  };
+  const closeModal3 = () => {
+    setModalOpen3(false);
+  };
   const isEmpty = function (val) {
     if (val === "" || val === undefined || val === null || (val !== null && typeof val === "object" && !Object.keys(val).length)) {
       return true;
@@ -53,25 +69,31 @@ function RouteMap() {
     }
   };
   const getStaticMap2Src = function (aUrl, imgId) {
-    var oReq = new XMLHttpRequest();
-    oReq.open("GET", aUrl, true);
-    oReq.setRequestHeader("X-NCP-APIGW-API-KEY-ID", "yxdllgza3i");
-    oReq.setRequestHeader("X-NCP-APIGW-API-KEY", "avFkOp6qAIH3quEtCysdzfCfqSWkeyhqgYl8x8t9");
-    // use multiple setRequestHeader calls to set multiple values
-    oReq.responseType = "arraybuffer";
-    oReq.onload = function (oEvent) {
-      var arrayBuffer = oReq.response; // Note: not oReq.responseText
-      if (arrayBuffer) {
-        var u8 = new Uint8Array(arrayBuffer);
-        var b64encoded = btoa(String.fromCharCode.apply(null, u8));
-        var mimetype = "image/png"; // or whatever your image mime type is
-        document.getElementById(imgId).src = "data:" + mimetype + ";base64," + b64encoded;
-      }
-    };
-    oReq.send(null);
+    // var oReq = new XMLHttpRequest();
+    // oReq.open("GET", aUrl, true);
+    // oReq.setRequestHeader("X-NCP-APIGW-API-KEY-ID", process.env.REACT_APP_API_KEY_ID);
+    // oReq.setRequestHeader("X-NCP-APIGW-API-KEY", process.env.REACT_APP_API_KEY);
+    // // use multiple setRequestHeader calls to set multiple values
+    // oReq.responseType = "arraybuffer";
+    // oReq.onload = function (oEvent) {
+    //   var arrayBuffer = oReq.response; // Note: not oReq.responseText
+    //   if (arrayBuffer) {
+    //     var u8 = new Uint8Array(arrayBuffer);
+    //     var b64encoded = btoa(String.fromCharCode.apply(null, u8));
+    //     var mimetype = "image/png"; // or whatever your image mime type is
+    //     document.getElementById(imgId).src = "data:" + mimetype + ";base64," + b64encoded;
+    //   }
+    // };
+    // oReq.send(null);
+    setTimeout(() => {
+      var staticImg = document.getElementById(imgId);
+      // console.log(aUrl, imgId, staticImg);
+      staticImg.src = aUrl;
+    }, 0);
   };
   const staticMapUrl = function (coordinate, level) {
-    return `/map-static/v2/raster?w=300&h=300&markers=type:d|size:mid|pos:${coordinate.x}%20${coordinate.y}&center=${coordinate.x},${coordinate.y}&level=${level}`;
+    // return `/map-static/v2/raster?w=300&h=300&markers=type:d|size:mid|pos:${coordinate.x}%20${coordinate.y}&center=${coordinate.x},${coordinate.y}&level=${level}`;
+    return `https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?w=300&h=300&markers=type:d|size:mid|pos:${coordinate.x}%20${coordinate.y}&center=${coordinate.x},${coordinate.y}&level=${level}&X-NCP-APIGW-API-KEY-ID=${process.env.REACT_APP_API_KEY_ID}&X-NCP-APIGW-API-KEY=${process.env.REACT_APP_API_KEY}`;
   };
 
   window.addEventListener("beforeunload", function (e) {
@@ -79,6 +101,14 @@ function RouteMap() {
     e.returnValue = "";
     dispatch(reload());
   });
+  const navigate = useNavigate();
+  const goList = function () {
+    navigate("/main");
+  };
+
+  useEffect(() => {
+    setStationList(stationInfos);
+  }, [stationInfos]);
 
   useEffect(() => {
     return () => dispatch(reload());
@@ -86,12 +116,12 @@ function RouteMap() {
 
   useEffect(() => {
     if (dataFetchedRef.current) return;
-    setRouteEmpty(isEmpty(stationInfos));
+    setRouteEmpty(isEmpty(stationList));
     console.log(params);
     console.log(routeEmpty);
     if (!isLoaded) {
-      dispatch(initRoute(params));
-      console.log(stationInfos);
+      dispatch(loadRoute(params));
+      console.log(stationList);
     }
   }, []);
 
@@ -110,83 +140,49 @@ function RouteMap() {
       },
     };
     const naverMap = new naver.maps.Map(mapElement.current, mapOptions);
-    let points = [];
+    let centerLat = 0;
+    let centerLng = 0;
+    let zoomLevel = 12;
 
-    for (var loc in stationInfos) {
+    for (var loc in stationList) {
       const newMarker = new naver.maps.Marker({
-        position: stationInfos[loc].stationLatLng,
+        position: stationList[loc].stationLatLng,
         map: naverMap,
-        title: stationInfos[loc].stationName,
+        title: stationList[loc].stationName,
+        arrived_time: stationList[loc].arrived_time,
+        icon: stopLogo,
       });
       naver.maps.Event.addListener(newMarker, "click", markerClick(loc));
       let tmpMarkers = markers;
       tmpMarkers.push(newMarker);
       setMarkers(tmpMarkers);
       // console.log(markers, newMarker);
-      points.push(convetLatLngCorr(stationInfos[loc].stationLatLng));
+      if (loc == 0 || loc == stationList.length - 1) {
+        centerLat += stationList[loc].stationLatLng._lat;
+        centerLng += stationList[loc].stationLatLng._lng;
+      }
     }
-    // console.log("////////////////////////////////");
-    // console.log(points);
-    // console.log(points[0].toString());
-    const start = points[0];
-    const goal = points.slice(-1);
-    var temp = [];
-    for (var i = 1; i < points.length - 1; i++) {
-      temp.push(points[i]);
+    centerLat /= 2;
+    centerLng /= 2;
+    const cneterLoc = new naver.maps.LatLng(centerLat, centerLng);
+    naverMap.updateBy(cneterLoc, zoomLevel);
+    if (isEmpty(stationInfos)) naverMap.updateBy(location, zoomLevel);
+
+    let polylinePath = [];
+    for (let i = 0; i < polyInfos.length; i++) {
+      polylinePath.push(new naver.maps.LatLng(polyInfos[i].latitude, polyInfos[i].longitude));
     }
-    const waypoints = temp.join("|");
-    const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
-    console.log(direction15Url);
-    // naver.maps.Service.geocode(
-    //   {
-    //     query: "대전광역시 유성구 덕명동 146",
-    //   },
-    //   function (status, response) {
-    //     if (status !== naver.maps.Service.Status.OK) {
-    //       return alert("Something wrong!");
-    //     }
-
-    //     var result = response.v2, // 검색 결과의 컨테이너
-    //       items = result.addresses; // 검색 결과의 배열
-    //     // console.log(result, items); //
-    //     // do Something
-    //   }
-    // );
-    // let tmpURL = "navermap" + direction15Url;
-    // console.log(tmpURL);
-
-    // naverMap 길찾기 요청, 경로 그리기
-    if (isLoaded)
-      axios
-        .get(direction15Url, {
-          headers: {
-            "X-NCP-APIGW-API-KEY-ID": "yxdllgza3i",
-            "X-NCP-APIGW-API-KEY": "avFkOp6qAIH3quEtCysdzfCfqSWkeyhqgYl8x8t9",
-            // "x-requested-with": "http://192.168.0.13:3000",
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-          let paths = response.data.route.trafast[0].path;
-          setRoutesDriving(response.data.route.trafast[0].path);
-          let polylinePath = [];
-          // console.log(paths, routesDriving);
-          paths.map((path) => {
-            polylinePath.push(new naver.maps.LatLng(path[1], path[0]));
-          });
-          new naver.maps.Polyline({
-            path: polylinePath, //좌표배열
-            strokeColor: "#3182CE", //선의 색 파랑
-            strokeOpacity: 0.8, //선의 투명도
-            strokeWeight: 6, //선의 두께
-            map: naverMap, //만들어 놓은 지도
-          });
-        });
-
+    new naver.maps.Polyline({
+      path: polylinePath, //좌표배열
+      strokeColor: "#3182CE", //선의 색 파랑
+      strokeOpacity: 0.8, //선의 투명도
+      strokeWeight: 6, //선의 두께
+      map: naverMap, //만들어 놓은 지도
+    });
     // 클릭 event listener
     naverMap.addListener("click", (e) => mapClick(e));
     setNaverMap(naverMap);
-  }, [stationInfos]);
+  }, [stationList]);
   const convetLatLngCorr = function (LatLng) {
     return LatLng.x.toString() + "," + LatLng.y.toString();
   };
@@ -213,22 +209,120 @@ function RouteMap() {
       const marker = markers[i];
       console.log(marker, marker.position);
       setNewstationName(marker.title);
+      setArrivedTime(marker.arrived_time);
       setTarget(i);
       const cordUrl = staticMapUrl(marker.position, 14);
       getStaticMap2Src(cordUrl, "cordMapImgTag2");
     };
   };
 
+  // fake data generator
+  const getItems = (count) =>
+    Array.from({ length: count }, (v, k) => k).map((k) => ({
+      id: `item-${k}`,
+      content: `item ${k}`,
+    }));
+
+  // a little function to help us with reordering the result
+  const reorder = (list, startIndex, endIndex) => {
+    let result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+
+    result = result.map((item, index) => {
+      if (item.order === index) {
+        return item;
+      } else {
+        return {
+          ...item,
+          order: index,
+        };
+      }
+    });
+
+    return result;
+  };
+
+  const grid = 8;
+
+  const getItemStyle = (isDragging, draggableStyle) => ({
+    // some basic styles to make the items look a bit nicer
+    userSelect: "none",
+    paddingLeft: grid,
+    paddingRight: grid,
+    paddingTop: grid,
+    paddingBottom: grid,
+    margin: `0 0 ${grid}px 0`,
+
+    // change background colour if dragging
+    background: isDragging ? "#63b3ed" : "white",
+    color: isDragging ? "white" : "black",
+    boxShadow: "0 1px .625rem 0 hsla(210, 7%, 22%, .06), 0 .125rem .25rem 0 hsla(210, 7%, 22%, .08)",
+    border: "1px solid #e8ebed",
+    borderRadius: "0.5rem",
+    // height: "10vh",
+
+    // styles we need to apply on draggables
+    ...draggableStyle,
+  });
+
+  const queryAttr = "data-rbd-drag-handle-draggable-id";
+
+  const [placeholderProps, setPlaceholderProps] = useState({});
+
+  const onDragEnd = (result) => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+    setPlaceholderProps({});
+    setStationList(reorder(stationList, result.source.index, result.destination.index));
+    // dispatch(setStation);
+  };
+
+  const onDragUpdate = (update) => {
+    if (!update.destination) {
+      return;
+    }
+    const draggableId = update.draggableId;
+    const destinationIndex = update.destination.index;
+
+    const domQuery = `[${queryAttr}='${draggableId}']`;
+    const draggedDOM = document.querySelector(domQuery);
+
+    if (!draggedDOM) {
+      return;
+    }
+    const { clientHeight, clientWidth } = draggedDOM;
+
+    const clientY =
+      parseFloat(window.getComputedStyle(draggedDOM.parentNode).paddingTop) +
+      [...draggedDOM.parentNode.children].slice(0, destinationIndex).reduce((total, curr) => {
+        const style = curr.currentStyle || window.getComputedStyle(curr);
+        const marginBottom = parseFloat(style.marginBottom);
+        return total + curr.clientHeight + marginBottom;
+      }, 0);
+
+    setPlaceholderProps({
+      clientHeight,
+      clientWidth,
+      clientY,
+      clientX: parseFloat(window.getComputedStyle(draggedDOM.parentNode).paddingLeft),
+    });
+  };
+
   return (
-    <div className="mapPage">
+    <div className="mapPage mt-8">
       <Modal open={modalOpen2} close={closeModal2} header={modalHeader}>
-        {/* // Modal.js <main> {props.children} </main>에 내용이 입력된다. 리액트 함수형 모달 */}
-        {/* {newCord} */}
-        <label className="input-group input-group-lg">
+        <label className="input-group input-group-lg justify-center	">
           <span className="">이름</span>
-          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-full max-w-xs" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
+          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-3/4 max-w-xs text-center" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
         </label>
-        <img id="cordMapImgTag2" alt="" />
+        <label className="input-group input-group-lg justify-center	">
+          <span className="">도착 시간</span>
+          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
+        </label>
+        <img id="cordMapImgTag2" alt="" src="" />
         <button
           className="btn btn-primary mt-3"
           onClick={() => {
@@ -237,6 +331,7 @@ function RouteMap() {
             var tmpMarkers = markers;
             var marker = tmpMarkers.splice(seq, 1);
             marker[0].title = newStationName;
+            marker[0].arrived_time = arrived_time;
             tmpMarkers.splice(seq, 0, marker[0]);
             setMarkers(tmpMarkers);
             marker.target = seq;
@@ -249,99 +344,189 @@ function RouteMap() {
         </button>
       </Modal>
       <Modal open={modalOpen} close={closeModal} header={modalHeader}>
-        {/* // Modal.js <main> {props.children} </main>에 내용이 입력된다. 리액트 함수형 모달 */}
-        {/* {newCord} */}
-        {btnDet && (
-          <label className="input-group input-group-lg">
+        <div>
+          <label className="input-group input-group-lg justify-center	">
             <span className="">이름</span>
-            <input type="text" placeholder="Type here" className="input input-bordered input-lg w-full max-w-xs" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
+            <input
+              type="text"
+              placeholder="Type here"
+              className="input input-bordered input-lg w-3/4 max-w-xs text-center"
+              value={newStationName}
+              onChange={(e) => setNewstationName(e.target.value)}
+            />
           </label>
-        )}
-        <img id="cordMapImgTag" alt="" />
+          <label className="input-group input-group-lg justify-center	">
+            <span className="">도착 시간</span>
+            <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
+          </label>
+        </div>
+        <img
+          id="cordMapImgTag"
+          alt=""
+          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=300&h=300&center=127.1054221,37.3591614&level=16&X-NCP-APIGW-API-KEY-ID=${process.env.REACT_APP_API_KEY_ID}`}
+        />
+
         <button
           className="btn btn-primary mt-3"
           onClick={() => {
-            if (btnDet) {
-              // TODO: Add station
-              let data = newStation;
-              data.name = newStationName;
-              const mapLoc = new naver.maps.LatLng(data.lat, data.lng);
-              setNewstation(data);
-              console.log(newStation);
-              const newMarker = new naver.maps.Marker({
-                position: mapLoc,
-                map: map,
-              });
-              setMarkers([...markers, newMarker]);
-              console.log(markers);
-              dispatch(addStation(newStation));
-              closeModal();
-            } else {
-              // TODO: Delete station
-              const tmpMarkers = markers[delStation];
-              console.log(tmpMarkers);
-              tmpMarkers.setMap(null);
-              dispatch(deleteStation(delStation));
-              setbtnDet(true);
-              closeModal();
-            }
+            // TODO: Add station
+            let data = newStation;
+            data.name = newStationName;
+            data.arrived_time = arrived_time;
+            const mapLoc = new naver.maps.LatLng(data.lat, data.lng);
+            setNewstation(data);
+            console.log(newStation);
+            const newMarker = new naver.maps.Marker({
+              position: mapLoc,
+              map: map,
+              icon: stopLogo,
+              title: newStationName,
+              arrived_time: arrived_time,
+            });
+            setMarkers([...markers, newMarker]);
+            console.log(markers);
+            dispatch(addStation(newStation));
+            closeModal();
           }}
         >
           {btnText}
         </button>
       </Modal>
-      <p className="bodyTitle "> {busName} 노선 추가 </p>
+      <Modal open={modalOpen3} close={closeModal3} header={modalHeader}>
+        <img
+          id="cordMapImgTag"
+          alt=""
+          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=300&h=300&center=127.1054221,37.3591614&level=16&X-NCP-APIGW-API-KEY-ID=${process.env.REACT_APP_API_KEY_ID}`}
+        />
+
+        <button
+          className="btn btn-primary mt-3"
+          onClick={() => {
+            // TODO: Delete station
+            const tmpMarkers = markers[delStation];
+            console.log(tmpMarkers);
+            tmpMarkers.setMap(null);
+            dispatch(deleteStation(delStation));
+            closeModal3();
+          }}
+        >
+          {btnText}
+        </button>
+      </Modal>
+      {/* <p className="bodyTitle text-ellipsis overflow-hidden"> {busName} 노선 관리 </p> */}
       <div className="mapContainer">
-        <div className="routeContainer">
-          <ul className="steps steps-vertical">
-            {stationInfos.map((station) => {
-              return (
-                <li className="step step-primary" key={station.id}>
-                  <span className="stationName">{station.stationName}</span>
-                  <div className="updownBtnFrame">
-                    <FontAwesomeIcon
-                      icon={faCaretUp}
-                      className="stationUpDown"
-                      onClick={() => {
-                        dispatch(staionUp(station.id));
-                      }}
-                    />
-                    <FontAwesomeIcon
-                      icon={faCaretDown}
-                      className="stationUpDown"
-                      onClick={() => {
-                        dispatch(stationDown(station.id));
-                      }}
-                    />
-                    <FontAwesomeIcon
-                      icon={faTrash}
-                      className="stationUpDown stationDelete"
-                      onClick={() => {
-                        const cordUrl = staticMapUrl(station.stationLatLng, 15);
-                        getStaticMap2Src(cordUrl, "cordMapImgTag");
-                        setModalHeader("정류장 삭제");
-                        setbtnText("삭제");
-                        setbtnDet(false);
-                        setDelstation(station.id);
-                        openModal();
-                      }}
-                    />
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+        <div className="flex flex-col">
+          <div className="routeContainer relative">
+            <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
+              <ul className="">
+                <Droppable droppableId="droppable">
+                  {(provided, snapshot) => (
+                    <div
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      // style={getListStyle(snapshot.isDraggingOver)}
+                    >
+                      {stationList.map((station, index) => {
+                        return (
+                          <Draggable key={station.id} draggableId={station.id} index={index}>
+                            {(provided, snapshot) => (
+                              <div
+                                ref={provided.innerRef} // 드래그가 시작되면 이 DOM에 ref가 달린다.
+                                {...provided.draggableProps} // 드래그 핸들러를 달기 위한 props
+                                {...provided.dragHandleProps} // 드래그 핸들러를 달기 위한 props
+                                style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                              >
+                                <li key={station.id}>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                      textAlign: "left",
+                                    }}
+                                  >
+                                    <div className="flex item-center">
+                                      <span className="mr-4">{parseInt(station.id) + 1}</span>
+                                      <span
+                                        className="stationName"
+                                        style={{
+                                          fontSize: "16px",
+                                          textAlign: "left",
+                                          wordBreak: "keep-all",
+                                        }}
+                                      >
+                                        {station.stationName}
+                                      </span>
+                                    </div>
+                                    <div className="updownBtnFrame">
+                                      <i
+                                        className="fa-regular fa-close text-sm"
+                                        onClick={() => {
+                                          const cordUrl = staticMapUrl(station.stationLatLng, 15);
+                                          getStaticMap2Src(cordUrl, "cordMapImgTag");
+                                          setModalHeader("정류장 삭제");
+                                          setbtnText("삭제");
+                                          setDelstation(station.id);
+                                          openModal3();
+                                        }}
+                                      />
+                                    </div>
+                                  </div>
+                                </li>
+                              </div>
+                            )}
+                          </Draggable>
+                        );
+                      })}
+
+                      {provided.placeholder}
+                      {/* <CustomPlaceholder snapshot={snapshot} /> */}
+                      {/* <div
+                        style={{
+                          position: "absolute",
+                          top: placeholderProps.clientY,
+                          left: placeholderProps.clientX,
+                          height: placeholderProps.clientHeight,
+                          background: "#e0e0e0",
+                          width: placeholderProps.clientWidth,
+                        }}
+                      ></div> */}
+                    </div>
+                  )}
+                </Droppable>
+              </ul>
+            </DragDropContext>
+          </div>
+          <label htmlFor="my-modal" className="btn btn-primary btn-outline btn-sm mt-3 mr-2">
+            <i className="fa-solid fa-plus"></i>&nbsp; 새 정류장 추가
+          </label>
+
+          {/* Put this part before </body> tag */}
+          <input type="checkbox" id="my-modal" className="modal-toggle" />
+          <div className="modal">
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">새 정류장 추가</h3>
+              <p className="py-4">지도에서 추가할 정류장의 위치를 클릭해주세요.</p>
+              <div className="modal-action">
+                <label htmlFor="my-modal" className="btn btn-primary">
+                  확인
+                </label>
+              </div>
+            </div>
+          </div>
+          <button
+            className="btn btn-primary btn-sm mt-2 mr-2"
+            onClick={async function () {
+              await dispatch(setStation(stationList));
+              await dispatch(updateRoute(params));
+              goList();
+            }}
+          >
+            <i className="fa-solid fa-floppy-disk"></i>&nbsp; 변경 사항 저장
+          </button>
         </div>
-        <div ref={mapElement} className="naverMap" />
+        <div ref={mapElement} className="naverMap content-box" />
       </div>
-      <button
-        className="btn btn-primary saveBtn mt-3"
-        onClick={() => {
-          dispatch(updateRoute(params));
-        }}
-      >
-        노선 추가
-      </button>
     </div>
   );
 }
