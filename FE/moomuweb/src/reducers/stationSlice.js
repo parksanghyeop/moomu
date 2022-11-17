@@ -2,12 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 var isEmpty = function (val) {
-  if (
-    val === "" ||
-    val === undefined ||
-    val === null ||
-    (val !== null && typeof val === "object" && !Object.keys(val).length)
-  ) {
+  if (val === "" || val === undefined || val === null || (val !== null && typeof val === "object" && !Object.keys(val).length)) {
     return true;
   } else {
     return false;
@@ -52,85 +47,82 @@ export const loadRoute = createAsyncThunk("get route", async (busId) => {
   return data;
 });
 
-export const updateRoute = createAsyncThunk(
-  "Update Bus Route",
-  async (busId, { getState }) => {
-    const state = await getState();
-    // let points = [];
-    // for (let loc = 0; loc < state.station.stations.length; loc++) {
-    //   const element = state.station.stations[loc].stationLatLng;
-    //   points.push(element.x.toString() + "," + element.y.toString());
-    // }
-    // const start = points[0];
-    // const goal = points.slice(-1);
-    // var temp = [];
-    // for (var i = 1; i < points.length - 1; i++) {
-    //   temp.push(points[i]);
-    // }
-    // const waypoints = temp.join("|");
-    // const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
-    // console.log(direction15Url);
+export const updateRoute = createAsyncThunk("Update Bus Route", async (busId, { getState }) => {
+  const state = await getState();
+  // let points = [];
+  // for (let loc = 0; loc < state.station.stations.length; loc++) {
+  //   const element = state.station.stations[loc].stationLatLng;
+  //   points.push(element.x.toString() + "," + element.y.toString());
+  // }
+  // const start = points[0];
+  // const goal = points.slice(-1);
+  // var temp = [];
+  // for (var i = 1; i < points.length - 1; i++) {
+  //   temp.push(points[i]);
+  // }
+  // const waypoints = temp.join("|");
+  // const direction15Url = `/map-direction-15/v1/driving?start=${start}&goal=${goal}&waypoints=${waypoints}&option=trafast`;
+  // console.log(direction15Url);
 
-    // const options = {
-    //   method: "get",
-    //   headers: {
-    //     "X-NCP-APIGW-API-KEY-ID": process.env.REACT_APP_API_KEY_ID,
-    //     "X-NCP-APIGW-API-KEY": process.env.REACT_APP_API_KEY,
-    //   },
-    // };
-    // let polyLine = [];
-    // await axios(direction15Url, options).then((response) => {
-    //   console.log(response.data);
-    //   let paths = response.data.route.trafast[0].path;
-    //   console.log(polyLine);
-    //   paths.map((path) => {
-    //     polyLine.push({
-    //       bus_id: busId.id,
-    //       latitude: path[1],
-    //       longitude: path[0],
-    //     });
-    //   });
-    // });
-    const updateUrl = `https://k7b202.p.ssafy.io/api/shuttlebus/station/edit/${busId.id}`;
-    let bodyData = [];
-    for (let i in state.station.stations) {
-      const data = state.station.stations[i];
-      bodyData.push({
-        bus_id: busId.id,
-        name: data.stationName,
-        lat: data.stationLatLng._lat,
-        lng: data.stationLatLng._lng,
-        order: data.order,
-        arrived_time: data.arrived_time,
-      });
-    }
-    var config = {
-      method: "put",
-      url: updateUrl,
-      headers: {
-        accept: "application/json",
-        Authorization: `Bearer ${state.token.rawToken.access_token}`,
-      },
-      data: [...bodyData],
-      // {
-      //   station_list: bodyData,
-      //   poly_list: polyLine,
-      // },
-    };
-    console.log(config);
-    console.log(state.station.originCopy === state.station.stations);
-    const isDataChange = state.station.originCopy === state.station.stations;
-    if (!isDataChange) {
-      const response = await axios(config);
-      console.log(response);
-    } else {
-      console.log("nothing to update");
-    }
+  // const options = {
+  //   method: "get",
+  //   headers: {
+  //     "X-NCP-APIGW-API-KEY-ID": process.env.REACT_APP_API_KEY_ID,
+  //     "X-NCP-APIGW-API-KEY": process.env.REACT_APP_API_KEY,
+  //   },
+  // };
+  // let polyLine = [];
+  // await axios(direction15Url, options).then((response) => {
+  //   console.log(response.data);
+  //   let paths = response.data.route.trafast[0].path;
+  //   console.log(polyLine);
+  //   paths.map((path) => {
+  //     polyLine.push({
+  //       bus_id: busId.id,
+  //       latitude: path[1],
+  //       longitude: path[0],
+  //     });
+  //   });
+  // });
+  const updateUrl = `https://k7b202.p.ssafy.io/api/shuttlebus/station/edit/${busId.id}`;
+  let bodyData = [];
+  for (let i in state.station.stations) {
+    const data = state.station.stations[i];
+    bodyData.push({
+      bus_id: busId.id,
+      name: data.stationName,
+      lat: data.stationLatLng._lat,
+      lng: data.stationLatLng._lng,
+      order: data.order,
+      arrived_time: data.arrived_time,
+    });
   }
-);
+  var config = {
+    method: "put",
+    url: updateUrl,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${state.token.rawToken.access_token}`,
+    },
+    data: [...bodyData],
+    // {
+    //   station_list: bodyData,
+    //   poly_list: polyLine,
+    // },
+  };
+  console.log(config);
+  console.log(state.station.originCopy === state.station.stations);
+  const isDataChange = state.station.originCopy === state.station.stations;
+  if (!isDataChange) {
+    const response = await axios(config);
+    console.log(response);
+  } else {
+    console.log("nothing to update");
+  }
+});
 
 export const staionSlice = createSlice({
-  name: "staionSlice",
+  name: "selectionSlice",
   initialState: {
     routeName: "",
     stations: [],
@@ -219,15 +211,5 @@ export const staionSlice = createSlice({
   },
 });
 
-export const {
-  initRoute,
-  reload,
-  stationDown,
-  staionUp,
-  deleteStation,
-  addStation,
-  updateStation,
-  setStation,
-} = staionSlice.actions;
-// export const tokenSelector = (state) => state.token.token;
+export const { initRoute, reload, stationDown, staionUp, deleteStation, addStation, updateStation, setStation } = staionSlice.actions;
 export default staionSlice.reducer;
