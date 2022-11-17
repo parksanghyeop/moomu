@@ -216,7 +216,8 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
                 <MapView
                     style={styles.map}
                     ref={mapRef}
-                    showsUserLocation={false}
+                    showsUserLocation={true}
+                    showsMyLocationButton={false}
                     provider={'google'}
                     initialRegion={{
                         latitude: lat,

@@ -29,11 +29,10 @@ instance.interceptors.response.use(
         if (error.response && error.response.status) {
             switch (error.response.status) {
                 case 401:
-                    RootNavigation.reset('LoginSignUp', { id: 1 });
+                    RootNavigation.resetDefault('start');
                     break;
                 case 451:
-                    await AsyncStorage.removeData('token');
-                    RootNavigation.reset('LoginSignUp', { id: 1 });
+                    RootNavigation.resetDefault('start');
                     break;
                 default:
                     return Promise.reject(error);
