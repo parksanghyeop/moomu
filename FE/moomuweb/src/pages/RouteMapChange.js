@@ -17,7 +17,6 @@ function RouteMap() {
   const [routeEmpty, setRouteEmpty] = useState(false);
   const [modalHeader, setModalHeader] = useState("header");
   const [btnText, setbtnText] = useState("btn");
-  const [btnDet, setbtnDet] = useState(true);
   const [delStation, setDelstation] = useState(null);
   const [newStation, setNewstation] = useState({});
   const [newStationName, setNewstationName] = useState("");
@@ -34,6 +33,7 @@ function RouteMap() {
   const params = useParams();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpen2, setModalOpen2] = useState(false);
+  const [modalOpen3, setModalOpen3] = useState(false);
   const [targetMarker, setTarget] = useState(-1);
   const { naver } = window;
 
@@ -42,8 +42,6 @@ function RouteMap() {
   const stopLogo = {
     url: bus_stop,
     scaledSize: new naver.maps.Size(24, 37),
-    // origin: new naver.maps.Point(0, 0),
-    // anchor: new naver.maps.Point(12, 37),
   };
   const openModal = () => {
     setModalOpen(true);
@@ -57,6 +55,12 @@ function RouteMap() {
   const closeModal2 = () => {
     setModalOpen2(false);
   };
+  const openModal3 = () => {
+    setModalOpen3(true);
+  };
+  const closeModal3 = () => {
+    setModalOpen3(false);
+  };
   const isEmpty = function (val) {
     if (val === "" || val === undefined || val === null || (val !== null && typeof val === "object" && !Object.keys(val).length)) {
       return true;
@@ -65,25 +69,31 @@ function RouteMap() {
     }
   };
   const getStaticMap2Src = function (aUrl, imgId) {
-    var oReq = new XMLHttpRequest();
-    oReq.open("GET", aUrl, true);
-    oReq.setRequestHeader("X-NCP-APIGW-API-KEY-ID", process.env.REACT_APP_API_KEY_ID);
-    oReq.setRequestHeader("X-NCP-APIGW-API-KEY", process.env.REACT_APP_API_KEY);
-    // use multiple setRequestHeader calls to set multiple values
-    oReq.responseType = "arraybuffer";
-    oReq.onload = function (oEvent) {
-      var arrayBuffer = oReq.response; // Note: not oReq.responseText
-      if (arrayBuffer) {
-        var u8 = new Uint8Array(arrayBuffer);
-        var b64encoded = btoa(String.fromCharCode.apply(null, u8));
-        var mimetype = "image/png"; // or whatever your image mime type is
-        document.getElementById(imgId).src = "data:" + mimetype + ";base64," + b64encoded;
-      }
-    };
-    oReq.send(null);
+    // var oReq = new XMLHttpRequest();
+    // oReq.open("GET", aUrl, true);
+    // oReq.setRequestHeader("X-NCP-APIGW-API-KEY-ID", process.env.REACT_APP_API_KEY_ID);
+    // oReq.setRequestHeader("X-NCP-APIGW-API-KEY", process.env.REACT_APP_API_KEY);
+    // // use multiple setRequestHeader calls to set multiple values
+    // oReq.responseType = "arraybuffer";
+    // oReq.onload = function (oEvent) {
+    //   var arrayBuffer = oReq.response; // Note: not oReq.responseText
+    //   if (arrayBuffer) {
+    //     var u8 = new Uint8Array(arrayBuffer);
+    //     var b64encoded = btoa(String.fromCharCode.apply(null, u8));
+    //     var mimetype = "image/png"; // or whatever your image mime type is
+    //     document.getElementById(imgId).src = "data:" + mimetype + ";base64," + b64encoded;
+    //   }
+    // };
+    // oReq.send(null);
+    setTimeout(() => {
+      var staticImg = document.getElementById(imgId);
+      // console.log(aUrl, imgId, staticImg);
+      staticImg.src = aUrl;
+    }, 0);
   };
   const staticMapUrl = function (coordinate, level) {
-    return `/map-static/v2/raster?w=300&h=300&markers=type:d|size:mid|pos:${coordinate.x}%20${coordinate.y}&center=${coordinate.x},${coordinate.y}&level=${level}`;
+    // return `/map-static/v2/raster?w=300&h=300&markers=type:d|size:mid|pos:${coordinate.x}%20${coordinate.y}&center=${coordinate.x},${coordinate.y}&level=${level}`;
+    return `https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?w=300&h=300&markers=type:d|size:mid|pos:${coordinate.x}%20${coordinate.y}&center=${coordinate.x},${coordinate.y}&level=${level}&X-NCP-APIGW-API-KEY-ID=${process.env.REACT_APP_API_KEY_ID}&X-NCP-APIGW-API-KEY=${process.env.REACT_APP_API_KEY}`;
   };
 
   window.addEventListener("beforeunload", function (e) {
@@ -304,8 +314,6 @@ function RouteMap() {
   return (
     <div className="mapPage mt-8">
       <Modal open={modalOpen2} close={closeModal2} header={modalHeader}>
-        {/* // Modal.js <main> {props.children} </main>에 내용이 입력된다. 리액트 함수형 모달 */}
-        {/* {newCord} */}
         <label className="input-group input-group-lg justify-center	">
           <span className="">이름</span>
           <input type="text" placeholder="Type here" className="input input-bordered input-lg w-3/4 max-w-xs text-center" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
@@ -314,7 +322,7 @@ function RouteMap() {
           <span className="">도착 시간</span>
           <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
         </label>
-        <img id="cordMapImgTag2" alt="" />
+        <img id="cordMapImgTag2" alt="" src="" />
         <button
           className="btn btn-primary mt-3"
           onClick={() => {
@@ -336,58 +344,70 @@ function RouteMap() {
         </button>
       </Modal>
       <Modal open={modalOpen} close={closeModal} header={modalHeader}>
-        {/* // Modal.js <main> {props.children} </main>에 내용이 입력된다. 리액트 함수형 모달 */}
-        {/* {newCord} */}
-        {btnDet && (
-          <div>
-            <label className="input-group input-group-lg justify-center	">
-              <span className="">이름</span>
-              <input
-                type="text"
-                placeholder="Type here"
-                className="input input-bordered input-lg w-3/4 max-w-xs text-center"
-                value={newStationName}
-                onChange={(e) => setNewstationName(e.target.value)}
-              />
-            </label>
-            <label className="input-group input-group-lg justify-center	">
-              <span className="">도착 시간</span>
-              <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
-            </label>
-          </div>
-        )}
-        <img id="cordMapImgTag" alt="" />
+        <div>
+          <label className="input-group input-group-lg justify-center	">
+            <span className="">이름</span>
+            <input
+              type="text"
+              placeholder="Type here"
+              className="input input-bordered input-lg w-3/4 max-w-xs text-center"
+              value={newStationName}
+              onChange={(e) => setNewstationName(e.target.value)}
+            />
+          </label>
+          <label className="input-group input-group-lg justify-center	">
+            <span className="">도착 시간</span>
+            <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
+          </label>
+        </div>
+        <img
+          id="cordMapImgTag"
+          alt=""
+          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=300&h=300&center=127.1054221,37.3591614&level=16&X-NCP-APIGW-API-KEY-ID=${process.env.REACT_APP_API_KEY_ID}`}
+        />
+
         <button
           className="btn btn-primary mt-3"
           onClick={() => {
-            if (btnDet) {
-              // TODO: Add station
-              let data = newStation;
-              data.name = newStationName;
-              data.arrived_time = arrived_time;
-              const mapLoc = new naver.maps.LatLng(data.lat, data.lng);
-              setNewstation(data);
-              console.log(newStation);
-              const newMarker = new naver.maps.Marker({
-                position: mapLoc,
-                map: map,
-                icon: stopLogo,
-                title: newStationName,
-                arrived_time: arrived_time,
-              });
-              setMarkers([...markers, newMarker]);
-              console.log(markers);
-              dispatch(addStation(newStation));
-              closeModal();
-            } else {
-              // TODO: Delete station
-              const tmpMarkers = markers[delStation];
-              console.log(tmpMarkers);
-              tmpMarkers.setMap(null);
-              dispatch(deleteStation(delStation));
-              setbtnDet(true);
-              closeModal();
-            }
+            // TODO: Add station
+            let data = newStation;
+            data.name = newStationName;
+            data.arrived_time = arrived_time;
+            const mapLoc = new naver.maps.LatLng(data.lat, data.lng);
+            setNewstation(data);
+            console.log(newStation);
+            const newMarker = new naver.maps.Marker({
+              position: mapLoc,
+              map: map,
+              icon: stopLogo,
+              title: newStationName,
+              arrived_time: arrived_time,
+            });
+            setMarkers([...markers, newMarker]);
+            console.log(markers);
+            dispatch(addStation(newStation));
+            closeModal();
+          }}
+        >
+          {btnText}
+        </button>
+      </Modal>
+      <Modal open={modalOpen3} close={closeModal3} header={modalHeader}>
+        <img
+          id="cordMapImgTag"
+          alt=""
+          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=300&h=300&center=127.1054221,37.3591614&level=16&X-NCP-APIGW-API-KEY-ID=${process.env.REACT_APP_API_KEY_ID}`}
+        />
+
+        <button
+          className="btn btn-primary mt-3"
+          onClick={() => {
+            // TODO: Delete station
+            const tmpMarkers = markers[delStation];
+            console.log(tmpMarkers);
+            tmpMarkers.setMap(null);
+            dispatch(deleteStation(delStation));
+            closeModal3();
           }}
         >
           {btnText}
@@ -446,9 +466,8 @@ function RouteMap() {
                                           getStaticMap2Src(cordUrl, "cordMapImgTag");
                                           setModalHeader("정류장 삭제");
                                           setbtnText("삭제");
-                                          setbtnDet(false);
                                           setDelstation(station.id);
-                                          openModal();
+                                          openModal3();
                                         }}
                                       />
                                     </div>
