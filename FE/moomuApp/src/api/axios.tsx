@@ -29,10 +29,10 @@ instance.interceptors.response.use(
         if (error.response && error.response.status) {
             switch (error.response.status) {
                 case 401:
-                    RootNavigation.resetDefault('start');
+                    RootNavigation.resetDefault('Start');
                     break;
                 case 451:
-                    RootNavigation.resetDefault('start');
+                    RootNavigation.resetDefault('Start');
                     break;
                 default:
                     return Promise.reject(error);
