@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app.dependencies import get_db
 from fastapi.security import OAuth2PasswordBearer
 
-ACCESS_EXPIRES = timedelta(minutes=60)
+ACCESS_EXPIRES = timedelta(days=14)
 REFRESH_EXPIRES = timedelta(days=14)
 
 ALGORITHM = "HS256"

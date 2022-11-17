@@ -2,17 +2,20 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faIdBadge, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 
 import "./DashBoard.css";
 import LoadingComponent from "../componentes/Loading";
+import { logout } from "../reducers/tokenSlice";
 
-function DashBoard() {
+function UserBoard() {
   const [isLoading, setLoading] = useState(true);
   const [users, setusers] = useState({});
   const rawToken = useSelector((state) => state.token.rawToken.access_token);
   let getuserUrl = "https://k7b202.p.ssafy.io/api/users/admin";
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getusers();
@@ -27,25 +30,19 @@ function DashBoard() {
         Authorization: `Bearer ${rawToken}`,
       },
     };
-    const response = await axios(config);
-    setusers(response.data);
-    console.log(response);
-    console.log(users);
-    setLoading(false);
+    try {
+      const response = await axios(config);
+      setusers(response.data);
+      console.log(response);
+      console.log(users);
+      setLoading(false);
+    } catch (error) {
+      if (error.response.status === 451) {
+        dispatch(logout());
+      }
+    }
+    // const response = await axios(config);
   };
-  const navigate = useNavigate();
-  let addRoute = function () {
-    navigate("/map");
-  };
-  const changeRoute = function (userId) {
-    // navigate(`/user/${userId}`);
-  };
-
-  // const options = {
-  //   method: "POST",
-  //   body: body,
-  //   url: url,
-  // };
 
   if (isLoading) {
     return <LoadingComponent />;
@@ -59,8 +56,8 @@ function DashBoard() {
           <thead>
             <tr className="text-primary font-bold table-title sticky top-0">
               <th className="w-60 ">사용자</th>
-              <th className="w-36 ">변경</th>
-              <th className="w-36 ">삭제</th>
+              <th className="w-36 ">승차 정류장</th>
+              <th className="w-36 ">하차 정류장</th>
             </tr>
           </thead>
           <tbody className="" style={{ overflowY: "scroll" }}>
@@ -68,14 +65,16 @@ function DashBoard() {
               return (
                 <tr key={user.id}>
                   <td className="font-bold routeTitle">{user.nickname}</td>
-                  <td>
+                  <td className="">
                     <button className="btn btn-ghost btn-lg changeIcon">
-                      <FontAwesomeIcon icon={faIdBadge} onClick={() => changeRoute(user.id)} />
+                      {/* <FontAwesomeIcon icon={faIdBadge} onClick={() => changeRoute(user.id)} /> */}
+                      {user.start_station ? <p className="stationInfo truncate ..."> {user.start_station.name} </p> : <FontAwesomeIcon icon={faIdBadge} />}
                     </button>
                   </td>
                   <td>
                     <button className="btn btn-ghost btn-lg deleteIcon">
-                      <FontAwesomeIcon icon={faTrashCan} />
+                      {user.end_station ? <p className="stationInfo truncate "> {user.end_station.name} </p> : <FontAwesomeIcon icon={faIdBadge} />}
+                      {/* <FontAwesomeIcon icon={faTrashCan} /> */}
                     </button>
                   </td>
                 </tr>
@@ -84,12 +83,9 @@ function DashBoard() {
           </tbody>
         </table>
       </div>
-      {/* <button className="btn btn-primary btn-xs sm:btn-sm md:btn-md lg:btn-lg logInBtn" onClick={() => addRoute()}>
-        노선 추가
-      </button> */}
     </div>
   );
 }
 
-export default DashBoard;
-/* LogIn Page component */
+export default UserBoard;
+/* UserBoard page */

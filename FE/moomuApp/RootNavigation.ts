@@ -17,7 +17,20 @@ export function goBack() {
 export function reset(name: any, params?: any) {
     if (navigationRef.isReady()) {
         navigationRef.reset({
-            routes: [{ name: name }, { params }],
+            routes: [
+                {
+                    name: name,
+                    params: params,
+                },
+            ],
+        });
+    }
+}
+
+export function resetDefault(name: any) {
+    if (navigationRef.isReady()) {
+        navigationRef.reset({
+            routes: [{ name: name }],
         });
     }
 }

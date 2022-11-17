@@ -71,6 +71,7 @@ class Bus(Base):
     name = Column(String(50), unique=True, index=True, nullable=False)
     region_id = Column(Integer, ForeignKey("region.id"))
     commute_or_leave = Column(Enum(CommuteOrLeave))
+    order = Column(Integer, nullable=False, default=-1)
 
     bus_stations = relationship("Station", back_populates="bus")
     region = relationship("Region", back_populates="bus")

@@ -16,8 +16,8 @@ class BusCreate(BusBase):
 
 class Bus(BusBase):
     id: int
+    order: int
     stations: list[Station] = []
-    cur: tuple = ()
 
     class Config:
         orm_mode = True

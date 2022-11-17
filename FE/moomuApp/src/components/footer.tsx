@@ -2,13 +2,15 @@ import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 
 const Footer = () => {
-    return <Text style={styles.text}>© 2022 MOOMU All Rights Reserved</Text>;
+    return (
+        <Text style={styles.text}>© 2022 MOOMU All rights owned by SSAFY</Text>
+    );
 };
 
 const styles = StyleSheet.create({
     text: {
         position: 'absolute',
-        width: 195,
+        width: 260,
         height: 14,
         // left: 99,
         // top: 796,

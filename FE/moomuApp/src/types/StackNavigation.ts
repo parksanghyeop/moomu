@@ -13,8 +13,11 @@ export type RootStackParamList = {
         bus_id: number;
         name: string;
         commute_or_leave: string;
+        order: number;
+        stationName: string;
     };
     Main: undefined;
+    Modify: undefined;
     BusSearch: undefined;
     Information: undefined;
     FAQ: undefined;
@@ -26,4 +29,5 @@ export type RootStackParamList = {
     InformationDetail: {
         information: any;
     };
+    Splash: undefined;
 };

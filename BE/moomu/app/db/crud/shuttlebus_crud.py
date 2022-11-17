@@ -20,6 +20,7 @@ def get_buses(db: Session, region_id: int, commute_or_leave: CommuteOrLeave):
         .options(Load(Bus).lazyload("*"))
         .filter(Bus.region_id == region_id)
         .filter(Bus.commute_or_leave == commute_or_leave)
+        .order_by(Bus.name)
         .all()
     )
 
@@ -109,3 +110,11 @@ def create_station_alarm(
         content=coltype + "버스가 잠시 후 " + station_name + "에 도착합니다. 준비해주세요.",
         db_users=db_users,
     )
+
+
+def set_bus_order(db: Session, commute_or_leave: CommuteOrLeave, bus_name: str, order: int):
+    db_bus = db.query(Bus).filter(Bus.commute_or_leave == commute_or_leave).filter(
+        Bus.name.like(f"{bus_name}%")
+    ).first()
+    db_bus.order = order
+    db.commit()

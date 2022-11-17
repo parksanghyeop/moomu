@@ -14,17 +14,25 @@ export default function Pagination({ page, total, limit, setPage }) {
   return (
     <div>
       <div>
-        <div className="btn-group">
+        <div className="">
           <button
-            className="btn"
+            className="btn btn-ghost"
             onClick={() => {
               setPage(page - 1);
             }}
-            disabled={page === 1}
+            style={{
+              visibility: page === 1 ? "hidden" : "visible",
+            }}
           >
             «
           </button>
-          <button onClick={() => setPage(firstNum)} className={"btn " + (page === firstNum ? "btn-active" : "")}>
+          <button
+            onClick={() => setPage(firstNum)}
+            className={
+              "btn " +
+              (page === firstNum ? "btn-primary btn-active" : "btn-ghost")
+            }
+          >
             {firstNum}
           </button>
           {Array(lastPage)
@@ -38,23 +46,38 @@ export default function Pagination({ page, total, limit, setPage }) {
                     onClick={() => {
                       setPage(firstNum + 1 + i);
                     }}
-                    className={"btn " + (page === firstNum + 1 + i ? "btn-active" : "")}
+                    className={
+                      "btn " +
+                      (page === firstNum + 1 + i
+                        ? "btn-active btn-primary"
+                        : "btn-ghost")
+                    }
                   >
                     {firstNum + 1 + i}
                   </button>
                 );
               } else if (i >= pageLimit - 2) {
                 return (
-                  <button border="true" key={i + 1} onClick={() => setPage(lastNum)} className={"btn" + (page === firstNum + 1 + i ? "btn-active" : null)}>
+                  <button
+                    border="true"
+                    key={i + 1}
+                    onClick={() => setPage(lastNum)}
+                    className={
+                      "btn" + (page === firstNum + 1 + i ? "btn-active" : null)
+                    }
+                  >
                     {lastNum}
                   </button>
                 );
               }
             })}
           <button
-            className="btn"
+            className="btn btn-ghost"
             onClick={() => {
               setPage(page + 1);
+            }}
+            style={{
+              visibility: page === total ? "hidden" : "visible",
             }}
           >
             »

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     createStackNavigator,
     StackNavigationProp,
@@ -9,6 +9,7 @@ import BusScreen from '../screens/BusScreen';
 import BusMapScreen from '../screens/BusMapScreen';
 import StationScreen from '../screens/StationScreen';
 import MainScreen from '../screens/MainScreen';
+import ModifyScreen from '../screens/ModifyScreen';
 import { RootStackParamList } from '../types/StackNavigation';
 import FaqScreen from '../screens/FaqScreen';
 import InformationDetailScreen from '../screens/InformationDetailScreen';
@@ -16,6 +17,7 @@ import InformationScreen from '../screens/InformationScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import SettingScreen from '../screens/SettingScreen';
 import FaqDetailScreen from '../screens/FaqDetailScreen';
+import SplashScreen from '../screens/Splashscreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -27,8 +29,13 @@ const StackNavigator = () => {
                 headerShadowVisible: false,
                 headerBackTitleVisible: false,
             }}
-            initialRouteName="Start"
+            initialRouteName="Splash"
         >
+            <Stack.Screen
+                name="Splash"
+                component={SplashScreen}
+                options={{ headerShown: false }}
+            />
             <Stack.Screen
                 name="Start"
                 component={StartScreen}
@@ -42,7 +49,7 @@ const StackNavigator = () => {
             <Stack.Screen
                 name="Bus"
                 component={BusScreen}
-                options={{ title: '노선조회' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="FAQ"
@@ -57,7 +64,7 @@ const StackNavigator = () => {
             <Stack.Screen
                 name="Information"
                 component={InformationScreen}
-                options={{ title: '공지사항' }}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="Main"
@@ -72,7 +79,7 @@ const StackNavigator = () => {
             <Stack.Screen
                 name="Station"
                 component={StationScreen}
-                options={({ route }) => ({ title: route.params.stationName })}
+                options={{ headerShown: false }}
             />
             <Stack.Screen
                 name="Notification"
@@ -87,6 +94,12 @@ const StackNavigator = () => {
             <Stack.Screen
                 name="InformationDetail"
                 component={InformationDetailScreen}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="Modify"
+                component={ModifyScreen}
+                options={{ title: '개인정보 수정' }}
             />
         </Stack.Navigator>
     );

@@ -5,6 +5,7 @@ import * as RootNavigation from '../../RootNavigation';
 const instance = axios.create({
     baseURL: 'https://k7b202.p.ssafy.io/api/',
     // baseURL: "http://localhost:8000/",
+    headers: { 'Content-Type': `application/json` },
 });
 
 instance.interceptors.request.use(
@@ -27,9 +28,12 @@ instance.interceptors.response.use(
     async (error) => {
         if (error.response && error.response.status) {
             switch (error.response.status) {
+                case 401:
+                    RootNavigation.reset('LoginSignUp', { id: 1 });
+                    break;
                 case 451:
                     await AsyncStorage.removeData('token');
-                    RootNavigation.reset('login', { id: 1 });
+                    RootNavigation.reset('LoginSignUp', { id: 1 });
                     break;
                 default:
                     return Promise.reject(error);
