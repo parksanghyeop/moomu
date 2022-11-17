@@ -42,8 +42,6 @@ function RouteMap() {
   const stopLogo = {
     url: bus_stop,
     scaledSize: new naver.maps.Size(24, 37),
-    // origin: new naver.maps.Point(0, 0),
-    // anchor: new naver.maps.Point(12, 37),
   };
   const openModal = () => {
     setModalOpen(true);
