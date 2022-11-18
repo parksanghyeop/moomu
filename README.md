@@ -86,7 +86,7 @@ MooMu는 Raspberry Pi를 이용해 버스위치를 실시간으로 받아 사용
 
 # 🚌프로젝트 아키텍쳐🚌
 
-![00.png](img/image_89.png)
+![00.png](img/00.png)
 
 # 🚌개발 기간🚌
 
