@@ -318,9 +318,18 @@ function RouteMap() {
           <span className="">이름</span>
           <input type="text" placeholder="Type here" className="input input-bordered input-lg w-3/4 max-w-xs text-center" value={newStationName} onChange={(e) => setNewstationName(e.target.value)} />
         </label>
-        <label className="input-group input-group-lg justify-center	">
+        <label className="input input-group input-group-lg justify-center	">
           <span className="">도착 시간</span>
-          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
+          <input
+            type="text"
+            placeholder="Type here"
+            className="input-bordered input-lg max-w-xs"
+            value={arrived_time}
+            onChange={(e) => setArrivedTime(e.target.value)}
+            style={{
+              width: "60%",
+            }}
+          />
         </label>
         <img id="cordMapImgTag2" alt="" src="" />
         <button
@@ -357,7 +366,16 @@ function RouteMap() {
           </label>
           <label className="input-group input-group-lg justify-center	">
             <span className="">도착 시간</span>
-            <input type="text" placeholder="Type here" className="input input-bordered input-lg w-2/5 max-w-xs" value={arrived_time} onChange={(e) => setArrivedTime(e.target.value)} />
+            <input
+              type="text"
+              placeholder="Type here"
+              className="input input-bordered input-lg max-w-xs"
+              value={arrived_time}
+              onChange={(e) => setArrivedTime(e.target.value)}
+              style={{
+                width: "60%",
+              }}
+            />
           </label>
         </div>
         <img
