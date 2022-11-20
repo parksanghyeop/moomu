@@ -48,40 +48,42 @@ function UserBoard() {
     return <LoadingComponent />;
   }
   return (
-    <div className="tablePage" style={{ width: "100%" }}>
-      {/* <p className="bodyTitle "> 사용자 </p> */}
-      <div className="overflow-x-auto w-full mt-5">
-        <table className="custom-table w-full">
-          {/* <!-- head --> */}
-          <thead>
-            <tr className="text-primary font-bold table-title sticky top-0">
-              <th className="w-60 ">사용자</th>
-              <th className="w-36 ">승차 정류장</th>
-              <th className="w-36 ">하차 정류장</th>
-            </tr>
-          </thead>
-          <tbody className="" style={{ overflowY: "scroll" }}>
-            {users.map((user) => {
-              return (
-                <tr key={user.id}>
-                  <td className="font-bold routeTitle">{user.nickname}</td>
-                  <td className="">
-                    <button className="btn btn-ghost btn-lg changeIcon">
-                      {/* <FontAwesomeIcon icon={faIdBadge} onClick={() => changeRoute(user.id)} /> */}
-                      {user.start_station ? <p className="stationInfo truncate ..."> {user.start_station.name} </p> : <FontAwesomeIcon icon={faIdBadge} />}
-                    </button>
-                  </td>
-                  <td>
-                    <button className="btn btn-ghost btn-lg deleteIcon">
-                      {user.end_station ? <p className="stationInfo truncate "> {user.end_station.name} </p> : <FontAwesomeIcon icon={faIdBadge} />}
-                      {/* <FontAwesomeIcon icon={faTrashCan} /> */}
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+    <div className="p-4 mt-4">
+      <div className="tablePage content-box h-">
+        {/* <p className="bodyTitle "> 사용자 </p> */}
+        <div className="overflow-x-auto w-full mt-5">
+          <table className="custom-table w-full">
+            {/* <!-- head --> */}
+            <thead>
+              <tr className="text-primary font-bold table-title sticky top-0">
+                <th className="w-60 ">사용자</th>
+                <th className="w-36 ">승차 정류장</th>
+                <th className="w-36 ">하차 정류장</th>
+              </tr>
+            </thead>
+            <tbody className="" style={{ overflowY: "scroll" }}>
+              {users.map((user) => {
+                return (
+                  <tr key={user.id}>
+                    <td className="font-bold routeTitle">{user.nickname}</td>
+                    <td className="text-center">
+                      <button className="btn btn-ghost btn-lg changeIcon">
+                        {/* <FontAwesomeIcon icon={faIdBadge} onClick={() => changeRoute(user.id)} /> */}
+                        {user.start_station ? <p className="stationInfo truncate"> {user.start_station.name} </p> : <FontAwesomeIcon icon={faIdBadge} />}
+                      </button>
+                    </td>
+                    <td className="text-center">
+                      <button className="btn btn-ghost btn-lg changeIcon">
+                        {user.end_station ? <p className="stationInfo truncate "> {user.end_station.name} </p> : <FontAwesomeIcon icon={faIdBadge} />}
+                        {/* <FontAwesomeIcon icon={faTrashCan} /> */}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
