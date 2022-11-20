@@ -202,8 +202,8 @@ function DashBoard() {
                       </button>
                     </td>
                     <td className="delete">
-                      <button className="btn btn-ghost btn-md deleteIcon hover:bg-base-200">
-                        <FontAwesomeIcon icon={faTrashCan} onClick={() => deleteRoute(route.id)} />
+                      <button className="btn btn-ghost btn-md deleteIcon hover:bg-base-200" onClick={() => deleteRoute(route.id)}>
+                        <FontAwesomeIcon icon={faTrashCan} />
                       </button>
                     </td>
                   </tr>
