@@ -1,0 +1,46 @@
+{
+    "project_info": {
+        "project_number": "487234784369",
+        "project_id": "moomu-3531b",
+        "storage_bucket": "moomu-3531b.appspot.com"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:487234784369:android:7bd114d675af3db3ee9fd0",
+                "android_client_info": {
+                    "package_name": "com.ssafy.moomuApp"
+                }
+            },
+            "oauth_client": [
+                {
+                    "client_id": "487234784369-3e8r8vgcfrgkdavs8nlojcg3efjfsp7f.apps.googleusercontent.com",
+                    "client_type": 3
+                }
+            ],
+            "api_key": [
+                {
+                    "current_key": "AIzaSyAZLpE8rHVzFJJZaOJQOXwA7VhlDlzyh-o"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": [
+                        {
+                            "client_id": "487234784369-3e8r8vgcfrgkdavs8nlojcg3efjfsp7f.apps.googleusercontent.com",
+                            "client_type": 3
+                        },
+                        {
+                            "client_id": "487234784369-12fmj3l2upffhjehup6al0169dciauhb.apps.googleusercontent.com",
+                            "client_type": 2,
+                            "ios_info": {
+                                "bundle_id": "com.ssafy.moomu"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}

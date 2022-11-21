@@ -26,10 +26,22 @@
                 "googleMaps": {
                     "apiKey": "AIzaSyCtffaTgJ44FDHISElp0rzuQwuHsp5Z4xM"
                 }
-            }
+            },
+            "package": "com.ssafy.moomuApp",
+            "googleServicesFile": "./google-services.json",
+            "useNextNotificationsApi": true
         },
         "web": {
             "favicon": "./assets/images/Logo.png"
-        }
+        },
+        "plugins": [
+            [
+                "expo-notifications",
+                {
+                    "icon": "./assets/icon.png",
+                    "color": "#FFFFFF"
+                }
+            ]
+        ]
     }
 }

@@ -34,8 +34,8 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
         props.route.params.commute_or_leave
     );
 
-    const [lat, setLatitude] = useState<number>();
-    const [lon, setLongitude] = useState<number>();
+    const [lat, setLatitude] = useState<number>(0);
+    const [lon, setLongitude] = useState<number>(0);
     const [bus_lat, setBusLat] = useState<number>();
     const [bus_lng, setBusLng] = useState<number>();
     const [visible, setVisible] = useState(false);
@@ -60,19 +60,6 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
                 return;
             }
 
-            const {
-                coords: { latitude, longitude },
-            } = await Location.getCurrentPositionAsync({
-                accuracy: Location.Accuracy.Balanced,
-                timeInterval: 5,
-            });
-
-            //let location = await Location.reverseGeocodeAsync({latitude, longitude}, {useGoogleMaps: true});
-            // console.log(location);
-            //setLocation(location);
-
-            setLatitude(latitude);
-            setLongitude(longitude);
             let sumlat = 0;
             let sumlon = 0;
             for (let i = 0; i < stationList.length; i++) {
@@ -164,6 +151,20 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
     }, []);
 
     const goToMyLocation = async () => {
+        const {
+            coords: { latitude, longitude },
+        } = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Balanced,
+            timeInterval: 5,
+        });
+
+        //let location = await Location.reverseGeocodeAsync({latitude, longitude}, {useGoogleMaps: true});
+        // console.log(location);
+        //setLocation(location);
+
+        setLatitude(latitude);
+        setLongitude(longitude);
+
         mapRef.current.animateCamera({
             center: { latitude: lat, longitude: lon },
             pitch: 2,
@@ -216,7 +217,8 @@ const BusMapScreen: React.FC<BusMapScreenProps> = (props) => {
                 <MapView
                     style={styles.map}
                     ref={mapRef}
-                    showsUserLocation={false}
+                    showsUserLocation={true}
+                    showsMyLocationButton={false}
                     provider={'google'}
                     initialRegion={{
                         latitude: lat,

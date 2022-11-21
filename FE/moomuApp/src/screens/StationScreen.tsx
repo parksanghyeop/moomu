@@ -122,8 +122,10 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
 
     const commute_or_leave = useselect ? (
         <Button1 text={'선택 확정'} onPress={confirmPress} />
-    ) : (
+    ) : co_or_le == 'COMMUTE' ? (
         <Button1 text={'승차지점변경'} onPress={() => setUseSelect(true)} />
+    ) : (
+        <Button1 text={'하차지점변경'} onPress={() => setUseSelect(true)} />
     );
 
     const back_or_cancle = useselect ? (
@@ -136,6 +138,7 @@ const StationScreen: React.FC<StationScreenProps> = (props) => {
         await axios
             .get(requests.shuttlebus_notion + props.route.params.bus_id)
             .then((response) => {
+                setBusOrder(response.data.order);
                 setStationList(response.data.stations);
                 // console.log(stationList);
             })

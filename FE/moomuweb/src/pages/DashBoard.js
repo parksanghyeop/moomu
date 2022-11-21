@@ -2,18 +2,20 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRoute, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 
 import "./DashBoard.css";
 import Modal from "../componentes/modal";
 import LoadingComponent from "../componentes/Loading";
+import { setSelection } from "../reducers/selectionSlice";
 
 function DashBoard() {
+  const dispatch = useDispatch();
+
   const [isLoading, setLoading] = useState(true);
   const [isreloaded, setReloaded] = useState(true);
   const [routes, setRoutes] = useState({});
-  const [selection, setSelection] = useState("COMMUTE");
   const [newBusName, setnewBusName] = useState("Moomu");
   const [modalOpen, setModalOpen] = useState(false);
   const [changeName, setchangeName] = useState(false);
@@ -21,6 +23,7 @@ function DashBoard() {
   const [changeBusId, setChangeBusId] = useState(0);
 
   const region_id = useSelector((state) => state.token.decoded.region);
+  const selection = useSelector((state) => state.selection.selection);
   // const region_id = 200;
   const rawToken = useSelector((state) => state.token.rawToken.access_token);
   // let url = `http://k7b202.p.ssafy.io:8000/shuttlebus/bus?region_id=${region_id}`;
@@ -94,7 +97,7 @@ function DashBoard() {
     });
   };
   const changeSelect = async function (e) {
-    await setSelection(e.target.value);
+    await dispatch(setSelection(e.target.value));
   };
   const navigate = useNavigate();
   const changeRoute = function (routeId) {
@@ -119,13 +122,7 @@ function DashBoard() {
       <Modal open={changeName} close={closeModal2} header="노선 이름 변경">
         <label className="input-group input-group-lg">
           <span className="">이름</span>
-          <input
-            type="text"
-            placeholder="Type here"
-            className="input input-bordered input-lg w-full max-w-xs"
-            value={busName}
-            onChange={(e) => setBusName(e.target.value)}
-          />
+          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-full max-w-xs" value={busName} onChange={(e) => setBusName(e.target.value)} />
         </label>
         <footer>
           <button
@@ -152,13 +149,7 @@ function DashBoard() {
       <Modal open={modalOpen} close={closeModal} header="신규 노선 추가">
         <label className="input-group input-group-lg">
           <span className="">이름</span>
-          <input
-            type="text"
-            placeholder="Type here"
-            className="input input-bordered input-lg w-full max-w-xs"
-            value={newBusName}
-            onChange={(e) => setnewBusName(e.target.value)}
-          />
+          <input type="text" placeholder="Type here" className="input input-bordered input-lg w-full max-w-xs" value={newBusName} onChange={(e) => setnewBusName(e.target.value)} />
         </label>
         <button
           className="btn btn-primary mt-3"
@@ -178,18 +169,12 @@ function DashBoard() {
       <div className="tablePage">
         <div className="content-box overflow-x-auto w-full custom-table-container">
           <div className="flex justify-start mb-4 mt-4">
-            <button
-              className="btn btn-sm btn-primary mr-4"
-              onClick={() => openModal()}
-            >
+            <button className="btn btn-sm btn-primary mr-4" onClick={() => openModal()}>
               노선 추가
             </button>
-            <select
-              className="select select-sm w-md max-w-xs"
-              onChange={changeSelect}
-            >
+            <select className="select select-sm w-md max-w-xs" onChange={changeSelect}>
               {selectOptions.map((option) => (
-                <option key={option.key} value={option.key}>
+                <option key={option.key} value={option.key} selected={selection === option.key}>
                   {option.value}
                 </option>
               ))}
@@ -201,10 +186,7 @@ function DashBoard() {
               {routes.map((route) => {
                 return (
                   <tr className="cursor-pointer " key={route.id}>
-                    <td
-                      className="w-full p-4 name hover:bg-base-200"
-                      onClick={() => changeRoute(route.id)}
-                    >
+                    <td className="w-full p-4 name hover:bg-base-200" onClick={() => changeRoute(route.id)}>
                       {route.name}
                     </td>
                     <td>
@@ -220,11 +202,8 @@ function DashBoard() {
                       </button>
                     </td>
                     <td className="delete">
-                      <button className="btn btn-ghost btn-md deleteIcon hover:bg-base-200">
-                        <FontAwesomeIcon
-                          icon={faTrashCan}
-                          onClick={() => deleteRoute(route.id)}
-                        />
+                      <button className="btn btn-ghost btn-md deleteIcon hover:bg-base-200" onClick={() => deleteRoute(route.id)}>
+                        <FontAwesomeIcon icon={faTrashCan} />
                       </button>
                     </td>
                   </tr>
